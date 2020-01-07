@@ -1,54 +1,60 @@
 package me.fjq.security.service;
 
 
-import me.fjq.security.LoginUser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 /**
- * 用户验证处理
+ * @author Zheng Jie
+ * @date 2018-11-22
  */
-@Service
-public class UserDetailsServiceImpl implements UserDetailsService
-{
-    private static final Logger log = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
+@Service("userDetailsService")
+@Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
+public class UserDetailsServiceImpl implements UserDetailsService {
 
-    @Autowired
-    private ISysUserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private SysPermissionService permissionService;
+    private final RoleService roleService;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
-    {
-        SysUser user = userService.selectUserByUserName(username);
-        if (StringUtils.isNull(user))
-        {
-            log.info("登录用户：{} 不存在.", username);
-            throw new UsernameNotFoundException("登录用户：" + username + " 不存在");
-        }
-        else if (UserStatus.DELETED.getCode().equals(user.getDelFlag()))
-        {
-            log.info("登录用户：{} 已被删除.", username);
-            throw new BaseException("对不起，您的账号：" + username + " 已被删除");
-        }
-        else if (UserStatus.DISABLE.getCode().equals(user.getStatus()))
-        {
-            log.info("登录用户：{} 已被停用.", username);
-            throw new BaseException("对不起，您的账号：" + username + " 已停用");
-        }
-
-        return createLoginUser(user);
+    public UserDetailsServiceImpl(UserService userService, RoleService roleService) {
+        this.userService = userService;
+        this.roleService = roleService;
     }
 
-    public UserDetails createLoginUser(SysUser user)
-    {
-        return new LoginUser(user, permissionService.getMenuPermission(user));
+    @Override
+    public UserDetails loadUserByUsername(String username){
+        UserDto user = userService.findByName(username);
+        if (user == null) {
+            throw new BadRequestException("账号不存在");
+        } else {
+            if (!user.getEnabled()) {
+                throw new BadRequestException("账号未激活");
+            }
+            return createJwtUser(user);
+        }
+    }
+
+    private UserDetails createJwtUser(UserDto user) {
+        return new JwtUser(
+                user.getId(),
+                user.getUsername(),
+                user.getNickName(),
+                user.getSex(),
+                user.getPassword(),
+                user.getAvatar(),
+                user.getEmail(),
+                user.getPhone(),
+                Optional.ofNullable(user.getDept()).map(DeptSmallDto::getName).orElse(null),
+                Optional.ofNullable(user.getJob()).map(JobSmallDto::getName).orElse(null),
+                roleService.mapToGrantedAuthorities(user),
+                user.getEnabled(),
+                user.getCreateTime(),
+                user.getLastPasswordResetTime()
+        );
     }
 }

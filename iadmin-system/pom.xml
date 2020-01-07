@@ -3,12 +3,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>me.fangjunqiang</groupId>
+		<groupId>me.fjq</groupId>
 		<artifactId>iadmin</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<groupId>me.fangjunqiang</groupId>
+	<groupId>me.fjq</groupId>
 	<artifactId>iadmin-system</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>iadmin-system</name>
@@ -16,10 +16,32 @@
 
 	<properties>
 		<java.version>1.8</java.version>
+		<jjwt.version>0.10.6</jjwt.version>
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>me.fjq</groupId>
+			<artifactId>iadmin-common</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 
+		<!--jwt-->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>${jjwt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>${jjwt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>${jjwt.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
