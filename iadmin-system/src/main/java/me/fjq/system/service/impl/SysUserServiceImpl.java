@@ -1,8 +1,11 @@
 package me.fjq.system.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import me.fjq.system.domain.SysRole;
 import me.fjq.system.domain.SysUser;
+import me.fjq.system.mapper.SysRoleMapper;
 import me.fjq.system.mapper.SysUserMapper;
 import me.fjq.system.service.ISysUserService;
 import org.springframework.stereotype.Service;
@@ -18,29 +21,66 @@ import java.util.List;
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements ISysUserService {
 
     private final SysUserMapper sysUserMapper;
+    private final SysRoleMapper sysRoleMapper;
 
-    public SysUserServiceImpl(SysUserMapper sysUserMapper) {
+    public SysUserServiceImpl(SysUserMapper sysUserMapper, SysRoleMapper sysRoleMapper) {
         this.sysUserMapper = sysUserMapper;
+        this.sysRoleMapper = sysRoleMapper;
     }
 
+    /**
+     * 根据条件分页查询用户列表
+     *
+     * @param user 用户信息
+     * @return 用户信息集合信息
+     */
     @Override
     public List<SysUser> selectUserList(SysUser user) {
-        return null;
+        return sysUserMapper.selectList();
     }
 
+    /**
+     * 通过用户名查询用户
+     *
+     * @param userName 用户名
+     * @return 用户对象信息
+     */
     @Override
     public SysUser selectUserByUserName(String userName) {
-        return null;
+        return sysUserMapper.selectOne(new QueryWrapper<SysUser>().lambda().eq(SysUser::getUserName, userName));
     }
 
+    /**
+     * 通过用户ID查询用户
+     *
+     * @param userId 用户ID
+     * @return 用户对象信息
+     */
     @Override
     public SysUser selectUserById(Long userId) {
-        return null;
+        return sysUserMapper.selectOne(new QueryWrapper<SysUser>().lambda().eq(SysUser::getUserId, userId));
     }
 
+    /**
+     * 查询用户所属角色组
+     *
+     * @param userName 用户名
+     * @return 结果
+     */
     @Override
     public String selectUserRoleGroup(String userName) {
-        return null;
+//        List<SysRole> list = roleMapper.selectRolesByUserName(userName);
+//        StringBuffer idsStr = new StringBuffer();
+//        for (SysRole role : list)
+//        {
+//            idsStr.append(role.getRoleName()).append(",");
+//        }
+//        if (StringUtils.isNotEmpty(idsStr.toString()))
+//        {
+//            return idsStr.substring(0, idsStr.length() - 1);
+//        }
+//        return idsStr.toString();
+        sysRoleMapper.selectList(new QueryWrapper<>().lambda().equals(SysRole::getu))
     }
 
     @Override
