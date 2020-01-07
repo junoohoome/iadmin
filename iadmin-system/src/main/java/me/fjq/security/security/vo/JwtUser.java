@@ -19,36 +19,36 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class JwtUser implements UserDetails {
 
-    private final Long id;
+    private Long id;
 
-    private final String username;
+    private String username;
 
-    private final String nickName;
+    private String nickName;
 
-    private final String sex;
-
-    @JsonIgnore
-    private final String password;
-
-    private final String avatar;
-
-    private final String email;
-
-    private final String phone;
-
-    private final String dept;
-
-    private final String job;
+    private String sex;
 
     @JsonIgnore
-    private final Collection<GrantedAuthority> authorities;
+    private String password;
 
-    private final boolean enabled;
+    private String avatar;
 
-    private Timestamp createTime;
+    private String email;
+
+    private String phone;
+
+    private String dept;
+
+//    private String job;
 
     @JsonIgnore
-    private final Date lastPasswordResetDate;
+    private Collection<GrantedAuthority> authorities;
+
+    private boolean enabled;
+
+    private Date createTime;
+
+    @JsonIgnore
+    private Date lastPasswordResetDate;
 
     @JsonIgnore
     @Override

@@ -1,7 +1,5 @@
 package me.fjq.security.config;
 
-//import me.zhengjie.annotation.AnonymousAccess;
-//import me.zhengjie.modules.security.security.*;
 
 import me.fjq.security.security.JwtAccessDeniedHandler;
 import me.fjq.security.security.JwtAuthenticationEntryPoint;
@@ -58,16 +56,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        // 搜寻匿名标记 url： @AnonymousAccess
-//        Map<RequestMappingInfo, HandlerMethod> handlerMethodMap = applicationContext.getBean(RequestMappingHandlerMapping.class).getHandlerMethods();
-//        Set<String> anonymousUrls = new HashSet<>();
-//        for (Map.Entry<RequestMappingInfo, HandlerMethod> infoEntry : handlerMethodMap.entrySet()) {
-//            HandlerMethod handlerMethod = infoEntry.getValue();
-//            AnonymousAccess anonymousAccess = handlerMethod.getMethodAnnotation(AnonymousAccess.class);
-//            if (null != anonymousAccess) {
-//                anonymousUrls.addAll(infoEntry.getKey().getPatternsCondition().getPatterns());
-//            }
-//        }
         httpSecurity
                 // 禁用 CSRF
                 .csrf().disable()

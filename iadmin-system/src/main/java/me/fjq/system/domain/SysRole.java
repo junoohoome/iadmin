@@ -41,4 +41,8 @@ public class SysRole extends BaseEntity {
     /** 部门组（数据权限） */
     private Long[] deptIds;
 
+    public SysRole(Long roleId)
+    {
+        this.roleId = roleId;
+    }
 }

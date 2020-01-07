@@ -8,6 +8,7 @@ import me.fjq.system.domain.SysUser;
 import me.fjq.system.mapper.SysRoleMapper;
 import me.fjq.system.mapper.SysUserMapper;
 import me.fjq.system.service.ISysUserService;
+import me.fjq.utils.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
      */
     @Override
     public List<SysUser> selectUserList(SysUser user) {
-        return sysUserMapper.selectList();
+        return null;
     }
 
     /**
@@ -69,18 +70,15 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
      */
     @Override
     public String selectUserRoleGroup(String userName) {
-//        List<SysRole> list = roleMapper.selectRolesByUserName(userName);
-//        StringBuffer idsStr = new StringBuffer();
-//        for (SysRole role : list)
-//        {
-//            idsStr.append(role.getRoleName()).append(",");
-//        }
-//        if (StringUtils.isNotEmpty(idsStr.toString()))
-//        {
-//            return idsStr.substring(0, idsStr.length() - 1);
-//        }
-//        return idsStr.toString();
-        sysRoleMapper.selectList(new QueryWrapper<>().lambda().equals(SysRole::getu))
+        List<SysRole> list = sysRoleMapper.selectRolesByUserName(userName);
+        StringBuffer idsStr = new StringBuffer();
+        for (SysRole role : list) {
+            idsStr.append(role.getRoleName()).append(",");
+        }
+        if (StringUtils.isNotEmpty(idsStr.toString())) {
+            return idsStr.substring(0, idsStr.length() - 1);
+        }
+        return idsStr.toString();
     }
 
     @Override

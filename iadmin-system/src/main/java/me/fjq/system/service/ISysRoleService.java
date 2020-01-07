@@ -2,7 +2,10 @@ package me.fjq.system.service;
 
 
 import me.fjq.system.domain.SysRole;
+import me.fjq.system.domain.SysUser;
+import org.springframework.security.core.GrantedAuthority;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -127,4 +130,11 @@ public interface ISysRoleService {
      * @return 结果
      */
     int deleteRoleByIds(Long[] roleIds);
+
+    /**
+     * 获取用户权限信息
+     * @param user 用户信息
+     * @return 权限信息
+     */
+    Collection<GrantedAuthority> mapToGrantedAuthorities(SysUser user);
 }

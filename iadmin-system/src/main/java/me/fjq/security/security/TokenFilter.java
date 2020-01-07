@@ -1,10 +1,10 @@
 package me.fjq.security.security;
 
 import io.jsonwebtoken.ExpiredJwtException;
+
 import lombok.extern.slf4j.Slf4j;
 import me.fjq.security.config.SecurityProperties;
 import me.fjq.security.security.vo.OnlineUser;
-import me.fjq.security.service.OnlineUserService;
 import me.fjq.utils.SpringContextHolder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,8 +40,6 @@ public class TokenFilter extends GenericFilterBean {
         OnlineUser onlineUser = null;
         try {
             SecurityProperties properties = SpringContextHolder.getBean(SecurityProperties.class);
-            OnlineUserService onlineUserService = SpringContextHolder.getBean(OnlineUserService.class);
-            onlineUser = onlineUserService.getOne(properties.getOnlineKey() + token);
         } catch (ExpiredJwtException e) {
             log.error(e.getMessage());
         }

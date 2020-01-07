@@ -30,5 +30,4 @@ public class OnlineUser {
 
     private Date loginTime;
 
-
 }
