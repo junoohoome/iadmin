@@ -2,6 +2,7 @@ package me.fjq;
 
 
 import me.fjq.system.domain.SysUser;
+import me.fjq.system.mapper.SysUserMapper;
 import me.fjq.system.service.ISysUserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,10 +16,13 @@ public class SystemApplicationTests {
 
     @Autowired
     ISysUserService userService;
+    @Autowired
+    SysUserMapper sysUserMapper;
 
     @Test
     public void contextLoads() {
-        SysUser sysUser = userService.selectUserById(1L);
+//        SysUser sysUser = userService.selectUserById(1L);
+        SysUser sysUser = sysUserMapper.selectUserByUserName("admin");
         System.out.println(sysUser);
     }
 
