@@ -1,6 +1,8 @@
 package me.fjq.system.domain;
 
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import me.fjq.core.BaseEntity;
 
@@ -12,6 +14,7 @@ import me.fjq.core.BaseEntity;
 public class SysRole extends BaseEntity {
 
     /** 角色ID */
+    @TableId(value = "role_id", type = IdType.AUTO)
     private Long roleId;
 
     /** 角色名称 */
@@ -37,9 +40,6 @@ public class SysRole extends BaseEntity {
 
     /** 菜单组 */
     private Long[] menuIds;
-
-    /** 部门组（数据权限） */
-    private Long[] deptIds;
 
     public SysRole(Long roleId)
     {

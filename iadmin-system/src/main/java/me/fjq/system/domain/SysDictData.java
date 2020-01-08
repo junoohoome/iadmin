@@ -2,6 +2,8 @@ package me.fjq.system.domain;
 
 
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import me.fjq.core.BaseEntity;
 
@@ -13,6 +15,7 @@ import me.fjq.core.BaseEntity;
 public class SysDictData extends BaseEntity {
 
     /** 字典编码 */
+    @TableId(value = "dict_code", type = IdType.AUTO)
     private Long dictCode;
 
     /** 字典排序 */

@@ -1,6 +1,8 @@
 package me.fjq.system.domain;
 
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 /**
@@ -8,6 +10,9 @@ import lombok.Data;
  */
 @Data
 public class SysRoleMenu {
+
+    private Long id;
+
     /** 角色ID */
     private Long roleId;
     

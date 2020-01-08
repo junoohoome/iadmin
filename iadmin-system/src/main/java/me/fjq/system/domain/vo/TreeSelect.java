@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import me.fjq.system.domain.SysDept;
 import me.fjq.system.domain.SysMenu;
 
 import java.io.Serializable;
@@ -34,12 +33,6 @@ public class TreeSelect implements Serializable {
      */
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<TreeSelect> children;
-
-    public TreeSelect(SysDept dept) {
-        this.id = dept.getDeptId();
-        this.label = dept.getDeptName();
-        this.children = dept.getChildren().stream().map(TreeSelect::new).collect(Collectors.toList());
-    }
 
     public TreeSelect(SysMenu menu) {
         this.id = menu.getMenuId();

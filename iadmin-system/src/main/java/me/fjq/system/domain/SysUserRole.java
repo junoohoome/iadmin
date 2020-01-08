@@ -9,6 +9,8 @@ import lombok.Data;
 @Data
 public class SysUserRole {
 
+    private Long id;
+
     /** 用户ID */
     private Long userId;
     

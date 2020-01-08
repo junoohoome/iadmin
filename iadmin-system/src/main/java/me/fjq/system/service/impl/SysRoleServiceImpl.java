@@ -5,15 +5,11 @@ import cn.hutool.core.util.ObjectUtil;
 import me.fjq.constant.UserConstants;
 import me.fjq.exception.CustomException;
 import me.fjq.system.domain.SysRole;
-import me.fjq.system.domain.SysRoleDept;
 import me.fjq.system.domain.SysRoleMenu;
-import me.fjq.system.domain.SysUser;
-import me.fjq.system.mapper.SysRoleDeptMapper;
-import me.fjq.system.mapper.SysRoleMapper;
-import me.fjq.system.mapper.SysRoleMenuMapper;
-import me.fjq.system.mapper.SysUserRoleMapper;
+import me.fjq.system.mapper.*;
 import me.fjq.system.service.ISysRoleService;
-import org.springframework.security.core.GrantedAuthority;
+//import org.springframework.security.core.GrantedAuthority;
+//import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,14 +24,14 @@ public class SysRoleServiceImpl implements ISysRoleService {
     private final SysRoleMapper roleMapper;
     private final SysRoleMenuMapper roleMenuMapper;
     private final SysUserRoleMapper userRoleMapper;
-    private final SysRoleDeptMapper roleDeptMapper;
+    private final SysMenuMapper menuMapper;
 
     public SysRoleServiceImpl(SysRoleMapper roleMapper, SysRoleMenuMapper roleMenuMapper,
-                              SysUserRoleMapper userRoleMapper, SysRoleDeptMapper roleDeptMapper) {
+                              SysUserRoleMapper userRoleMapper, SysMenuMapper menuMapper) {
         this.roleMapper = roleMapper;
         this.roleMenuMapper = roleMenuMapper;
         this.userRoleMapper = userRoleMapper;
-        this.roleDeptMapper = roleDeptMapper;
+        this.menuMapper = menuMapper;
     }
 
     /**
@@ -205,11 +201,7 @@ public class SysRoleServiceImpl implements ISysRoleService {
     @Transactional
     public int authDataScope(SysRole role) {
         // 修改角色信息
-        roleMapper.updateRole(role);
-        // 删除角色与部门关联
-        roleDeptMapper.deleteRoleDeptByRoleId(role.getRoleId());
-        // 新增角色和部门信息（数据权限）
-        return insertRoleDept(role);
+        return roleMapper.updateRole(role);
     }
 
     /**
@@ -229,27 +221,6 @@ public class SysRoleServiceImpl implements ISysRoleService {
         }
         if (list.size() > 0) {
             rows = roleMenuMapper.batchRoleMenu(list);
-        }
-        return rows;
-    }
-
-    /**
-     * 新增角色部门信息(数据权限)
-     *
-     * @param role 角色对象
-     */
-    public int insertRoleDept(SysRole role) {
-        int rows = 1;
-        // 新增角色与部门（数据权限）管理
-        List<SysRoleDept> list = new ArrayList<SysRoleDept>();
-        for (Long deptId : role.getDeptIds()) {
-            SysRoleDept rd = new SysRoleDept();
-            rd.setRoleId(role.getRoleId());
-            rd.setDeptId(deptId);
-            list.add(rd);
-        }
-        if (list.size() > 0) {
-            rows = roleDeptMapper.batchRoleDept(list);
         }
         return rows;
     }
@@ -283,8 +254,16 @@ public class SysRoleServiceImpl implements ISysRoleService {
         return roleMapper.deleteRoleByIds(roleIds);
     }
 
-    @Override
-    public Collection<GrantedAuthority> mapToGrantedAuthorities(SysUser user) {
-        return null;
-    }
+//    @Override
+//    public Collection<GrantedAuthority> mapToGrantedAuthorities(SysUser user) {
+//        List<String> perms = menuMapper.selectMenuPermsByUserId(user.getUserId());
+//        Set<String> permissions = new HashSet<>();
+//        for (String perm : perms) {
+//            if (StringUtils.isNotEmpty(perm)) {
+//                permissions.addAll(Arrays.asList(perm.trim().split(",")));
+//            }
+//        }
+//        return permissions.stream().map(SimpleGrantedAuthority::new)
+//                .collect(Collectors.toList());
+//    }
 }

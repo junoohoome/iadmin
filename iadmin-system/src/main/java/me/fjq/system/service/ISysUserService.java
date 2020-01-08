@@ -8,6 +8,8 @@ import java.util.List;
 
 /**
  * 用户 业务层
+ * @author fjq
+ * @date 2020-1-8
  */
 public interface ISysUserService extends IService<SysUser> {
 

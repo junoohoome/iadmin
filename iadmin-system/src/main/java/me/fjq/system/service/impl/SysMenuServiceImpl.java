@@ -3,7 +3,7 @@ package me.fjq.system.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
 import me.fjq.constant.UserConstants;
-import me.fjq.security.security.utils.SecurityUtils;
+//import me.fjq.security.security.utils.SecurityUtils;
 import me.fjq.system.domain.SysMenu;
 import me.fjq.system.domain.vo.MetaVo;
 import me.fjq.system.domain.vo.RouterVo;
@@ -71,13 +71,14 @@ public class SysMenuServiceImpl implements ISysMenuService {
      */
     @Override
     public List<SysMenu> selectMenuTreeByUserId(Long userId) {
-        List<SysMenu> menus = null;
-        if (SecurityUtils.isAdmin(userId)) {
-            menus = menuMapper.selectMenuTreeAll();
-        } else {
-            menus = menuMapper.selectMenuTreeByUserId(userId);
-        }
-        return getChildPerms(menus, 0);
+//        List<SysMenu> menus = null;
+////        if (SecurityUtils.isAdmin(userId)) {
+////            menus = menuMapper.selectMenuTreeAll();
+////        } else {
+////            menus = menuMapper.selectMenuTreeByUserId(userId);
+////        }
+////        return getChildPerms(menus, 0);
+        return null;
     }
 
     /**

@@ -1,16 +1,11 @@
 package me.fjq.config;
 
-import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * <p>
- *     MybatisPlus配置
- * </p>
- * @author geekidea
- * @since 2018-11-08
+ *  MybatisPlus配置
  */
 @Configuration
 public class MybatisPlusConfig {

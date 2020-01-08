@@ -1,7 +1,10 @@
 package me.fjq.system.domain;
 
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import me.fjq.core.BaseEntity;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,10 +12,12 @@ import java.util.List;
 /**
  * 菜单权限表 sys_menu
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class SysMenu extends BaseEntity {
 
     /** 菜单ID */
+    @TableId(value = "menu_id", type = IdType.AUTO)
     private Long menuId;
 
     /** 菜单名称 */
