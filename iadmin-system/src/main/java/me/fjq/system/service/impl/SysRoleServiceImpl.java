@@ -6,14 +6,19 @@ import me.fjq.constant.UserConstants;
 import me.fjq.exception.CustomException;
 import me.fjq.system.domain.SysRole;
 import me.fjq.system.domain.SysRoleMenu;
+import me.fjq.system.domain.SysUser;
 import me.fjq.system.mapper.*;
 import me.fjq.system.service.ISysRoleService;
 //import org.springframework.security.core.GrantedAuthority;
 //import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import me.fjq.utils.StringUtils;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 角色 业务层处理
@@ -254,16 +259,16 @@ public class SysRoleServiceImpl implements ISysRoleService {
         return roleMapper.deleteRoleByIds(roleIds);
     }
 
-//    @Override
-//    public Collection<GrantedAuthority> mapToGrantedAuthorities(SysUser user) {
-//        List<String> perms = menuMapper.selectMenuPermsByUserId(user.getUserId());
-//        Set<String> permissions = new HashSet<>();
-//        for (String perm : perms) {
-//            if (StringUtils.isNotEmpty(perm)) {
-//                permissions.addAll(Arrays.asList(perm.trim().split(",")));
-//            }
-//        }
-//        return permissions.stream().map(SimpleGrantedAuthority::new)
-//                .collect(Collectors.toList());
-//    }
+    @Override
+    public Collection<GrantedAuthority> mapToGrantedAuthorities(SysUser user) {
+        List<String> perms = menuMapper.selectMenuPermsByUserId(user.getUserId());
+        Set<String> permissions = new HashSet<>();
+        for (String perm : perms) {
+            if (StringUtils.isNotEmpty(perm)) {
+                permissions.addAll(Arrays.asList(perm.trim().split(",")));
+            }
+        }
+        return permissions.stream().map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+    }
 }

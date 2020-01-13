@@ -7,7 +7,6 @@ import lombok.Data;
 import me.fjq.core.BaseEntity;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * 用户对象 sys_user
@@ -85,13 +84,6 @@ public class SysUser extends BaseEntity {
      */
 //    private Long[] roleIds;
 
-    public boolean isAdmin() {
-        return isAdmin(this.userId);
-    }
-
-    public static boolean isAdmin(Long userId) {
-        return userId != null && 1L == userId;
-    }
 
 
 }

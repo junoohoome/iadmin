@@ -15,7 +15,7 @@ spring:
     database: 0
     host: 127.0.0.1
     port: 6379
-    password:
+#    password:
     #连接超时时间
     timeout: 5000
 
@@ -47,11 +47,6 @@ task:
     keep-alive-seconds: 60
     # 队列容量
     queue-capacity: 50
-
-#七牛云
-qiniu:
-  # 文件大小 /M
-  max-size: 15
 
 #邮箱验证码有效时间/分钟
 code:

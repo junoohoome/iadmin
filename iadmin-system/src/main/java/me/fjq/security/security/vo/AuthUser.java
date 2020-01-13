@@ -6,7 +6,7 @@ import lombok.Setter;
 import javax.validation.constraints.NotBlank;
 
 /**
- *
+ * 登录用户实体类
  */
 @Getter
 @Setter
@@ -22,8 +22,4 @@ public class AuthUser {
 
     private String uuid = "";
 
-    @Override
-    public String toString() {
-        return "{username=" + username  + ", password= ******}";
-    }
 }

@@ -3,6 +3,7 @@ package me.fjq.system.service;
 
 import me.fjq.system.domain.SysRole;
 import me.fjq.system.domain.SysUser;
+import org.springframework.security.core.GrantedAuthority;
 //import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
@@ -136,5 +137,5 @@ public interface ISysRoleService {
      * @param user 用户信息
      * @return 权限信息
      */
-//    Collection<GrantedAuthority> mapToGrantedAuthorities(SysUser user);
+    Collection<GrantedAuthority> mapToGrantedAuthorities(SysUser user);
 }
