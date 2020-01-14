@@ -6,13 +6,14 @@ import me.fjq.security.security.vo.JwtUser;
 import me.fjq.system.domain.SysUser;
 import me.fjq.system.service.ISysRoleService;
 import me.fjq.system.service.ISysUserService;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.Collection;
 
 
 @Service("userDetailsService")
@@ -29,19 +30,19 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 
     @Override
-    public UserDetails loadUserByUsername(String username){
+    public UserDetails loadUserByUsername(String username) {
         SysUser user = userService.selectUserByUserName(username);
         if (user == null) {
             throw new BadRequestException("账号不存在");
-        } else {
-            if (user.getStatus().equals("1")) {
-                throw new BadRequestException("账号未激活");
-            }
-            return createJwtUser(user);
         }
+        if (user.getStatus().equals("1")) {
+            throw new BadRequestException("账号未激活");
+        }
+        return createJwtUser(user);
     }
 
     private UserDetails createJwtUser(SysUser user) {
+        Collection<GrantedAuthority> authorities = roleService.mapToGrantedAuthorities(user);
         return new JwtUser(
                 user.getUserId(),
                 user.getUserName(),
@@ -51,7 +52,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 user.getAvatar(),
                 user.getEmail(),
                 user.getPhonenumber(),
-                roleService.mapToGrantedAuthorities(user),
+                authorities,
                 Boolean.valueOf(user.getStatus()),
                 user.getCreateTime(),
                 user.getUpdateTime()

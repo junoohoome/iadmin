@@ -28,14 +28,11 @@ public class SysRoleServiceImpl implements ISysRoleService {
 
     private final SysRoleMapper roleMapper;
     private final SysRoleMenuMapper roleMenuMapper;
-    private final SysUserRoleMapper userRoleMapper;
     private final SysMenuMapper menuMapper;
 
-    public SysRoleServiceImpl(SysRoleMapper roleMapper, SysRoleMenuMapper roleMenuMapper,
-                              SysUserRoleMapper userRoleMapper, SysMenuMapper menuMapper) {
+    public SysRoleServiceImpl(SysRoleMapper roleMapper, SysRoleMenuMapper roleMenuMapper, SysMenuMapper menuMapper) {
         this.roleMapper = roleMapper;
         this.roleMenuMapper = roleMenuMapper;
-        this.userRoleMapper = userRoleMapper;
         this.menuMapper = menuMapper;
     }
 
@@ -152,7 +149,7 @@ public class SysRoleServiceImpl implements ISysRoleService {
      */
     @Override
     public int countUserRoleByRoleId(Long roleId) {
-        return userRoleMapper.countUserRoleByRoleId(roleId);
+        return 0;
     }
 
     /**
@@ -249,14 +246,7 @@ public class SysRoleServiceImpl implements ISysRoleService {
      */
     @Override
     public int deleteRoleByIds(Long[] roleIds) {
-        for (Long roleId : roleIds) {
-            checkRoleAllowed(new SysRole(roleId));
-            SysRole role = selectRoleById(roleId);
-            if (countUserRoleByRoleId(roleId) > 0) {
-                throw new CustomException(String.format("%1$s已分配,不能删除", role.getRoleName()));
-            }
-        }
-        return roleMapper.deleteRoleByIds(roleIds);
+       return 0;
     }
 
     @Override

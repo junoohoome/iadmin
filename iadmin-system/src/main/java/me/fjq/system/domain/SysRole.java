@@ -41,8 +41,4 @@ public class SysRole extends BaseEntity {
     /** 菜单组 */
     private Long[] menuIds;
 
-    public SysRole(Long roleId)
-    {
-        this.roleId = roleId;
-    }
 }

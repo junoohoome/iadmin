@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class JwtUser implements UserDetails {
 
+    private static final long serialVersionUID = 1L;
+
     private Long id;
 
     private String username;
@@ -46,6 +48,12 @@ public class JwtUser implements UserDetails {
 
     @JsonIgnore
     private Date lastPasswordResetDate;
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities;
+    }
 
     @JsonIgnore
     @Override
@@ -76,7 +84,5 @@ public class JwtUser implements UserDetails {
         return enabled;
     }
 
-    public Collection getRoles() {
-        return authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
-    }
+
 }

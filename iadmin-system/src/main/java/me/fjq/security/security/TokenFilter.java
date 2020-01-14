@@ -1,10 +1,7 @@
 package me.fjq.security.security;
 
-import io.jsonwebtoken.ExpiredJwtException;
-
 import lombok.extern.slf4j.Slf4j;
 import me.fjq.security.config.SecurityProperties;
-import me.fjq.security.security.vo.OnlineUser;
 import me.fjq.utils.SpringContextHolder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,14 +33,9 @@ public class TokenFilter extends GenericFilterBean {
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
         String token = resolveToken(httpServletRequest);
         String requestRri = httpServletRequest.getRequestURI();
+        log.info("token:[{}], uri:[{}]", token, requestRri);
         // 验证 token 是否存在
-        OnlineUser onlineUser = null;
-        try {
-            SecurityProperties properties = SpringContextHolder.getBean(SecurityProperties.class);
-        } catch (ExpiredJwtException e) {
-            log.error(e.getMessage());
-        }
-        if (onlineUser != null && StringUtils.hasText(token) && tokenProvider.validateToken(token)) {
+        if (StringUtils.hasText(token) && tokenProvider.validateToken(token)) {
             Authentication authentication = tokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             log.debug("set Authentication to security context for '{}', uri: {}", authentication.getName(), requestRri);
