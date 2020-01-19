@@ -1,21 +1,20 @@
 package me.fjq.security.service;
 
 
+import lombok.extern.slf4j.Slf4j;
 import me.fjq.exception.BadRequestException;
 import me.fjq.security.security.vo.JwtUser;
 import me.fjq.system.domain.SysUser;
 import me.fjq.system.service.ISysRoleService;
 import me.fjq.system.service.ISysUserService;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
 
-
+@Slf4j
 @Service("userDetailsService")
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -42,7 +41,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     private UserDetails createJwtUser(SysUser user) {
-        Collection<GrantedAuthority> authorities = roleService.mapToGrantedAuthorities(user);
         return new JwtUser(
                 user.getUserId(),
                 user.getUserName(),
@@ -52,8 +50,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 user.getAvatar(),
                 user.getEmail(),
                 user.getPhonenumber(),
-                authorities,
-                Boolean.valueOf(user.getStatus()),
+                roleService.mapToGrantedAuthorities(user),
+                true,
                 user.getCreateTime(),
                 user.getUpdateTime()
         );

@@ -6,7 +6,6 @@ import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
@@ -19,41 +18,32 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class JwtUser implements UserDetails {
 
-    private static final long serialVersionUID = 1L;
+    private final Long id;
 
-    private Long id;
+    private final String username;
 
-    private String username;
+    private final String nickName;
 
-    private String nickName;
-
-    private String sex;
+    private final String sex;
 
     @JsonIgnore
-    private String password;
+    private final String password;
 
-    private String avatar;
+    private final String avatar;
 
-    private String email;
+    private final String email;
 
-    private String phone;
-
+    private final String phone;
 
     @JsonIgnore
-    private Collection<GrantedAuthority> authorities;
+    private final Collection<GrantedAuthority> authorities;
 
-    private boolean enabled;
+    private final boolean enabled;
 
     private Date createTime;
 
     @JsonIgnore
-    private Date lastPasswordResetDate;
-
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
-    }
+    private final Date lastPasswordResetDate;
 
     @JsonIgnore
     @Override
@@ -84,5 +74,8 @@ public class JwtUser implements UserDetails {
         return enabled;
     }
 
+    public Collection getRoles() {
+        return authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
+    }
 
 }

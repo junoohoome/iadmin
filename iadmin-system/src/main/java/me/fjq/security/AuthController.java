@@ -3,10 +3,8 @@ package me.fjq.security;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.RSA;
-
 import com.wf.captcha.ArithmeticCaptcha;
 import lombok.extern.slf4j.Slf4j;
-
 import me.fjq.exception.BadRequestException;
 import me.fjq.security.config.SecurityProperties;
 import me.fjq.security.security.TokenProvider;
@@ -26,7 +24,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -79,7 +76,7 @@ public class AuthController {
         }
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(authUser.getUsername(), password);
-
+        // 该方法会去调用UserDetailsServiceImpl.loadUserByUsername
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         // 生成令牌
@@ -119,7 +116,7 @@ public class AuthController {
     }
 
     @DeleteMapping(value = "/logout")
-    public ResponseEntity<Object> logout(HttpServletRequest request) {
+    public ResponseEntity<Object> logout() {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

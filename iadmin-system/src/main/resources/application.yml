@@ -1,4 +1,5 @@
 server:
+  name: iadmin
   port: 8080
 
 spring:
@@ -12,8 +13,8 @@ spring:
         enabled: false
   redis:
     #数据库索引
-    database: 0
-    host: 127.0.0.1
+    database: 8
+    host: 192.168.100.219
     port: 6379
 #    password:
     #连接超时时间
@@ -58,5 +59,4 @@ loginCode:
 
 #密码加密传输，前端公钥加密，后端私钥解密
 rsa:
-  private_key: MIIBUwIBADANBgkqhkiG9w0BAQEFAASCAT0wggE5AgEAAkEA0vfvyTdGJkdbHkB8mp0f3FE0GYP3AYPaJF7jUd1M0XxFSE2ceK3k2kw20YvQ09NJKk+OMjWQl9WitG9pB6tSCQIDAQABAkA2SimBrWC2/wvauBuYqjCFwLvYiRYqZKThUS3MZlebXJiLB+Ue/gUifAAKIg1avttUZsHBHrop4qfJCwAI0+YRAiEA+W3NK/RaXtnRqmoUUkb59zsZUBLpvZgQPfj1MhyHDz0CIQDYhsAhPJ3mgS64NbUZmGWuuNKp5coY2GIj/zYDMJp6vQIgUueLFXv/eZ1ekgz2Oi67MNCk5jeTF2BurZqNLR3MSmUCIFT3Q6uHMtsB9Eha4u7hS31tj1UWE+D+ADzp59MGnoftAiBeHT7gDMuqeJHPL4b+kC+gzV4FGTfhR9q3tTbklZkD2A==
-
+  private_key: MIIBVQIBADANBgkqhkiG9w0BAQEFAASCAT8wggE7AgEAAkEA1Vb98wHg0dyEA5HBYqJzfvmWslP0O172eUJoe3+IJ0gDUNgisDRdfV9SBgtN2D5CDNQP9Iw5e8fzcktY3+RbsQIDAQABAkEAjb2MX6XBzuypsQ1n5LZ18ci1vKlWvRNswkfCzzp+JUnWiiQDKmfa9QrkRievNioFt0y71uQAMgOQ64G+SRGFGQIhAOyqvYcyBtHNnDeuYYdGbJhkOr0tRZdpoWuc9CPj0X5nAiEA5sRtMXkyrRyIE/OGm+LdaRJaxZTX8QTmWIWEregw1icCIA2cUCQLS3sbYQWOwMsf0LT+5qXkiaEIkSD4OM4rluu3AiEAyVZZmo+OqkC5bQbMy9c8q/6qmbZKTWuj+VnMr9pkOYMCIGPBCrhhZv/RMuuj+y3BA/UD7oUfjUs3bo84MfgZuMJD

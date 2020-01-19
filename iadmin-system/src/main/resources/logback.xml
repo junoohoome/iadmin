@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+    <contextName>IAdmin</contextName>
     <!-- 日志存放路径 -->
 	<property name="log.path" value="/home/fjq/logs" />
     <property name="log.charset" value="utf-8" />
     <!-- 日志输出格式 -->
-    <property name="log.pattern" value="%black(%contextName-) %red(%d{yyyy-MM-dd HH:mm:ss}) %green([%thread]) %highlight(%-5level) %boldMagenta(%logger{36}) - %gray(%msg%n)" />
-
+    <property name="log.pattern" value="%black(%contextName-) %red(%d{yyyy-MM-dd HH:mm:ss}) %green([%thread]) %highlight(%-5level) %boldMagenta(%logger{34}) - %gray(%msg%n)" />
     <!-- 控制台输出 -->
 	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
@@ -78,7 +78,7 @@
 	<!-- Spring日志级别控制  -->
 	<logger name="org.springframework" level="warn" />
 
-	<root level="info">
+	<root level="debugger">
 		<appender-ref ref="console" />
 	</root>
 	
