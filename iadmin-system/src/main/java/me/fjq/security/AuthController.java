@@ -11,6 +11,8 @@ import me.fjq.security.security.TokenProvider;
 import me.fjq.security.security.utils.SecurityUtils;
 import me.fjq.security.security.vo.AuthUser;
 import me.fjq.security.security.vo.JwtUser;
+import me.fjq.system.service.ISysMenuService;
+import me.fjq.system.service.ISysRoleService;
 import me.fjq.utils.RedisUtils;
 import me.fjq.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +27,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -47,14 +51,18 @@ public class AuthController {
     private final UserDetailsService userDetailsService;
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final ISysRoleService roleService;
+    private final ISysMenuService menuService;
 
     public AuthController(SecurityProperties properties, RedisUtils redisUtils, UserDetailsService userDetailsService,
-                          TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder) {
+                          TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder, ISysRoleService roleService, ISysMenuService menuService) {
         this.properties = properties;
         this.redisUtils = redisUtils;
         this.userDetailsService = userDetailsService;
         this.tokenProvider = tokenProvider;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
+        this.roleService = roleService;
+        this.menuService = menuService;
     }
 
 
@@ -74,26 +82,46 @@ public class AuthController {
         if (StringUtils.isBlank(authUser.getCode()) || !authUser.getCode().equalsIgnoreCase(code)) {
             throw new BadRequestException("验证码错误");
         }
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(authUser.getUsername(), password);
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(authUser.getUsername(), password);
         // 该方法会去调用UserDetailsServiceImpl.loadUserByUsername
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         // 生成令牌
         String token = tokenProvider.createToken(authentication);
-        final JwtUser jwtUser = (JwtUser) authentication.getPrincipal();
-        // 返回 token 与 用户信息
-        Map<String, Object> authInfo = new HashMap<String, Object>(2) {{
+        Map<String,Object> res = new HashMap<String,Object>(1){{
             put("token", properties.getTokenStartWith() + token);
-            put("user", jwtUser);
         }};
-        return ResponseEntity.ok(authInfo);
+        return ResponseEntity.ok(res);
     }
 
     @GetMapping(value = "/info")
     public ResponseEntity<Object> getUserInfo() {
         JwtUser jwtUser = (JwtUser) userDetailsService.loadUserByUsername(SecurityUtils.getUsername());
-        return ResponseEntity.ok(jwtUser);
+        // 角色集合
+//        Set<String> roles = permissionService.getRolePermission(user);
+
+        // 权限集合
+//        Set<String> permissions = permissionService.getMenuPermission(user);
+
+//        JwtUser jwtUser = SecurityUtils.getLoginUser();
+
+        Set<String> roles = new HashSet<>();
+        Set<String> permissions = new HashSet<>();
+        // 管理员拥有所有权限
+        boolean isAdmin = SecurityUtils.isAdmin(jwtUser.getId());
+        if (isAdmin) {
+            roles.add("admin");
+            permissions.add("*:*:*");
+        } else {
+            roles.addAll(roleService.selectRolePermissionByUserId(jwtUser.getId()));
+            permissions.addAll(menuService.selectMenuPermsByUserId(jwtUser.getId()));
+        }
+
+        HashMap map = new HashMap(3);
+        map.put("user", jwtUser);
+        map.put("roles", roles);
+        map.put("permissions", permissions);
+        return ResponseEntity.ok(map);
     }
 
     @GetMapping(value = "/code")

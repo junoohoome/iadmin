@@ -3,12 +3,13 @@ package me.fjq.security.security.vo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.stream.Collectors;
+
 
 /**
  *
@@ -34,6 +35,8 @@ public class JwtUser implements UserDetails {
     private final String email;
 
     private final String phone;
+
+    private final Long[] roleIds;
 
     @JsonIgnore
     private final Collection<GrantedAuthority> authorities;
@@ -72,10 +75,6 @@ public class JwtUser implements UserDetails {
     @Override
     public boolean isEnabled() {
         return enabled;
-    }
-
-    public Collection getRoles() {
-        return authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
     }
 
 }

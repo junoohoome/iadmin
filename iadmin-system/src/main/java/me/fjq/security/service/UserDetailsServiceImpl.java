@@ -2,6 +2,7 @@ package me.fjq.security.service;
 
 
 import lombok.extern.slf4j.Slf4j;
+import me.fjq.enums.UserStatus;
 import me.fjq.exception.BadRequestException;
 import me.fjq.security.security.vo.JwtUser;
 import me.fjq.system.domain.SysUser;
@@ -34,7 +35,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (user == null) {
             throw new BadRequestException("账号不存在");
         }
-        if (user.getStatus().equals("1")) {
+        if (user.getStatus().equals(UserStatus.DISABLE.getCode())) {
             throw new BadRequestException("账号未激活");
         }
         return createJwtUser(user);
@@ -50,6 +51,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 user.getAvatar(),
                 user.getEmail(),
                 user.getPhonenumber(),
+                user.getRoleIds(),
                 roleService.mapToGrantedAuthorities(user),
                 true,
                 user.getCreateTime(),
