@@ -10,9 +10,13 @@ import java.util.Date;
 
 /**
  * 用户对象 sys_user
+ *
+ * @author fjq
+ * @date 2020/1/7 14:46
  */
 @Data
 public class SysUser extends BaseEntity {
+
     /**
      * 用户ID
      */
@@ -37,7 +41,7 @@ public class SysUser extends BaseEntity {
     /**
      * 手机号码
      */
-    private String phonenumber;
+    private String phoneNumber;
 
     /**
      * 用户性别
@@ -57,12 +61,12 @@ public class SysUser extends BaseEntity {
     /**
      * 帐号状态（0正常 1停用）
      */
-    private String status;
+    private Integer status;
 
     /**
      * 删除标志（0代表存在 2代表删除）
      */
-    private String delFlag;
+    private Integer delFlag;
 
     /**
      * 最后登陆IP
@@ -78,8 +82,5 @@ public class SysUser extends BaseEntity {
      * 角色组
      */
     private Long[] roleIds;
-
-
-
 
 }

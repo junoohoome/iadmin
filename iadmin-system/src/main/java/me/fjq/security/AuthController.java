@@ -88,7 +88,7 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         // 生成令牌
         String token = tokenProvider.createToken(authentication);
-        Map<String,Object> res = new HashMap<String,Object>(1){{
+        Map<String, Object> res = new HashMap<String, Object>(1) {{
             put("token", properties.getTokenStartWith() + token);
         }};
         return ResponseEntity.ok(res);
@@ -97,14 +97,6 @@ public class AuthController {
     @GetMapping(value = "/info")
     public ResponseEntity<Object> getUserInfo() {
         JwtUser jwtUser = (JwtUser) userDetailsService.loadUserByUsername(SecurityUtils.getUsername());
-        // 角色集合
-//        Set<String> roles = permissionService.getRolePermission(user);
-
-        // 权限集合
-//        Set<String> permissions = permissionService.getMenuPermission(user);
-
-//        JwtUser jwtUser = SecurityUtils.getLoginUser();
-
         Set<String> roles = new HashSet<>();
         Set<String> permissions = new HashSet<>();
         // 管理员拥有所有权限
@@ -116,7 +108,6 @@ public class AuthController {
             roles.addAll(roleService.selectRolePermissionByUserId(jwtUser.getId()));
             permissions.addAll(menuService.selectMenuPermsByUserId(jwtUser.getId()));
         }
-
         HashMap map = new HashMap(3);
         map.put("user", jwtUser);
         map.put("roles", roles);

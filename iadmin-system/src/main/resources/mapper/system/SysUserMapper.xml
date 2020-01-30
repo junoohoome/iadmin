@@ -20,9 +20,8 @@
         <result property="updateBy" column="update_by"/>
         <result property="updateTime" column="update_time"/>
         <result property="remark" column="remark"/>
-<!--        <collection property="roles" javaType="java.util.List" resultMap="RoleResult"/>-->
+        <collection property="roles" javaType="java.util.List" resultMap="RoleResult"/>
     </resultMap>
-
 
     <resultMap id="RoleResult" type="me.fjq.system.domain.SysRole">
         <id property="roleId" column="role_id"/>

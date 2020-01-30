@@ -50,7 +50,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 user.getPassword(),
                 user.getAvatar(),
                 user.getEmail(),
-                user.getPhonenumber(),
+                user.getPhoneNumber(),
                 user.getRoleIds(),
                 roleService.mapToGrantedAuthorities(user),
                 true,
