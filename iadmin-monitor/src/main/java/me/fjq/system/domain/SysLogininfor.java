@@ -3,7 +3,7 @@ package me.fjq.system.domain;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.fjq.core.BaseEntity;
+import me.fjq.Domain.BaseEntity;
 
 import java.util.Date;
 

@@ -5,6 +5,7 @@ import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.RSA;
 import com.wf.captcha.ArithmeticCaptcha;
 import lombok.extern.slf4j.Slf4j;
+import me.fjq.Domain.ResponseEntity;
 import me.fjq.exception.BadRequestException;
 import me.fjq.security.config.SecurityProperties;
 import me.fjq.security.security.TokenProvider;
@@ -17,7 +18,6 @@ import me.fjq.utils.RedisUtils;
 import me.fjq.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -67,7 +67,7 @@ public class AuthController {
 
 
     @PostMapping(value = "/login")
-    public ResponseEntity<Object> login(@Validated @RequestBody AuthUser authUser) {
+    public ResponseEntity login(@Validated @RequestBody AuthUser authUser) {
         // 密码解密
         RSA rsa = new RSA(privateKey, null);
         String password = new String(rsa.decrypt(authUser.getPassword(), KeyType.PrivateKey));
@@ -95,7 +95,7 @@ public class AuthController {
     }
 
     @GetMapping(value = "/info")
-    public ResponseEntity<Object> getUserInfo() {
+    public ResponseEntity getUserInfo() {
         JwtUser jwtUser = (JwtUser) userDetailsService.loadUserByUsername(SecurityUtils.getUsername());
         Set<String> roles = new HashSet<>();
         Set<String> permissions = new HashSet<>();
@@ -116,7 +116,7 @@ public class AuthController {
     }
 
     @GetMapping(value = "/code")
-    public ResponseEntity<Object> getCode() {
+    public ResponseEntity getCode() {
         // 算术类型
         ArithmeticCaptcha captcha = new ArithmeticCaptcha(111, 36);
         // 几位数运算，默认是两位
@@ -135,7 +135,7 @@ public class AuthController {
     }
 
     @DeleteMapping(value = "/logout")
-    public ResponseEntity<Object> logout() {
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity logout() {
+        return ResponseEntity.ok();
     }
 }

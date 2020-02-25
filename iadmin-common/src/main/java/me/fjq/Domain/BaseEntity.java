@@ -1,4 +1,4 @@
-package me.fjq.core;
+package me.fjq.Domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
