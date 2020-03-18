@@ -23,7 +23,6 @@
 <!--        <collection property="roles" javaType="java.util.List" resultMap="RoleResult"/>-->
     </resultMap>
 
-
     <resultMap id="RoleResult" type="me.fjq.system.domain.SysRole">
         <id property="roleId" column="role_id"/>
         <result property="roleName" column="role_name"/>

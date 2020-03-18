@@ -21,7 +21,6 @@
 		<module>iadmin-system</module>
 		<module>iadmin-tools</module>
 		<module>iadmin-monitor</module>
-		<module>iadmin-generator</module>
 		<module>iadmin-quartz</module>
 	</modules>
 
@@ -53,10 +52,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -92,14 +87,12 @@
 			<artifactId>druid-spring-boot-starter</artifactId>
 			<version>${druid.version}</version>
 		</dependency>
-
 		<!--lombok插件-->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
-
 		<!--https://gitee.com/lionsoul/ip2region/tree/v1.4-release/-->
 		<dependency>
 			<groupId>org.lionsoul</groupId>
@@ -116,7 +109,6 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>3.17</version>
 		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/cn.hutool/hutool-all -->
 		<dependency>
 			<groupId>cn.hutool</groupId>

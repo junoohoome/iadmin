@@ -2,7 +2,6 @@ package me.fjq.system.service.impl;
 
 
 import me.fjq.system.mapper.SysMenuMapper;
-import me.fjq.system.mapper.SysRoleMenuMapper;
 import me.fjq.system.service.ISysMenuService;
 import me.fjq.utils.StringUtils;
 import org.springframework.stereotype.Service;
@@ -18,14 +17,11 @@ import java.util.Set;
  */
 @Service
 public class SysMenuServiceImpl implements ISysMenuService {
-    public static final String PREMISSION_STRING = "perms[\"{0}\"]";
 
     private final SysMenuMapper menuMapper;
-    private final SysRoleMenuMapper roleMenuMapper;
 
-    public SysMenuServiceImpl(SysMenuMapper menuMapper, SysRoleMenuMapper roleMenuMapper) {
+    public SysMenuServiceImpl(SysMenuMapper menuMapper) {
         this.menuMapper = menuMapper;
-        this.roleMenuMapper = roleMenuMapper;
     }
 
     /**
@@ -37,13 +33,13 @@ public class SysMenuServiceImpl implements ISysMenuService {
     @Override
     public Set<String> selectMenuPermsByUserId(Long userId) {
         List<String> perms = menuMapper.selectMenuPermsByUserId(userId);
-        Set<String> permsSet = new HashSet<>();
+        Set<String> permissions = new HashSet<>();
         for (String perm : perms) {
             if (StringUtils.isNotEmpty(perm)) {
-                permsSet.addAll(Arrays.asList(perm.trim().split(",")));
+                permissions.addAll(Arrays.asList(perm.trim().split(",")));
             }
         }
-        return permsSet;
+        return permissions;
     }
 
 }

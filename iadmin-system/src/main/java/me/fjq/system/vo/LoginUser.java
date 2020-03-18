@@ -1,4 +1,4 @@
-package me.fjq.security.security.vo;
+package me.fjq.system.vo;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +10,7 @@ import javax.validation.constraints.NotBlank;
  */
 @Getter
 @Setter
-public class AuthUser {
+public class LoginUser {
 
     @NotBlank
     private String username;
@@ -20,6 +20,6 @@ public class AuthUser {
 
     private String code;
 
-    private String uuid = "";
+    private String uuid;
 
 }
