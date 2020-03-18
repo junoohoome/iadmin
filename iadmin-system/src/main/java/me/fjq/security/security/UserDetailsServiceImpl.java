@@ -3,6 +3,7 @@ import me.fjq.system.domain.SysUser;
 import me.fjq.system.service.ISysMenuService;
 import me.fjq.system.service.ISysUserService;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -36,7 +37,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
         // 用户权限列表，根据用户拥有的权限标识与如 @PreAuthorize("hasAuthority('sys:menu:view')") 标注的接口对比，决定是否可以调用接口
         Set<String> permissions = sysMenuService.selectMenuPermsByUserId(user.getUserId());
-        List<GrantedAuthority> grantedAuthorities = permissions.stream().map(GrantedAuthorityImpl::new).collect(Collectors.toList());
+        List<GrantedAuthority> grantedAuthorities = permissions.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
         return new JwtUserDetails(user.getUserName(), user.getPassword(), grantedAuthorities);
     }
 }

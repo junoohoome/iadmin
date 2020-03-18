@@ -1,7 +1,6 @@
 package me.fjq.security.config;
 
 import me.fjq.security.security.JwtAuthenticationFilter;
-import me.fjq.security.security.JwtAuthenticationProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -14,7 +13,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 
@@ -42,9 +40,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        // 密码加密方式
-        return new BCryptPasswordEncoder();
+    @Override
+    public AuthenticationManager authenticationManager() throws Exception {
+        return super.authenticationManager();
     }
 
     @Override
@@ -55,12 +53,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         // 禁用 csrf, 由于使用的是JWT，我们这里不需要csrf
         http.cors().and().csrf().disable()
-                // token验证过滤器
-                .addFilterBefore(new JwtAuthenticationFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class)
-                // 退出登录处理器
-                .logout().logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
                 // 防止iframe 造成跨域
-                .and().headers().frameOptions().disable()
+                .headers().frameOptions().disable()
                 // 不创建会话
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeRequests()
@@ -81,18 +75,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/actuator/**").permitAll()
                 // 其他所有请求需要身份认证
                 .anyRequest().authenticated();
+        // token验证过滤器
+        http.addFilterBefore(new JwtAuthenticationFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class);
+        // 退出登录处理器
+        http.logout().logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler());
     }
 
     @Bean
-    @Override
-    public AuthenticationManager authenticationManager() throws Exception {
-        return super.authenticationManager();
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        // 密码加密方式
+        return new BCryptPasswordEncoder();
     }
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        // 使用自定义身份验证组件
-        auth.authenticationProvider(new JwtAuthenticationProvider(userDetailsService));
+        // 身份验证接口
+        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
+//        auth.authenticationProvider(new JwtAuthenticationProvider(userDetailsService)));
     }
 
 }

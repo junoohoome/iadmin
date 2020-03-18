@@ -3,20 +3,21 @@ package me.fjq.security.security.utils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import me.fjq.security.security.GrantedAuthorityImpl;
 import me.fjq.security.security.JwtAuthenticatioToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * JWT工具类
  *
- * @author Louis
- * @date Jan 14, 2019
+ * @author fjq
+ * @date 2020/03/18
  */
 public class JwtTokenUtils implements Serializable {
 
@@ -108,13 +109,17 @@ public class JwtTokenUtils implements Serializable {
                 if (isTokenExpired(token)) {
                     return null;
                 }
-                Object authors = claims.get(AUTHORITIES);
-                List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-                if (authors != null && authors instanceof List) {
-                    for (Object object : (List) authors) {
-                        authorities.add(new GrantedAuthorityImpl((String) ((Map) object).get("authority")));
-                    }
-                }
+//                Object authors = claims.get(AUTHORITIES);
+//                List<GrantedAuthority> authorities = new ArrayList<>();
+//                if (authors != null && authors instanceof List) {
+//                    for (Object object : (List) authors) {
+//                        authorities.add(new SimpleGrantedAuthority((String) ((Map) object).get("authority")));
+//                    }
+//                }
+                List<GrantedAuthority> authorities = Arrays.stream(claims.get(AUTHORITIES).toString()
+                        .split(","))
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList());
                 authentication = new JwtAuthenticatioToken(username, null, authorities, token);
             } else {
                 if (validateToken(token, SecurityUtils.getUsername())) {
