@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import me.fjq.core.HttpResult;
 import me.fjq.exception.BadRequestException;
 import me.fjq.security.config.SecurityProperties;
-import me.fjq.security.security.JwtAuthenticatioToken;
 import me.fjq.security.security.utils.SecurityUtils;
 import me.fjq.system.domain.SysUser;
 import me.fjq.system.service.ISysUserService;
@@ -78,7 +77,7 @@ public class LoginController {
 //            return HttpResult.error("密码不正确");
 //        }
         // 系统登录认证
-        JwtAuthenticatioToken token = SecurityUtils.login(request, loginUser.getUsername(), password, authenticationManager);
+        String token = SecurityUtils.login(request, loginUser.getUsername(), password, authenticationManager);
         return HttpResult.ok(token);
     }
 

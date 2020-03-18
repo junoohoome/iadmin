@@ -1,7 +1,7 @@
 package me.fjq.security.security.utils;
 
-import me.fjq.security.security.JwtAuthenticatioToken;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,16 +27,16 @@ public class SecurityUtils {
      * @param authenticationManager
      * @return
      */
-    public static JwtAuthenticatioToken login(HttpServletRequest request, String username, String password, AuthenticationManager authenticationManager) {
-        JwtAuthenticatioToken token = new JwtAuthenticatioToken(username, password);
-        token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+    public static String login(HttpServletRequest request, String username, String password, AuthenticationManager authenticationManager) {
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(username, password);
+        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         // 执行登录认证过程
-        Authentication authentication = authenticationManager.authenticate(token);
+        Authentication authentication = authenticationManager.authenticate(authenticationToken);
         // 认证成功存储认证信息到上下文
         SecurityContextHolder.getContext().setAuthentication(authentication);
         // 生成令牌并返回给客户端
-        token.setToken(JwtTokenUtils.generateToken(authentication));
-        return token;
+        return JwtTokenUtils.generateToken(authentication);
     }
 
     /**

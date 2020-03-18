@@ -91,7 +91,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         // 身份验证接口
         auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
-//        auth.authenticationProvider(new JwtAuthenticationProvider(userDetailsService)));
     }
 
 }

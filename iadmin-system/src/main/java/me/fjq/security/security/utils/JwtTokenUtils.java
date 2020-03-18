@@ -3,10 +3,11 @@ package me.fjq.security.security.utils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import me.fjq.security.security.JwtAuthenticatioToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
@@ -120,7 +121,9 @@ public class JwtTokenUtils implements Serializable {
                         .split(","))
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
-                authentication = new JwtAuthenticatioToken(username, null, authorities, token);
+//                authentication = new JwtAuthenticatioToken(username, null, authorities, token);
+                User principal = new User(username, "", authorities);
+                authentication = new UsernamePasswordAuthenticationToken(principal, token, authorities);
             } else {
                 if (validateToken(token, SecurityUtils.getUsername())) {
                     // 如果上下文中Authentication非空，且请求令牌合法，直接返回当前登录认证信息
