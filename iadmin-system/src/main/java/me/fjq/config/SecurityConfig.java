@@ -42,12 +42,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
     }
 
-//    @Bean
-//    GrantedAuthorityDefaults grantedAuthorityDefaults() {
-//        // 去除 ROLE_ 前缀
-//        return new GrantedAuthorityDefaults("");
-//    }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         // 密码加密方式
@@ -99,7 +93,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(anonymousUrls.toArray(new String[0])).anonymous()
                 // 所有请求都需要认证
                 .anyRequest().authenticated();
-//                .and().apply(new TokenConfigurer(tokenProvider));
         // 添加JWT filter
         httpSecurity.addFilterBefore(new TokenFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
     }

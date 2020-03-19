@@ -10,10 +10,13 @@ import me.fjq.security.JwtUserDetails;
 import me.fjq.security.TokenProvider;
 import me.fjq.security.properties.SecurityProperties;
 import me.fjq.security.utils.SecurityUtils;
+import me.fjq.system.domain.SysMenu;
+import me.fjq.system.domain.SysUser;
 import me.fjq.system.service.ISysMenuService;
 import me.fjq.system.service.ISysRoleService;
 import me.fjq.system.vo.AuthUser;
 import me.fjq.utils.RedisUtils;
+import me.fjq.utils.ServletUtils;
 import me.fjq.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,10 +27,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -111,6 +111,18 @@ public class LoginController {
         map.put("roles", roles);
         map.put("permissions", permissions);
         return HttpResult.ok(map);
+    }
+
+    /**
+     * 获取路由信息
+     *
+     * @return 路由信息
+     */
+    @GetMapping("getRouters")
+    public HttpResult getRouters() {
+        JwtUserDetails user = (JwtUserDetails) userDetailsService.loadUserByUsername(SecurityUtils.getUsername());
+        List<SysMenu> menus = menuService.selectMenuTreeByUserId(user.getId());
+        return HttpResult.ok(menuService.buildMenus(menus));
     }
 
     @GetMapping(value = "auth/code")

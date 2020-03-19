@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.fjq.enums.UserStatus;
 import me.fjq.exception.BadRequestException;
 import me.fjq.system.domain.SysUser;
-import me.fjq.system.service.ISysRoleService;
+import me.fjq.system.service.ISysMenuService;
 import me.fjq.system.service.ISysUserService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,11 +22,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final ISysUserService userService;
-    private final ISysRoleService roleService;
+    private final ISysMenuService menuService;
 
-    public UserDetailsServiceImpl(ISysUserService userService, ISysRoleService roleService) {
+    public UserDetailsServiceImpl(ISysUserService userService, ISysMenuService menuService) {
         this.userService = userService;
-        this.roleService = roleService;
+        this.menuService = menuService;
     }
 
     @Override
@@ -52,7 +52,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 user.getEmail(),
                 user.getPhoneNumber(),
                 user.getRoleIds(),
-                roleService.mapToGrantedAuthorities(user),
+                menuService.mapToGrantedAuthorities(user),
                 user.getStatus() == 0 ? true : false,
                 user.getCreateTime(),
                 user.getUpdateTime()

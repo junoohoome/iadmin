@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import me.fjq.system.domain.SysUser;
 
 /**
- * 用户 业务层
+ * 用户业务层
  * @author fjq
  * @date 2020-1-8
  */

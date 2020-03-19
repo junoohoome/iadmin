@@ -4,7 +4,6 @@ package me.fjq.system.domain;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import me.fjq.Domain.BaseEntity;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +11,6 @@ import java.util.List;
 /**
  * 菜单权限表 sys_menu
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
 public class SysMenu extends BaseEntity {
 
