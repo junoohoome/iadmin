@@ -1,4 +1,4 @@
-package me.fjq.system.domain.vo;
+package me.fjq.system.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;

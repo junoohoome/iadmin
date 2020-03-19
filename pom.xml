@@ -21,7 +21,6 @@
 		<module>iadmin-system</module>
 		<module>iadmin-tools</module>
 		<module>iadmin-monitor</module>
-		<module>iadmin-generator</module>
 		<module>iadmin-quartz</module>
 	</modules>
 
