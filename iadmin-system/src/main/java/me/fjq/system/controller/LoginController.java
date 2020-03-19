@@ -1,23 +1,21 @@
-package me.fjq.security;
+package me.fjq.system.controller;
 
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.RSA;
 import com.wf.captcha.ArithmeticCaptcha;
 import lombok.extern.slf4j.Slf4j;
-import me.fjq.Domain.ResponseEntity;
-import me.fjq.exception.BadRequestException;
-import me.fjq.security.config.SecurityProperties;
-import me.fjq.security.security.TokenProvider;
-import me.fjq.security.security.utils.SecurityUtils;
-import me.fjq.security.security.vo.AuthUser;
-import me.fjq.security.security.vo.JwtUser;
+import me.fjq.Domain.HttpResult;
+import me.fjq.security.JwtUserDetails;
+import me.fjq.security.TokenProvider;
+import me.fjq.security.properties.SecurityProperties;
+import me.fjq.security.utils.SecurityUtils;
 import me.fjq.system.service.ISysMenuService;
 import me.fjq.system.service.ISysRoleService;
+import me.fjq.system.vo.AuthUser;
 import me.fjq.utils.RedisUtils;
 import me.fjq.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -37,8 +35,8 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @RestController
-@RequestMapping("/auth")
-public class AuthController {
+@RequestMapping
+public class LoginController {
 
     @Value("${loginCode.expiration}")
     private Long expiration;
@@ -54,8 +52,8 @@ public class AuthController {
     private final ISysRoleService roleService;
     private final ISysMenuService menuService;
 
-    public AuthController(SecurityProperties properties, RedisUtils redisUtils, UserDetailsService userDetailsService,
-                          TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder, ISysRoleService roleService, ISysMenuService menuService) {
+    public LoginController(SecurityProperties properties, RedisUtils redisUtils, UserDetailsService userDetailsService,
+                           TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder, ISysRoleService roleService, ISysMenuService menuService) {
         this.properties = properties;
         this.redisUtils = redisUtils;
         this.userDetailsService = userDetailsService;
@@ -66,8 +64,8 @@ public class AuthController {
     }
 
 
-    @PostMapping(value = "/login")
-    public ResponseEntity login(@Validated @RequestBody AuthUser authUser) {
+    @PostMapping(value = "auth/login")
+    public HttpResult login(@Validated @RequestBody AuthUser authUser) {
         // 密码解密
         RSA rsa = new RSA(privateKey, null);
         String password = new String(rsa.decrypt(authUser.getPassword(), KeyType.PrivateKey));
@@ -77,10 +75,10 @@ public class AuthController {
         redisUtils.del(authUser.getUuid());
 
         if (StringUtils.isBlank(code)) {
-            throw new BadRequestException("验证码不存在或已过期");
+            return HttpResult.error("验证码不存在或已过期");
         }
         if (StringUtils.isBlank(authUser.getCode()) || !authUser.getCode().equalsIgnoreCase(code)) {
-            throw new BadRequestException("验证码错误");
+            return HttpResult.error("验证码错误");
         }
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(authUser.getUsername(), password);
         // 该方法会去调用UserDetailsServiceImpl.loadUserByUsername
@@ -91,32 +89,32 @@ public class AuthController {
         Map<String, Object> res = new HashMap<String, Object>(1) {{
             put("token", properties.getTokenStartWith() + token);
         }};
-        return ResponseEntity.ok(res);
+        return HttpResult.ok(res);
     }
 
-    @GetMapping(value = "/info")
-    public ResponseEntity getUserInfo() {
-        JwtUser jwtUser = (JwtUser) userDetailsService.loadUserByUsername(SecurityUtils.getUsername());
+    @GetMapping(value = "user/info")
+    public HttpResult getUserInfo() {
+        JwtUserDetails user = (JwtUserDetails) userDetailsService.loadUserByUsername(SecurityUtils.getUsername());
         Set<String> roles = new HashSet<>();
         Set<String> permissions = new HashSet<>();
         // 管理员拥有所有权限
-        boolean isAdmin = SecurityUtils.isAdmin(jwtUser.getId());
+        boolean isAdmin = SecurityUtils.isAdmin(user.getId());
         if (isAdmin) {
             roles.add("admin");
             permissions.add("*:*:*");
         } else {
-            roles.addAll(roleService.selectRolePermissionByUserId(jwtUser.getId()));
-            permissions.addAll(menuService.selectMenuPermsByUserId(jwtUser.getId()));
+            roles.addAll(roleService.selectRolePermissionByUserId(user.getId()));
+            permissions.addAll(menuService.selectMenuPermsByUserId(user.getId()));
         }
         HashMap map = new HashMap(3);
-        map.put("user", jwtUser);
+        map.put("user", user);
         map.put("roles", roles);
         map.put("permissions", permissions);
-        return ResponseEntity.ok(map);
+        return HttpResult.ok(map);
     }
 
-    @GetMapping(value = "/code")
-    public ResponseEntity getCode() {
+    @GetMapping(value = "auth/code")
+    public HttpResult getCode() {
         // 算术类型
         ArithmeticCaptcha captcha = new ArithmeticCaptcha(111, 36);
         // 几位数运算，默认是两位
@@ -131,11 +129,11 @@ public class AuthController {
             put("img", captcha.toBase64());
             put("uuid", uuid);
         }};
-        return ResponseEntity.ok(imgResult);
+        return HttpResult.ok(imgResult);
     }
 
     @DeleteMapping(value = "/logout")
-    public ResponseEntity logout() {
-        return ResponseEntity.ok();
+    public HttpResult logout() {
+        return HttpResult.ok();
     }
 }

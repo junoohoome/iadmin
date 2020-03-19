@@ -1,4 +1,4 @@
-package me.fjq.security.security.vo;
+package me.fjq.system.vo;
 
 import lombok.Getter;
 import lombok.Setter;

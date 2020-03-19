@@ -1,10 +1,9 @@
-package me.fjq.security.service;
+package me.fjq.security;
 
 
 import lombok.extern.slf4j.Slf4j;
 import me.fjq.enums.UserStatus;
 import me.fjq.exception.BadRequestException;
-import me.fjq.security.security.vo.JwtUser;
 import me.fjq.system.domain.SysUser;
 import me.fjq.system.service.ISysRoleService;
 import me.fjq.system.service.ISysUserService;
@@ -14,7 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-
+/**
+ * @author fjq
+ */
 @Slf4j
 @Service("userDetailsService")
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
@@ -27,7 +28,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         this.userService = userService;
         this.roleService = roleService;
     }
-
 
     @Override
     public UserDetails loadUserByUsername(String username) {
@@ -42,7 +42,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     private UserDetails createJwtUser(SysUser user) {
-        return new JwtUser(
+        return new JwtUserDetails(
                 user.getUserId(),
                 user.getUserName(),
                 user.getNickName(),
@@ -53,7 +53,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 user.getPhoneNumber(),
                 user.getRoleIds(),
                 roleService.mapToGrantedAuthorities(user),
-                true,
+                user.getStatus() == 0 ? true : false,
                 user.getCreateTime(),
                 user.getUpdateTime()
         );

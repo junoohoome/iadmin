@@ -1,10 +1,10 @@
-package me.fjq.security.security;
+package me.fjq.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
-import me.fjq.security.config.SecurityProperties;
+import me.fjq.security.properties.SecurityProperties;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,7 +20,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-
+/**
+ * @author fjq
+ */
 @Slf4j
 @Component
 public class TokenProvider implements InitializingBean {
@@ -32,7 +34,6 @@ public class TokenProvider implements InitializingBean {
     public TokenProvider(SecurityProperties properties) {
         this.properties = properties;
     }
-
 
     @Override
     public void afterPropertiesSet() {
@@ -94,9 +95,11 @@ public class TokenProvider implements InitializingBean {
 
     public String getToken(HttpServletRequest request) {
         final String requestHeader = request.getHeader(properties.getHeader());
-        if (requestHeader != null && requestHeader.startsWith(properties.getTokenStartWith())) {
-            return requestHeader.substring(7);
+        String tokenStartsWith = properties.getTokenStartWith();
+        if (requestHeader != null && requestHeader.startsWith(tokenStartsWith)) {
+            return requestHeader.substring(tokenStartsWith.length());
         }
         return null;
     }
+
 }

@@ -1,9 +1,8 @@
-package me.fjq.security.security.vo;
+package me.fjq.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -12,12 +11,12 @@ import java.util.Date;
 
 
 /**
- *
+ * @author fjq
  */
 
 @Getter
 @AllArgsConstructor
-public class JwtUser implements UserDetails {
+public class JwtUserDetails implements UserDetails {
 
     private final Long id;
 

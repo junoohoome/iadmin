@@ -1,10 +1,10 @@
-package me.fjq.security.config;
+package me.fjq.config;
 
 
-import me.fjq.security.security.JwtAccessDeniedHandler;
-import me.fjq.security.security.JwtAuthenticationEntryPoint;
-import me.fjq.security.security.TokenConfigurer;
-import me.fjq.security.security.TokenProvider;
+import me.fjq.security.TokenFilter;
+import me.fjq.security.TokenProvider;
+import me.fjq.security.handle.JwtAccessDeniedHandler;
+import me.fjq.security.handle.JwtAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -12,7 +12,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,7 +22,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- *
+ * @author fjq
  */
 @Configuration
 @EnableWebSecurity
@@ -43,11 +42,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
     }
 
-    @Bean
-    GrantedAuthorityDefaults grantedAuthorityDefaults() {
-        // 去除 ROLE_ 前缀
-        return new GrantedAuthorityDefaults("");
-    }
+//    @Bean
+//    GrantedAuthorityDefaults grantedAuthorityDefaults() {
+//        // 去除 ROLE_ 前缀
+//        return new GrantedAuthorityDefaults("");
+//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -69,20 +68,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling()
                 .authenticationEntryPoint(authenticationErrorHandler)
                 .accessDeniedHandler(jwtAccessDeniedHandler)
-
                 // 防止iframe 造成跨域
-                .and()
-                .headers()
-                .frameOptions()
-                .disable()
+                .and().headers().frameOptions().disable()
 
                 // 不创建会话
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-
-                .and()
-                .authorizeRequests()
+                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and().authorizeRequests()
                 // 静态资源等等
                 .antMatchers(
                         HttpMethod.GET,
@@ -90,8 +81,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.html",
                         "/**/*.css",
                         "/**/*.js",
-                        "/webSocket/**"
-                ).permitAll()
+                        "/webSocket/**")
+                .permitAll()
                 // swagger 文档
                 .antMatchers("/swagger-ui.html").permitAll()
                 .antMatchers("/swagger-resources/**").permitAll()
@@ -107,11 +98,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // 自定义匿名访问所有url放行 ： 允许匿名和带权限以及登录用户访问
                 .antMatchers(anonymousUrls.toArray(new String[0])).anonymous()
                 // 所有请求都需要认证
-                .anyRequest().authenticated()
-                .and().apply(securityConfigurerAdapter());
+                .anyRequest().authenticated();
+//                .and().apply(new TokenConfigurer(tokenProvider));
+        // 添加JWT filter
+        httpSecurity.addFilterBefore(new TokenFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
     }
 
-    private TokenConfigurer securityConfigurerAdapter() {
-        return new TokenConfigurer(tokenProvider);
-    }
 }

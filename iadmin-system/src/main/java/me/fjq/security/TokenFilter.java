@@ -1,8 +1,6 @@
-package me.fjq.security.security;
+package me.fjq.security;
 
 import lombok.extern.slf4j.Slf4j;
-import me.fjq.security.config.SecurityProperties;
-import me.fjq.utils.SpringContextHolder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
@@ -16,25 +14,25 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
- * @author /
+ * @author fjq
  */
 @Slf4j
 public class TokenFilter extends GenericFilterBean {
 
     private final TokenProvider tokenProvider;
 
-    TokenFilter(TokenProvider tokenProvider) {
+    public TokenFilter(TokenProvider tokenProvider) {
         this.tokenProvider = tokenProvider;
     }
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
-            throws IOException, ServletException {
-        HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
-        String token = resolveToken(httpServletRequest);
-        String requestRri = httpServletRequest.getRequestURI();
-        log.info("token:[{}], uri:[{}]", token, requestRri);
-        // 验证 token 是否存在
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        String token = tokenProvider.getToken(request);
+        String requestRri = request.getRequestURI();
+        log.debug("token:[{}], uri:[{}]", token, requestRri);
+
+        // 验证 token
         if (StringUtils.hasText(token) && tokenProvider.validateToken(token)) {
             Authentication authentication = tokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -45,12 +43,4 @@ public class TokenFilter extends GenericFilterBean {
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
-    private String resolveToken(HttpServletRequest request) {
-        SecurityProperties properties = SpringContextHolder.getBean(SecurityProperties.class);
-        String bearerToken = request.getHeader(properties.getHeader());
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(properties.getTokenStartWith())) {
-            return bearerToken.substring(7);
-        }
-        return null;
-    }
 }

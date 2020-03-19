@@ -1,4 +1,4 @@
-package me.fjq.security.security;
+package me.fjq.security.handle;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- *
+ * @author fjq
  */
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {

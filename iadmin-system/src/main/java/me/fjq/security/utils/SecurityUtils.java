@@ -1,4 +1,4 @@
-package me.fjq.security.security.utils;
+package me.fjq.security.utils;
 
 
 import cn.hutool.json.JSONObject;
@@ -11,7 +11,6 @@ import org.springframework.security.core.userdetails.UserDetails;
  * 安全服务工具类
  */
 public class SecurityUtils {
-
 
     public static UserDetails getUserDetails() {
         UserDetails userDetails;
@@ -32,7 +31,6 @@ public class SecurityUtils {
         Object obj = getUserDetails();
         return new JSONObject(obj).get("username", String.class);
     }
-
 
     /**
      * 是否为管理员
