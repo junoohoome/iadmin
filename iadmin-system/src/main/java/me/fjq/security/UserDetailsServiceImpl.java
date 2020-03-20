@@ -38,10 +38,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (user.getStatus().equals(UserStatus.DISABLE.getCode())) {
             throw new BadRequestException("账号未激活");
         }
-        return createJwtUser(user);
-    }
-
-    private UserDetails createJwtUser(SysUser user) {
         return new JwtUserDetails(
                 user.getUserId(),
                 user.getUserName(),
@@ -53,7 +49,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 user.getPhoneNumber(),
                 menuService.mapToGrantedAuthorities(user),
                 user.getStatus(),
-                user.getCreateTime()
-        );
+                user.getCreateTime());
     }
+
 }
