@@ -1,7 +1,8 @@
 package me.fjq.system.domain;
 
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 角色和菜单关联 sys_role_menu
@@ -9,7 +10,8 @@ import lombok.Data;
  * @author fjq
  * @date 2020/1/7 14:46
  */
-@Data
+@Getter
+@Setter
 public class SysRoleMenu {
 
     private Long id;

@@ -30,7 +30,6 @@ public class TokenFilter extends GenericFilterBean {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         String token = tokenProvider.getToken(request);
         String requestRri = request.getRequestURI();
-        log.debug("token:[{}], uri:[{}]", token, requestRri);
 
         // 验证 token
         if (StringUtils.hasText(token) && tokenProvider.validateToken(token)) {

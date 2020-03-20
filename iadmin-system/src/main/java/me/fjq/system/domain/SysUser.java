@@ -3,7 +3,8 @@ package me.fjq.system.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import me.fjq.Domain.BaseEntity;
 
 import java.util.Date;
@@ -14,7 +15,8 @@ import java.util.Date;
  * @author fjq
  * @date 2020/1/7 14:46
  */
-@Data
+@Getter
+@Setter
 public class SysUser extends BaseEntity {
 
     /**
@@ -78,9 +80,5 @@ public class SysUser extends BaseEntity {
      */
     private Date loginDate;
 
-    /**
-     * 角色组
-     */
-    private Long[] roleIds;
 
 }

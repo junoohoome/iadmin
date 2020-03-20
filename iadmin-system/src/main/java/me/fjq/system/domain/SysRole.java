@@ -3,7 +3,8 @@ package me.fjq.system.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import me.fjq.Domain.BaseEntity;
 
 
@@ -13,7 +14,8 @@ import me.fjq.Domain.BaseEntity;
  * @author fjq
  * @date 2020/1/7 14:46
  */
-@Data
+@Getter
+@Setter
 public class SysRole extends BaseEntity {
 
     /**
@@ -56,10 +58,5 @@ public class SysRole extends BaseEntity {
      * 用户是否存在此角色标识 默认不存在
      */
     private Boolean flag = false;
-
-    /**
-     * 菜单组
-     */
-    private Long[] menuIds;
 
 }

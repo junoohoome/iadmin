@@ -1,52 +1,65 @@
 package me.fjq.core;
 
-import lombok.Getter;
-import lombok.Setter;
+import me.fjq.enums.ErrorCode;
+import lombok.Data;
 import org.springframework.http.HttpStatus;
 
-/**
- * HTTP结果封装
- *
- * @author FJQ
- * @date 2020/03/18
- */
-@Getter
-@Setter
-public class HttpResult {
 
-    private int code = 200;
+@Data
+public class HttpResult<T> {
+
+    private int code;
     private String msg;
-    private Object data;
+    private T data;
 
-    public static HttpResult error() {
-        return error(HttpStatus.INTERNAL_SERVER_ERROR.value(), "未知异常，请联系管理员");
+
+    private HttpResult(HttpStatus httpStatus) {
+        this(httpStatus.value(), httpStatus.getReasonPhrase(), null);
     }
 
-    public static HttpResult error(String msg) {
-        return error(HttpStatus.INTERNAL_SERVER_ERROR.value(), msg);
+    private HttpResult(HttpStatus httpStatus, T data) {
+        this(httpStatus.value(), httpStatus.getReasonPhrase(), data);
     }
 
-    public static HttpResult error(int code, String msg) {
-        HttpResult r = new HttpResult();
-        r.setCode(code);
-        r.setMsg(msg);
-        return r;
+    private HttpResult(int code, String msg) {
+        this(code, msg, null);
     }
 
-    public static HttpResult ok(String msg) {
-        HttpResult r = new HttpResult();
-        r.setMsg(msg);
-        return r;
+    private HttpResult(int code, String msg, T data) {
+        this.code = code;
+        this.msg = msg;
+        this.data = data;
     }
 
-    public static HttpResult ok(Object data) {
-        HttpResult r = new HttpResult();
-        r.setData(data);
-        return r;
+    public static <T> HttpResult<T> ok() {
+        return new HttpResult<>(HttpStatus.OK);
     }
 
-    public static HttpResult ok() {
-        return new HttpResult();
+    public static <T> HttpResult<T> ok(T data) {
+        return new HttpResult<>(HttpStatus.OK, data);
     }
 
+    public static <T> HttpResult<T> error() {
+        return new HttpResult<>(HttpStatus.BAD_REQUEST);
+    }
+
+    public static <T> HttpResult<T> error(HttpStatus httpStatus) {
+        return new HttpResult<>(httpStatus);
+    }
+
+    public static <T> HttpResult<T> error(ErrorCode errorCode) {
+        return new HttpResult<>(errorCode.code, errorCode.msg);
+    }
+
+    public static <T> HttpResult<T> error(Integer code, String msg) {
+        return new HttpResult<>(code, msg);
+    }
+
+    public static <T> HttpResult<T> error(String msg) {
+        return new HttpResult<>(HttpStatus.BAD_REQUEST.value(), msg);
+    }
+
+    public static <T> HttpResult<T> unauthorized(String msg) {
+        return new HttpResult<>(HttpStatus.UNAUTHORIZED.value(), msg);
+    }
 }

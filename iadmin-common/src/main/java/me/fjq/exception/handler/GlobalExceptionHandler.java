@@ -1,7 +1,7 @@
 package me.fjq.exception.handler;
 
 import lombok.extern.slf4j.Slf4j;
-import me.fjq.Domain.HttpResult;
+import me.fjq.core.HttpResult;
 import me.fjq.exception.BadRequestException;
 import me.fjq.utils.ThrowableUtil;
 import org.springframework.security.authentication.BadCredentialsException;

@@ -1,7 +1,8 @@
 package me.fjq.system.domain;
 
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 用户和角色关联 sys_user_role
@@ -9,7 +10,8 @@ import lombok.Data;
  * @author fjq
  * @date 2020/1/7 14:46
  */
-@Data
+@Getter
+@Setter
 public class SysUserRole {
 
     private Long id;

@@ -51,11 +51,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 user.getAvatar(),
                 user.getEmail(),
                 user.getPhoneNumber(),
-                user.getRoleIds(),
                 menuService.mapToGrantedAuthorities(user),
-                user.getStatus() == 0 ? true : false,
-                user.getCreateTime(),
-                user.getUpdateTime()
+                user.getStatus(),
+                user.getCreateTime()
         );
     }
 }

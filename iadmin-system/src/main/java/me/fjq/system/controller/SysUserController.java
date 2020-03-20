@@ -7,8 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * @author fang
- * @date 2020/1/7 14:46
+ * @author fjq
  */
 @RestController
 @RequestMapping("/user")
@@ -20,7 +19,7 @@ public class SysUserController {
         this.sysUserService = sysUserService;
     }
 
-    public void getById(String id){
+    public void getById(String id) {
         SysUser sysUser = sysUserService.getById(id);
     }
 

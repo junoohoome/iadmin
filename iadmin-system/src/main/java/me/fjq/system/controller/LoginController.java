@@ -5,33 +5,28 @@ import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.RSA;
 import com.wf.captcha.ArithmeticCaptcha;
 import lombok.extern.slf4j.Slf4j;
-import me.fjq.Domain.HttpResult;
-import me.fjq.security.JwtUserDetails;
+import me.fjq.core.HttpResult;
 import me.fjq.security.TokenProvider;
 import me.fjq.security.properties.SecurityProperties;
-import me.fjq.security.utils.SecurityUtils;
-import me.fjq.system.domain.SysMenu;
-import me.fjq.system.domain.SysUser;
-import me.fjq.system.service.ISysMenuService;
-import me.fjq.system.service.ISysRoleService;
 import me.fjq.system.vo.AuthUser;
 import me.fjq.utils.RedisUtils;
-import me.fjq.utils.ServletUtils;
-import me.fjq.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
  * 授权、根据token获取用户详细信息
+ *
+ * @author fjq
  */
 @Slf4j
 @RestController
@@ -46,21 +41,15 @@ public class LoginController {
     private Boolean singleLogin;
     private final SecurityProperties properties;
     private final RedisUtils redisUtils;
-    private final UserDetailsService userDetailsService;
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final ISysRoleService roleService;
-    private final ISysMenuService menuService;
 
-    public LoginController(SecurityProperties properties, RedisUtils redisUtils, UserDetailsService userDetailsService,
-                           TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder, ISysRoleService roleService, ISysMenuService menuService) {
+    public LoginController(SecurityProperties properties, RedisUtils redisUtils,
+                           TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder) {
         this.properties = properties;
         this.redisUtils = redisUtils;
-        this.userDetailsService = userDetailsService;
         this.tokenProvider = tokenProvider;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
-        this.roleService = roleService;
-        this.menuService = menuService;
     }
 
 
@@ -86,43 +75,10 @@ public class LoginController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         // 生成令牌
         String token = tokenProvider.createToken(authentication);
-        Map<String, Object> res = new HashMap<String, Object>(1) {{
+        Map<String, Object> map = new HashMap<String, Object>(1) {{
             put("token", properties.getTokenStartWith() + token);
         }};
-        return HttpResult.ok(res);
-    }
-
-    @GetMapping(value = "user/info")
-    public HttpResult getUserInfo() {
-        JwtUserDetails user = (JwtUserDetails) userDetailsService.loadUserByUsername(SecurityUtils.getUsername());
-        Set<String> roles = new HashSet<>();
-        Set<String> permissions = new HashSet<>();
-        // 管理员拥有所有权限
-        boolean isAdmin = SecurityUtils.isAdmin(user.getId());
-        if (isAdmin) {
-            roles.add("admin");
-            permissions.add("*:*:*");
-        } else {
-            roles.addAll(roleService.selectRolePermissionByUserId(user.getId()));
-            permissions.addAll(menuService.selectMenuPermsByUserId(user.getId()));
-        }
-        HashMap map = new HashMap(3);
-        map.put("user", user);
-        map.put("roles", roles);
-        map.put("permissions", permissions);
         return HttpResult.ok(map);
-    }
-
-    /**
-     * 获取路由信息
-     *
-     * @return 路由信息
-     */
-    @GetMapping("getRouters")
-    public HttpResult getRouters() {
-        JwtUserDetails user = (JwtUserDetails) userDetailsService.loadUserByUsername(SecurityUtils.getUsername());
-        List<SysMenu> menus = menuService.selectMenuTreeByUserId(user.getId());
-        return HttpResult.ok(menuService.buildMenus(menus));
     }
 
     @GetMapping(value = "auth/code")
@@ -148,4 +104,5 @@ public class LoginController {
     public HttpResult logout() {
         return HttpResult.ok();
     }
+
 }

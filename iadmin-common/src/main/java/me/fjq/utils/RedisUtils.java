@@ -1,6 +1,5 @@
 package me.fjq.utils;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.Cursor;
@@ -72,7 +71,7 @@ public class RedisUtils {
             result.add(new String(cursor.next()));
         }
         try {
-            RedisConnectionUtils.releaseConnection(rc, factory);
+            RedisConnectionUtils.releaseConnection(rc, factory, true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -110,7 +109,7 @@ public class RedisUtils {
             cursor.next();
         }
         try {
-            RedisConnectionUtils.releaseConnection(rc, factory);
+            RedisConnectionUtils.releaseConnection(rc, factory,true);
         } catch (Exception e) {
             e.printStackTrace();
         }

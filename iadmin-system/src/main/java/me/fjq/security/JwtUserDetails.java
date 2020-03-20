@@ -33,19 +33,14 @@ public class JwtUserDetails implements UserDetails {
 
     private final String email;
 
-    private final String phone;
-
-    private final Long[] roleIds;
+    private final String phoneName;
 
     @JsonIgnore
     private final Collection<GrantedAuthority> authorities;
 
-    private final boolean enabled;
+    private final Integer status;
 
     private Date createTime;
-
-    @JsonIgnore
-    private final Date lastPasswordResetDate;
 
     @JsonIgnore
     @Override
@@ -73,7 +68,7 @@ public class JwtUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return enabled;
+        return status == 0 ? true : false;
     }
 
 }
