@@ -1,8 +1,8 @@
 package me.fjq.config;
 
 
-import me.fjq.security.TokenFilter;
-import me.fjq.security.TokenProvider;
+import lombok.AllArgsConstructor;
+import me.fjq.security.JwtAuthenticationTokenFilter;
 import me.fjq.security.handle.JwtAccessDeniedHandler;
 import me.fjq.security.handle.JwtAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
@@ -24,23 +24,16 @@ import java.util.Set;
 /**
  * @author fjq
  */
+@AllArgsConstructor
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final TokenProvider tokenProvider;
+    private final JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
     private final CorsFilter corsFilter;
     private final JwtAuthenticationEntryPoint authenticationErrorHandler;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
-
-    public SecurityConfig(TokenProvider tokenProvider, CorsFilter corsFilter, JwtAuthenticationEntryPoint authenticationErrorHandler,
-                          JwtAccessDeniedHandler jwtAccessDeniedHandler) {
-        this.tokenProvider = tokenProvider;
-        this.corsFilter = corsFilter;
-        this.authenticationErrorHandler = authenticationErrorHandler;
-        this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
-    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -94,7 +87,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // 所有请求都需要认证
                 .anyRequest().authenticated();
         // 添加JWT filter
-        httpSecurity.addFilterBefore(new TokenFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
+        httpSecurity.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
 }

@@ -6,7 +6,7 @@ import cn.hutool.crypto.asymmetric.RSA;
 import com.wf.captcha.ArithmeticCaptcha;
 import lombok.extern.slf4j.Slf4j;
 import me.fjq.core.HttpResult;
-import me.fjq.security.TokenProvider;
+import me.fjq.security.JwtTokenService;
 import me.fjq.security.properties.SecurityProperties;
 import me.fjq.system.vo.AuthUser;
 import me.fjq.utils.RedisUtils;
@@ -41,14 +41,14 @@ public class LoginController {
     private Boolean singleLogin;
     private final SecurityProperties properties;
     private final RedisUtils redisUtils;
-    private final TokenProvider tokenProvider;
+    private final JwtTokenService jwtTokenService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     public LoginController(SecurityProperties properties, RedisUtils redisUtils,
-                           TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder) {
+                           JwtTokenService jwtTokenService, AuthenticationManagerBuilder authenticationManagerBuilder) {
         this.properties = properties;
         this.redisUtils = redisUtils;
-        this.tokenProvider = tokenProvider;
+        this.jwtTokenService = jwtTokenService;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
     }
 
@@ -74,7 +74,7 @@ public class LoginController {
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         // 生成令牌
-        String token = tokenProvider.createToken(authentication);
+        String token = jwtTokenService.generateToken(authentication);
         Map<String, Object> map = new HashMap<String, Object>(1) {{
             put("token", properties.getTokenStartWith() + token);
         }};
