@@ -5,9 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import me.fjq.core.HttpResult;
 import me.fjq.security.JwtUserDetails;
 import me.fjq.security.utils.SecurityUtils;
-import me.fjq.system.domain.SysMenu;
-import me.fjq.system.service.ISysMenuService;
-import me.fjq.system.service.ISysRoleService;
+import me.fjq.system.entity.SysMenu;
+import me.fjq.system.service.SysMenuService;
+import me.fjq.system.service.SysRoleService;
 import me.fjq.system.vo.RouterVo;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,8 +26,8 @@ import java.util.*;
 public class IndexController {
 
     private final UserDetailsService userDetailsService;
-    private final ISysRoleService roleService;
-    private final ISysMenuService menuService;
+    private final SysRoleService roleService;
+    private final SysMenuService menuService;
 
     @GetMapping(value = "user/info")
     public HttpResult getUserInfo() {

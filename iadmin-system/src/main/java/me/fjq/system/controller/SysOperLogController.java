@@ -5,8 +5,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.api.ApiController;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import me.fjq.system.entity.SysUser;
-import me.fjq.system.service.SysUserService;
+import me.fjq.system.entity.SysOperLog;
+import me.fjq.system.service.SysOperLogService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -16,30 +16,30 @@ import java.util.List;
 
 
 /**
- * 用户信息表(SysUser)表控制层
+ * 操作日志记录(SysOperLog)表控制层
  *
  * @author fjq
  * @since 2020-03-23 22:43:49
  */
 @RestController
-@RequestMapping("sysUser")
-public class SysUserController extends ApiController {
+@RequestMapping("sysOperLog")
+public class SysOperLogController extends ApiController {
     /**
      * 服务对象
      */
     @Resource
-    private SysUserService sysUserService;
+    private SysOperLogService sysOperLogService;
 
     /**
      * 分页查询所有数据
      *
      * @param page 分页对象
-     * @param sysUser 查询实体
+     * @param sysOperLog 查询实体
      * @return 所有数据
      */
     @GetMapping
-    public R selectAll(Page<SysUser> page, SysUser sysUser) {
-        return success(this.sysUserService.page(page, new QueryWrapper<>(sysUser)));
+    public R selectAll(Page<SysOperLog> page, SysOperLog sysOperLog) {
+        return success(this.sysOperLogService.page(page, new QueryWrapper<>(sysOperLog)));
     }
 
     /**
@@ -50,29 +50,29 @@ public class SysUserController extends ApiController {
      */
     @GetMapping("{id}")
     public R selectOne(@PathVariable Serializable id) {
-        return success(this.sysUserService.getById(id));
+        return success(this.sysOperLogService.getById(id));
     }
 
     /**
      * 新增数据
      *
-     * @param sysUser 实体对象
+     * @param sysOperLog 实体对象
      * @return 新增结果
      */
     @PostMapping
-    public R insert(@RequestBody SysUser sysUser) {
-        return success(this.sysUserService.save(sysUser));
+    public R insert(@RequestBody SysOperLog sysOperLog) {
+        return success(this.sysOperLogService.save(sysOperLog));
     }
 
     /**
      * 修改数据
      *
-     * @param sysUser 实体对象
+     * @param sysOperLog 实体对象
      * @return 修改结果
      */
     @PutMapping
-    public R update(@RequestBody SysUser sysUser) {
-        return success(this.sysUserService.updateById(sysUser));
+    public R update(@RequestBody SysOperLog sysOperLog) {
+        return success(this.sysOperLogService.updateById(sysOperLog));
     }
 
     /**
@@ -83,6 +83,6 @@ public class SysUserController extends ApiController {
      */
     @DeleteMapping
     public R delete(@RequestParam("idList") List<Long> idList) {
-        return success(this.sysUserService.removeByIds(idList));
+        return success(this.sysOperLogService.removeByIds(idList));
     }
 }

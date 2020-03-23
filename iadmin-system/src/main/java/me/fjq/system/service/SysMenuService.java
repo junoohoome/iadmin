@@ -1,8 +1,8 @@
 package me.fjq.system.service;
 
-
-import me.fjq.system.domain.SysMenu;
-import me.fjq.system.domain.SysUser;
+import com.baomidou.mybatisplus.extension.service.IService;
+import me.fjq.system.entity.SysMenu;
+import me.fjq.system.entity.SysUser;
 import me.fjq.system.vo.RouterVo;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -10,10 +10,16 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+;
+
+
 /**
- * 菜单 业务层
+ * 菜单权限表(SysMenu)表服务接口
+ *
+ * @author fjq
+ * @since 2020-03-23 22:43:48
  */
-public interface ISysMenuService {
+public interface SysMenuService extends IService<SysMenu> {
 
     /**
      * 根据用户ID查询权限
@@ -45,4 +51,5 @@ public interface ISysMenuService {
      * @return 路由列表
      */
     List<RouterVo> buildMenus(List<SysMenu> menus);
+
 }

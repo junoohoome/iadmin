@@ -4,14 +4,16 @@ package me.fjq.security;
 import lombok.extern.slf4j.Slf4j;
 import me.fjq.enums.UserStatus;
 import me.fjq.exception.BadRequestException;
-import me.fjq.system.domain.SysUser;
-import me.fjq.system.service.ISysMenuService;
-import me.fjq.system.service.ISysUserService;
+import me.fjq.system.entity.SysUser;
+import me.fjq.system.service.SysUserService;
+import me.fjq.system.service.SysMenuService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+;
 
 /**
  * @author fjq
@@ -21,10 +23,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final ISysUserService userService;
-    private final ISysMenuService menuService;
+    private final SysUserService userService;
+    private final SysMenuService menuService;
 
-    public UserDetailsServiceImpl(ISysUserService userService, ISysMenuService menuService) {
+    public UserDetailsServiceImpl(SysUserService userService, SysMenuService menuService) {
         this.userService = userService;
         this.menuService = menuService;
     }
@@ -46,7 +48,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 user.getPassword(),
                 user.getAvatar(),
                 user.getEmail(),
-                user.getPhoneNumber(),
+                user.getMobile(),
                 menuService.mapToGrantedAuthorities(user),
                 user.getStatus(),
                 user.getCreateTime());

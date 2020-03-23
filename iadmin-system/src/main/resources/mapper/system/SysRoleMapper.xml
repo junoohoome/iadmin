@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="me.fjq.system.mapper.SysRoleMapper">
 
-    <resultMap type="me.fjq.system.domain.SysRole" id="SysRoleResult">
+    <resultMap type="me.fjq.system.entity.SysRole" id="SysRoleResult">
         <id property="roleId" column="role_id"/>
         <result property="roleName" column="role_name"/>
         <result property="roleKey" column="role_key"/>

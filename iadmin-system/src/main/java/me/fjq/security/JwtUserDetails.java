@@ -33,12 +33,12 @@ public class JwtUserDetails implements UserDetails {
 
     private final String email;
 
-    private final String phoneName;
+    private final String mobile;
 
     @JsonIgnore
     private final Collection<GrantedAuthority> authorities;
 
-    private final Integer status;
+    private final String status;
 
     private Date createTime;
 
@@ -68,7 +68,7 @@ public class JwtUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return status == 0 ? true : false;
+        return status.equals("0") ? true : false;
     }
 
 }

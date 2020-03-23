@@ -1,24 +1,18 @@
 package me.fjq.system.service.impl;
 
-
-import me.fjq.system.domain.SysDictData;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import me.fjq.system.mapper.SysDictDataMapper;
-import me.fjq.system.service.ISysDictDataService;
+import me.fjq.system.entity.SysDictData;
+import me.fjq.system.service.SysDictDataService;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 /**
- * 字典 业务层处理
+ * 字典数据表(SysDictData)表服务实现类
+ *
+ * @author fjq
+ * @since 2020-03-23 22:43:48
  */
-@Service
-public class SysDictDataServiceImpl implements ISysDictDataService {
-
-    private final SysDictDataMapper dictDataMapper;
-
-    public SysDictDataServiceImpl(SysDictDataMapper dictDataMapper) {
-        this.dictDataMapper = dictDataMapper;
-    }
-
+@Service("sysDictDataService")
+public class SysDictDataServiceImpl extends ServiceImpl<SysDictDataMapper, SysDictData> implements SysDictDataService {
 
 }

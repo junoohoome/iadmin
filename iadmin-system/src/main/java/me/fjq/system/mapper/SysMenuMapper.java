@@ -1,12 +1,15 @@
 package me.fjq.system.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import me.fjq.system.domain.SysMenu;
+import me.fjq.system.entity.SysMenu;
 
 import java.util.List;
 
 /**
- * 菜单表 数据层
+ * 菜单权限表(SysMenu)表数据库访问层
+ *
+ * @author fjq
+ * @since 2020-03-23 22:43:48
  */
 public interface SysMenuMapper extends BaseMapper<SysMenu> {
 
@@ -32,4 +35,5 @@ public interface SysMenuMapper extends BaseMapper<SysMenu> {
      * @return 菜单列表
      */
     List<SysMenu> selectMenuTreeByUserId(Long userId);
+
 }

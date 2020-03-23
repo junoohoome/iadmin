@@ -1,4 +1,4 @@
-package me.fjq.system.domain;
+package me.fjq.system.entity;
 
 
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -9,56 +9,33 @@ import me.fjq.Domain.BaseEntity;
 
 
 /**
- * 字典数据表 sys_dict_data
+ * 字典数据表(SysDictData)表实体类
+ *
+ * @author fjq
+ * @since 2020-03-23 22:43:48
  */
 @Getter
 @Setter
 public class SysDictData extends BaseEntity {
 
-    /**
-     * 字典编码
-     */
+    /**字典编码*/
     @TableId(value = "dict_code", type = IdType.AUTO)
     private Long dictCode;
-
-    /**
-     * 字典排序
-     */
-    private Long dictSort;
-
-    /**
-     * 字典标签
-     */
+    /**字典排序*/
+    private Integer dictSort;
+    /**字典标签*/
     private String dictLabel;
-
-    /**
-     * 字典键值
-     */
+    /**字典键值*/
     private String dictValue;
-
-    /**
-     * 字典类型
-     */
+    /**字典类型*/
     private String dictType;
-
-    /**
-     * 样式属性（其他样式扩展）
-     */
+    /**样式属性（其他样式扩展）*/
     private String cssClass;
-
-    /**
-     * 表格字典样式
-     */
+    /**表格回显样式*/
     private String listClass;
-
-    /**
-     * 是否默认（Y是 N否）
-     */
+    /**是否默认（Y是 N否）*/
     private String isDefault;
-
-    /**
-     * 状态（0正常 1停用）
-     */
+    /**状态（0正常 1停用）*/
     private String status;
 
 }

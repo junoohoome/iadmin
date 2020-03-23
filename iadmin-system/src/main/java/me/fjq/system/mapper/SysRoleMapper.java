@@ -1,13 +1,16 @@
 package me.fjq.system.mapper;
 
-
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import me.fjq.system.domain.SysRole;
+import me.fjq.system.entity.SysRole;
 
 import java.util.List;
 
+
 /**
- * 角色表 数据层
+ * 角色信息表(SysRole)表数据库访问层
+ *
+ * @author fjq
+ * @since 2020-03-23 22:43:49
  */
 public interface SysRoleMapper extends BaseMapper<SysRole> {
 
@@ -20,4 +23,3 @@ public interface SysRoleMapper extends BaseMapper<SysRole> {
     List<SysRole> selectRolePermissionByUserId(Long userId);
 
 }
-

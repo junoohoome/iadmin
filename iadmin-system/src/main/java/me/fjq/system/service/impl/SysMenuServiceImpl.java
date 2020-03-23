@@ -1,12 +1,13 @@
 package me.fjq.system.service.impl;
 
-
 import cn.hutool.core.collection.CollectionUtil;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.AllArgsConstructor;
 import me.fjq.security.utils.SecurityUtils;
-import me.fjq.system.domain.SysMenu;
-import me.fjq.system.domain.SysUser;
+import me.fjq.system.entity.SysMenu;
+import me.fjq.system.entity.SysUser;
 import me.fjq.system.mapper.SysMenuMapper;
-import me.fjq.system.service.ISysMenuService;
+import me.fjq.system.service.SysMenuService;
 import me.fjq.system.vo.MetaVo;
 import me.fjq.system.vo.RouterVo;
 import org.apache.commons.lang3.StringUtils;
@@ -17,18 +18,17 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
 /**
- * 菜单 业务层处理
+ * 菜单权限表(SysMenu)表服务实现类
+ *
+ * @author fjq
+ * @since 2020-03-23 22:43:49
  */
-@Service
-public class SysMenuServiceImpl implements ISysMenuService {
+@AllArgsConstructor
+@Service("sysMenuService")
+public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> implements SysMenuService {
 
     private final SysMenuMapper menuMapper;
-
-    public SysMenuServiceImpl(SysMenuMapper menuMapper) {
-        this.menuMapper = menuMapper;
-    }
 
     @Override
     public Set<String> selectMenuPermsByUserId(Long userId) {

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import me.fjq.system.domain.SysMenu;
+import me.fjq.system.entity.SysMenu;
 
 import java.io.Serializable;
 import java.util.List;

@@ -1,12 +1,11 @@
 package me.fjq.system.controller;
 
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.api.ApiController;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import me.fjq.system.entity.SysUser;
-import me.fjq.system.service.SysUserService;
+import me.fjq.system.entity.SysLogininfor;
+import me.fjq.system.service.SysLogininforService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -14,32 +13,31 @@ import java.io.Serializable;
 import java.util.List;
 
 
-
 /**
- * 用户信息表(SysUser)表控制层
+ * 系统访问记录(SysLogininfor)表控制层
  *
  * @author fjq
- * @since 2020-03-23 22:43:49
+ * @since 2020-03-23 22:43:48
  */
 @RestController
-@RequestMapping("sysUser")
-public class SysUserController extends ApiController {
+@RequestMapping("sysLogininfor")
+public class SysLogininforController extends ApiController {
     /**
      * 服务对象
      */
     @Resource
-    private SysUserService sysUserService;
+    private SysLogininforService sysLogininforService;
 
     /**
      * 分页查询所有数据
      *
      * @param page 分页对象
-     * @param sysUser 查询实体
+     * @param sysLogininfor 查询实体
      * @return 所有数据
      */
     @GetMapping
-    public R selectAll(Page<SysUser> page, SysUser sysUser) {
-        return success(this.sysUserService.page(page, new QueryWrapper<>(sysUser)));
+    public R selectAll(Page<SysLogininfor> page, SysLogininfor sysLogininfor) {
+        return success(this.sysLogininforService.page(page, new QueryWrapper<>(sysLogininfor)));
     }
 
     /**
@@ -50,29 +48,29 @@ public class SysUserController extends ApiController {
      */
     @GetMapping("{id}")
     public R selectOne(@PathVariable Serializable id) {
-        return success(this.sysUserService.getById(id));
+        return success(this.sysLogininforService.getById(id));
     }
 
     /**
      * 新增数据
      *
-     * @param sysUser 实体对象
+     * @param sysLogininfor 实体对象
      * @return 新增结果
      */
     @PostMapping
-    public R insert(@RequestBody SysUser sysUser) {
-        return success(this.sysUserService.save(sysUser));
+    public R insert(@RequestBody SysLogininfor sysLogininfor) {
+        return success(this.sysLogininforService.save(sysLogininfor));
     }
 
     /**
      * 修改数据
      *
-     * @param sysUser 实体对象
+     * @param sysLogininfor 实体对象
      * @return 修改结果
      */
     @PutMapping
-    public R update(@RequestBody SysUser sysUser) {
-        return success(this.sysUserService.updateById(sysUser));
+    public R update(@RequestBody SysLogininfor sysLogininfor) {
+        return success(this.sysLogininforService.updateById(sysLogininfor));
     }
 
     /**
@@ -83,6 +81,6 @@ public class SysUserController extends ApiController {
      */
     @DeleteMapping
     public R delete(@RequestParam("idList") List<Long> idList) {
-        return success(this.sysUserService.removeByIds(idList));
+        return success(this.sysLogininforService.removeByIds(idList));
     }
 }

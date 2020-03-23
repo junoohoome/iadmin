@@ -119,7 +119,7 @@ public class JwtTokenService {
      */
     public Boolean validateToken(String token) {
         try {
-            return isTokenExpired(token);
+            return !isTokenExpired(token);
         } catch (SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT signature.");
             e.printStackTrace();

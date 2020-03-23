@@ -1,36 +1,14 @@
 package me.fjq.system.mapper;
 
-
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import me.fjq.system.domain.SysRoleMenu;
-
-import java.util.List;
+import me.fjq.system.entity.SysRoleMenu;
 
 /**
- * 角色与菜单关联表 数据层
+ * 角色和菜单关联表(SysRoleMenu)表数据库访问层
+ *
+ * @author fjq
+ * @since 2020-03-23 22:43:49
  */
 public interface SysRoleMenuMapper extends BaseMapper<SysRoleMenu> {
-    /**
-     * 查询菜单使用数量
-     *
-     * @param menuId 菜单ID
-     * @return 结果
-     */
-    int checkMenuExistRole(Long menuId);
 
-    /**
-     * 通过角色ID删除角色和菜单关联
-     *
-     * @param roleId 角色ID
-     * @return 结果
-     */
-    int deleteRoleMenuByRoleId(Long roleId);
-
-    /**
-     * 批量新增角色菜单信息
-     *
-     * @param roleMenuList 角色菜单列表
-     * @return 结果
-     */
-    int batchRoleMenu(List<SysRoleMenu> roleMenuList);
 }

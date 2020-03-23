@@ -1,9 +1,9 @@
 package me.fjq;
 
 
-import me.fjq.system.domain.SysUser;
+import me.fjq.system.entity.SysUser;
 import me.fjq.system.mapper.SysUserMapper;
-import me.fjq.system.service.ISysUserService;
+import me.fjq.system.service.SysUserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class SystemApplicationTests {
 
     @Autowired
-    ISysUserService userService;
+    SysUserService userService;
     @Autowired
     SysUserMapper sysUserMapper;
 
