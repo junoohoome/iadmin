@@ -58,4 +58,14 @@ public class Constants {
      * 用于IP定位转换
      */
     public static final String REGION = "内网IP|内网IP";
+
+    /**
+     * 验证码 CODE_KEY
+     */
+    public static final String CODE_KEY = "code_key";
+
+    /**
+     * 验证码有效时间/分钟
+     */
+    public static final Long CODE_EXPIRE_TIME = 3L;
 }

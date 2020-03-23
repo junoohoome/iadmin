@@ -13,12 +13,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 /**
  * WebMvcConfigurer
  *
- * @author Zheng Jie
- * @date 2018-11-30
+ * @author fjq
  */
 @Configuration
 @EnableWebMvc
-public class ConfigurerAdapter implements WebMvcConfigurer {
+public class WebMvcConfig implements WebMvcConfigurer {
 
     @Value("${file.path}")
     private String path;
@@ -40,8 +39,8 @@ public class ConfigurerAdapter implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        String avatarUtl = "file:" + avatar.replace("\\","/");
-        String pathUtl = "file:" + path.replace("\\","/");
+        String avatarUtl = "file:" + avatar.replace("\\", "/");
+        String pathUtl = "file:" + path.replace("\\", "/");
         registry.addResourceHandler("/avatar/**").addResourceLocations(avatarUtl).setCachePeriod(0);
         registry.addResourceHandler("/file/**").addResourceLocations(pathUtl).setCachePeriod(0);
         registry.addResourceHandler("/**").addResourceLocations("classpath:/META-INF/resources/").setCachePeriod(0);

@@ -5,9 +5,10 @@ import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.RSA;
 import com.wf.captcha.ArithmeticCaptcha;
 import lombok.extern.slf4j.Slf4j;
+import me.fjq.constant.Constants;
 import me.fjq.core.HttpResult;
 import me.fjq.security.JwtTokenService;
-import me.fjq.security.properties.SecurityProperties;
+import me.fjq.properties.SecurityProperties;
 import me.fjq.system.vo.AuthUser;
 import me.fjq.utils.RedisUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -33,12 +34,8 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping
 public class LoginController {
 
-    @Value("${loginCode.expiration}")
-    private Long expiration;
     @Value("${rsa.private_key}")
     private String privateKey;
-    @Value("${single.login:false}")
-    private Boolean singleLogin;
     private final SecurityProperties properties;
     private final RedisUtils redisUtils;
     private final JwtTokenService jwtTokenService;
@@ -89,9 +86,9 @@ public class LoginController {
         captcha.setLen(2);
         // 获取运算的结果
         String result = captcha.text();
-        String uuid = properties.getCodeKey() + IdUtil.simpleUUID();
+        String uuid = Constants.CODE_KEY + IdUtil.simpleUUID();
         // 保存
-        redisUtils.set(uuid, result, expiration, TimeUnit.MINUTES);
+        redisUtils.set(uuid, result, Constants.CODE_EXPIRE_TIME, TimeUnit.MINUTES);
         // 验证码信息
         Map<String, Object> imgResult = new HashMap<String, Object>(2) {{
             put("img", captcha.toBase64());

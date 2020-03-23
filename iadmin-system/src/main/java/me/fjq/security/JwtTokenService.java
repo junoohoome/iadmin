@@ -3,7 +3,7 @@ package me.fjq.security;
 
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
-import me.fjq.security.properties.SecurityProperties;
+import me.fjq.properties.SecurityProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

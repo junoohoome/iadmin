@@ -22,6 +22,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * Spring Security配置
+ *
  * @author fjq
  */
 @AllArgsConstructor

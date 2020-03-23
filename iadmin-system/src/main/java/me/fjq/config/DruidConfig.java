@@ -1,112 +1,102 @@
-package me.fjq.config;
-
-import com.alibaba.druid.pool.DruidDataSource;
-import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
-import com.alibaba.druid.spring.boot.autoconfigure.properties.DruidStatProperties;
-import com.alibaba.druid.util.Utils;
-import me.fjq.config.datasource.DynamicDataSource;
-import me.fjq.enums.DataSourceType;
-import me.fjq.properties.DruidProperties;
-import me.fjq.utils.SpringContextHolder;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-
-import javax.servlet.*;
-import javax.sql.DataSource;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import static me.fjq.utils.SpringContextHolder.getBean;
-
-/**
- * druid 配置多数据源
- */
-@Configuration
-public class DruidConfig {
-    @Bean
-    @ConfigurationProperties("spring.datasource.druid.master")
-    public DataSource masterDataSource(DruidProperties druidProperties) {
-        DruidDataSource dataSource = DruidDataSourceBuilder.create().build();
-        return druidProperties.dataSource(dataSource);
-    }
-
+//package me.fjq.config;
+//
+//import com.alibaba.druid.pool.DruidDataSource;
+//import com.alibaba.druid.support.http.StatViewServlet;
+//import com.alibaba.druid.support.http.WebStatFilter;
+//import me.fjq.properties.DruidDataSourceProperties;
+//import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+//import org.springframework.boot.context.properties.EnableConfigurationProperties;
+//import org.springframework.boot.web.servlet.FilterRegistrationBean;
+//import org.springframework.boot.web.servlet.ServletRegistrationBean;
+//import org.springframework.context.annotation.Bean;
+//import org.springframework.context.annotation.Configuration;
+//
+//import javax.servlet.Filter;
+//import javax.servlet.Servlet;
+//import javax.sql.DataSource;
+//import java.sql.SQLException;
+//
+///**
+// * Druid数据源配置
+// *
+// * @author fjq
+// */
+//@Configuration
+//@EnableConfigurationProperties({DruidDataSourceProperties.class})
+//public class DruidConfig {
+//
+//    private final DruidDataSourceProperties properties;
+//
+//    public DruidConfig(DruidDataSourceProperties properties) {
+//        this.properties = properties;
+//    }
+//
 //    @Bean
-//    @ConfigurationProperties("spring.datasource.druid.slave")
-//    @ConditionalOnProperty(prefix = "spring.datasource.druid.slave", name = "enabled", havingValue = "true")
-//    public DataSource slaveDataSource(DruidProperties druidProperties) {
-//        DruidDataSource dataSource = DruidDataSourceBuilder.create().build();
-//        return druidProperties.dataSource(dataSource);
+//    @ConditionalOnMissingBean
+//    public DataSource druidDataSource() {
+//        DruidDataSource druidDataSource = new DruidDataSource();
+//        druidDataSource.setDriverClassName(properties.getDriverClassName());
+//        druidDataSource.setUrl(properties.getUrl());
+//        druidDataSource.setUsername(properties.getUsername());
+//        druidDataSource.setPassword(properties.getPassword());
+//        druidDataSource.setInitialSize(properties.getInitialSize());
+//        druidDataSource.setMinIdle(properties.getMinIdle());
+//        druidDataSource.setMaxActive(properties.getMaxActive());
+//        druidDataSource.setMaxWait(properties.getMaxWait());
+//        druidDataSource.setTimeBetweenEvictionRunsMillis(properties.getTimeBetweenEvictionRunsMillis());
+//        druidDataSource.setMinEvictableIdleTimeMillis(properties.getMinEvictableIdleTimeMillis());
+//        druidDataSource.setValidationQuery(properties.getValidationQuery());
+//        druidDataSource.setTestWhileIdle(properties.isTestWhileIdle());
+//        druidDataSource.setTestOnBorrow(properties.isTestOnBorrow());
+//        druidDataSource.setTestOnReturn(properties.isTestOnReturn());
+//        druidDataSource.setPoolPreparedStatements(properties.isPoolPreparedStatements());
+//        druidDataSource.setMaxPoolPreparedStatementPerConnectionSize(properties.getMaxPoolPreparedStatementPerConnectionSize());
+//
+//        try {
+//            druidDataSource.setFilters(properties.getFilters());
+//            druidDataSource.init();
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return druidDataSource;
 //    }
-
-//    @Bean(name = "dynamicDataSource")
-//    @Primary
-//    public DynamicDataSource dataSource(DataSource masterDataSource) {
-//        Map<Object, Object> targetDataSources = new HashMap<>();
-//        targetDataSources.put(DataSourceType.MASTER.name(), masterDataSource);
-//        setDataSource(targetDataSources, DataSourceType.SLAVE.name(), "slaveDataSource");
-//        return new DynamicDataSource(masterDataSource, targetDataSources);
+//
+//    /**
+//     * 注册Servlet信息， 配置监控视图
+//     *
+//     * @return
+//     */
+//    @Bean
+//    @ConditionalOnMissingBean
+//    public ServletRegistrationBean<Servlet> druidServlet() {
+//        ServletRegistrationBean<Servlet> servletRegistrationBean = new ServletRegistrationBean<>(new StatViewServlet(), "/druid/*");
+//
+//        //白名单：
+//        servletRegistrationBean.addInitParameter("allow","127.0.0.1");
+//        //IP黑名单 (存在共同时，deny优先于allow) : 如果满足deny的话提示:Sorry, you are not permitted to view this page.
+////        servletRegistrationBean.addInitParameter("deny", "192.168.1.119");
+//        //登录查看信息的账号密码, 用于登录Druid监控后台
+//        servletRegistrationBean.addInitParameter("loginUsername", "admin");
+//        servletRegistrationBean.addInitParameter("loginPassword", "admin");
+//        //是否能够重置数据.
+//        servletRegistrationBean.addInitParameter("resetEnable", "true");
+//        return servletRegistrationBean;
+//
 //    }
-
-    /**
-     * 设置数据源
-     *
-     * @param targetDataSources 备选数据源集合
-     * @param sourceName        数据源名称
-     * @param beanName          bean名称
-     */
-    public void setDataSource(Map<Object, Object> targetDataSources, String sourceName, String beanName) {
-        try {
-            DataSource dataSource = SpringContextHolder.getBean(beanName);
-            targetDataSources.put(sourceName, dataSource);
-        } catch (Exception e) {
-        }
-    }
-
-    /**
-     * 去除监控页面底部的广告
-     */
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    @Bean
-    @ConditionalOnProperty(name = "spring.datasource.druid.statViewServlet.enabled", havingValue = "true")
-    public FilterRegistrationBean removeDruidFilterRegistrationBean(DruidStatProperties properties) {
-        // 获取web监控页面的参数
-        DruidStatProperties.StatViewServlet config = properties.getStatViewServlet();
-        // 提取common.js的配置路径
-        String pattern = config.getUrlPattern() != null ? config.getUrlPattern() : "/druid/*";
-        String commonJsPattern = pattern.replaceAll("\\*", "js/common.js");
-        final String filePath = "support/http/resources/js/common.js";
-        // 创建filter进行过滤
-        Filter filter = new Filter() {
-            @Override
-            public void init(javax.servlet.FilterConfig filterConfig) throws ServletException {
-            }
-
-            @Override
-            public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-                    throws IOException, ServletException {
-                chain.doFilter(request, response);
-                // 重置缓冲区，响应头不会被重置
-                response.resetBuffer();
-                // 获取common.js
-                String text = Utils.readFromResource(filePath);
-                // 正则替换banner, 除去底部的广告信息
-                text = text.replaceAll("<a.*?banner\"></a><br/>", "");
-                text = text.replaceAll("powered.*?shrek.wang</a>", "");
-                response.getWriter().write(text);
-            }
-
-            @Override
-            public void destroy() {
-            }
-        };
-        FilterRegistrationBean registrationBean = new FilterRegistrationBean();
-        registrationBean.setFilter(filter);
-        registrationBean.addUrlPatterns(commonJsPattern);
-        return registrationBean;
-    }
-}
+//
+//    /**
+//     * 注册Filter信息, 监控拦截器
+//     *
+//     * @return
+//     */
+//    @Bean
+//    @ConditionalOnMissingBean
+//    public FilterRegistrationBean<Filter> filterRegistrationBean() {
+//        FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
+//        filterRegistrationBean.setFilter(new WebStatFilter());
+//        filterRegistrationBean.addUrlPatterns("/*");
+//        filterRegistrationBean.addInitParameter("exclusions", "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*");
+//        return filterRegistrationBean;
+//    }
+//}
