@@ -3,7 +3,7 @@ package me.fjq.system.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
-import me.fjq.security.utils.SecurityUtils;
+import me.fjq.utils.SecurityUtils;
 import me.fjq.system.entity.SysMenu;
 import me.fjq.system.mapper.SysMenuMapper;
 import me.fjq.system.service.SysMenuService;

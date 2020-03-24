@@ -1,4 +1,4 @@
-package me.fjq.security.utils;
+package me.fjq.utils;
 
 
 import org.springframework.security.core.Authentication;

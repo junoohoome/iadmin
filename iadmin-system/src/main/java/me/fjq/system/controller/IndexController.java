@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.fjq.core.HttpResult;
 import me.fjq.security.JwtTokenService;
 import me.fjq.security.JwtUserDetails;
-import me.fjq.security.utils.SecurityUtils;
+import me.fjq.utils.SecurityUtils;
 import me.fjq.system.entity.SysMenu;
 import me.fjq.system.service.SysMenuService;
 import me.fjq.system.service.SysRoleService;
