@@ -1,7 +1,6 @@
 package me.fjq.security.utils;
 
 
-
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,7 +13,7 @@ public class SecurityUtils {
     /**
      * 获取当前用户名
      *
-     * @return
+     * @return 用户名
      */
     public static String getUsername() {
         String username = null;

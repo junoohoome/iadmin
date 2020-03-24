@@ -5,18 +5,14 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
 import me.fjq.security.utils.SecurityUtils;
 import me.fjq.system.entity.SysMenu;
-import me.fjq.system.entity.SysUser;
 import me.fjq.system.mapper.SysMenuMapper;
 import me.fjq.system.service.SysMenuService;
 import me.fjq.system.vo.MetaVo;
 import me.fjq.system.vo.RouterVo;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 菜单权限表(SysMenu)表服务实现类
@@ -43,14 +39,6 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
     }
 
     @Override
-    public Collection<GrantedAuthority> mapToGrantedAuthorities(SysUser user) {
-        Set<String> permissions = selectMenuPermsByUserId(user.getUserId());
-        return permissions.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public List<SysMenu> selectMenuTreeByUserId(Long userId) {
         List<SysMenu> menus;
         if (SecurityUtils.isAdmin(userId)) {
@@ -58,7 +46,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
         } else {
             menus = menuMapper.selectMenuTreeByUserId(userId);
         }
-        return getChildPerms(menus, 0);
+        return getChildMenuTree(menus, 0);
     }
 
     @Override
@@ -87,7 +75,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
      * @param menu 菜单信息
      * @return 路由地址
      */
-    public String getRouterPath(SysMenu menu) {
+    private String getRouterPath(SysMenu menu) {
         String routerPath = menu.getPath();
         // 非外链并且是一级目录
         if (0 == menu.getParentId() && "1".equals(menu.getIsFrame())) {
@@ -103,7 +91,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
      * @param parentId 传入的父节点ID
      * @return String
      */
-    public List<SysMenu> getChildPerms(List<SysMenu> list, int parentId) {
+    private List<SysMenu> getChildMenuTree(List<SysMenu> list, int parentId) {
         List<SysMenu> returnList = new ArrayList<>();
         for (Iterator<SysMenu> iterator = list.iterator(); iterator.hasNext(); ) {
             SysMenu t = iterator.next();

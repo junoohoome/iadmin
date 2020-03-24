@@ -1,14 +1,19 @@
 package me.fjq.security;
 
 
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.json.JSONUtil;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
+import me.fjq.exception.JwtTokenException;
 import me.fjq.properties.SecurityProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
@@ -37,7 +42,6 @@ public class JwtTokenService {
      * 权限列表
      */
     private static final String AUTHORITIES = "authorities";
-
     private final SecurityProperties properties;
 
     public JwtTokenService(SecurityProperties properties) {
@@ -88,18 +92,27 @@ public class JwtTokenService {
     /**
      * 从令牌中获取用户信息
      *
-     * @param token 令牌
+     * @param request HttpServletRequest
      * @return 用户名
      */
-    public JwtUserDetails getUserInfoFromToken(String token) {
+    public JwtUserDetails getJwtUserDetails(HttpServletRequest request) {
+        String token = getToken(request);
+        if (ObjectUtil.isNull(token)) {
+            throw new JwtTokenException("获取令牌异常");
+        }
         Claims claims = getClaimsFromToken(token);
-        return (JwtUserDetails) claims.get(USERINFO);
+        Object obj = claims.get(USERINFO);
+        if (ObjectUtil.isNull(obj)) {
+            throw new JwtTokenException("获取用户信息异常");
+        }
+        // LinkHashMap类型转换
+        return JSONUtil.toBean(JSONUtil.toJsonStr(obj), JwtUserDetails.class);
     }
 
     /**
      * 获取请求token
      *
-     * @param request
+     * @param request HttpServletRequest
      * @return token
      */
     public String getToken(HttpServletRequest request) {
@@ -117,7 +130,7 @@ public class JwtTokenService {
      * @param token 令牌
      * @return true/false
      */
-    public Boolean validateToken(String token) {
+    private Boolean validateToken(String token) {
         try {
             return !isTokenExpired(token);
         } catch (SecurityException | MalformedJwtException e) {
@@ -139,7 +152,7 @@ public class JwtTokenService {
     /**
      * 获取认证方式
      *
-     * @param token
+     * @param token 令牌
      * @return 认证方式
      */
     public Authentication getAuthenticationFromToken(String token) {
@@ -152,6 +165,43 @@ public class JwtTokenService {
         User principal = new User(claims.getSubject(), "", authorities);
 
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
+    }
+
+    /**
+     * 获取令牌进行认证
+     *
+     * @param request HttpServletRequest
+     */
+    public void checkAuthentication(HttpServletRequest request) {
+        String token = getToken(request);
+        String requestRri = request.getRequestURI();
+        // 验证 token
+        if (StringUtils.isNotBlank(token) && validateToken(token)) {
+            // 获取令牌并根据令牌获取登录认证信息
+            Authentication authentication = getAuthenticationFromToken(token);
+            // 设置登录认证信息到上下文
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            log.debug("set Authentication to security context for '{}', uri: {}", authentication.getName(), requestRri);
+        } else {
+            log.debug("no valid JWT token found, uri: {}", requestRri);
+        }
+    }
+
+    /**
+     * 系统登录认证
+     *
+     * @param username                     用户名
+     * @param password                     密码
+     * @param authenticationManagerBuilder 认证管理器
+     * @return token
+     */
+    public String login(String username, String password, AuthenticationManagerBuilder authenticationManagerBuilder) {
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
+        // 执行登录认证过程,该方法会去调用UserDetailsServiceImpl.loadUserByUsername
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        // 认证成功存储认证信息到上下文
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return generateToken(authentication);
     }
 
     /**

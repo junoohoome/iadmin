@@ -3,6 +3,7 @@ package me.fjq.security;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -15,30 +16,31 @@ import java.util.Date;
  */
 
 @Getter
+@Setter
 @AllArgsConstructor
 public class JwtUserDetails implements UserDetails {
 
-    private final Long id;
+    private Long id;
 
-    private final String username;
+    private String username;
 
-    private final String nickName;
+    private String nickName;
 
-    private final String sex;
-
-    @JsonIgnore
-    private final String password;
-
-    private final String avatar;
-
-    private final String email;
-
-    private final String mobile;
+    private String sex;
 
     @JsonIgnore
-    private final Collection<GrantedAuthority> authorities;
+    private String password;
 
-    private final String status;
+    private String avatar;
+
+    private String email;
+
+    private String mobile;
+
+    @JsonIgnore
+    private Collection<GrantedAuthority> authorities;
+
+    private String status;
 
     private Date createTime;
 

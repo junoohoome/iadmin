@@ -20,6 +20,6 @@ public interface SysRoleService extends IService<SysRole> {
      * @param userId 用户ID
      * @return 权限列表
      */
-    Set<String> selectRolePermissionByUserId(Long userId);
+    Set<String> selectRolePermsByUserId(Long userId);
 
 }

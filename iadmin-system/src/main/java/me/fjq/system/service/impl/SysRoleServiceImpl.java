@@ -26,7 +26,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     private final SysRoleMapper roleMapper;
 
     @Override
-    public Set<String> selectRolePermissionByUserId(Long userId) {
+    public Set<String> selectRolePermsByUserId(Long userId) {
         List<SysRole> sysRoles = roleMapper.selectRolePermissionByUserId(userId);
         Set<String> perms = new HashSet<>();
         for (SysRole perm : sysRoles) {

@@ -2,10 +2,7 @@ package me.fjq.security;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
@@ -30,17 +27,8 @@ public class JwtAuthenticationTokenFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
-        String token = jwtTokenService.getToken(request);
-        String requestRri = request.getRequestURI();
-
-        // 验证 token
-        if (StringUtils.hasText(token) && jwtTokenService.validateToken(token)) {
-            Authentication authentication = jwtTokenService.getAuthenticationFromToken(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            log.debug("set Authentication to security context for '{}', uri: {}", authentication.getName(), requestRri);
-        } else {
-            log.debug("no valid JWT token found, uri: {}", requestRri);
-        }
+        // 获取token, 并检查登录状态
+        jwtTokenService.checkAuthentication(request);
         filterChain.doFilter(servletRequest, servletResponse);
     }
 

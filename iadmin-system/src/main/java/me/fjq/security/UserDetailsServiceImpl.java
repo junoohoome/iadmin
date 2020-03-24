@@ -1,17 +1,24 @@
 package me.fjq.security;
 
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fjq.enums.UserStatus;
 import me.fjq.exception.BadRequestException;
 import me.fjq.system.entity.SysUser;
-import me.fjq.system.service.SysUserService;
 import me.fjq.system.service.SysMenuService;
+import me.fjq.system.service.SysUserService;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 ;
 
@@ -19,17 +26,13 @@ import org.springframework.transaction.annotation.Transactional;
  * @author fjq
  */
 @Slf4j
+@AllArgsConstructor
 @Service("userDetailsService")
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true, rollbackFor = Exception.class)
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final SysUserService userService;
     private final SysMenuService menuService;
-
-    public UserDetailsServiceImpl(SysUserService userService, SysMenuService menuService) {
-        this.userService = userService;
-        this.menuService = menuService;
-    }
 
     @Override
     public UserDetails loadUserByUsername(String username) {
@@ -40,6 +43,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (user.getStatus().equals(UserStatus.DISABLE.getCode())) {
             throw new BadRequestException("账号未激活");
         }
+        Set<String> permissions = menuService.selectMenuPermsByUserId(user.getUserId());
+        List<GrantedAuthority> authorities = permissions.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+
         return new JwtUserDetails(
                 user.getUserId(),
                 user.getUserName(),
@@ -49,7 +57,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 user.getAvatar(),
                 user.getEmail(),
                 user.getMobile(),
-                menuService.mapToGrantedAuthorities(user),
+                authorities,
                 user.getStatus(),
                 user.getCreateTime());
     }

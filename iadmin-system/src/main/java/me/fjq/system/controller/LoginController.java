@@ -13,10 +13,7 @@ import me.fjq.system.vo.AuthUser;
 import me.fjq.utils.RedisUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,23 +56,15 @@ public class LoginController {
         String code = (String) redisUtils.get(authUser.getUuid());
         // 清除验证码
         redisUtils.del(authUser.getUuid());
-
         if (StringUtils.isBlank(code)) {
             return HttpResult.error("验证码不存在或已过期");
         }
         if (StringUtils.isBlank(authUser.getCode()) || !authUser.getCode().equalsIgnoreCase(code)) {
             return HttpResult.error("验证码错误");
         }
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(authUser.getUsername(), password);
-        // 该方法会去调用UserDetailsServiceImpl.loadUserByUsername
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        // 生成令牌
-        String token = jwtTokenService.generateToken(authentication);
-        Map<String, Object> map = new HashMap<String, Object>(1) {{
-            put("token", properties.getTokenStartWith() + token);
-        }};
-        return HttpResult.ok(map);
+        // 系统登录认证并返回令牌
+        String token = jwtTokenService.login(authUser.getUsername(), password, authenticationManagerBuilder);
+        return HttpResult.ok(properties.getTokenStartWith().concat(token));
     }
 
     @GetMapping(value = "auth/code")

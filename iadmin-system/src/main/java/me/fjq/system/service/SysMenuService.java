@@ -2,11 +2,8 @@ package me.fjq.system.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import me.fjq.system.entity.SysMenu;
-import me.fjq.system.entity.SysUser;
 import me.fjq.system.vo.RouterVo;
-import org.springframework.security.core.GrantedAuthority;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -28,13 +25,6 @@ public interface SysMenuService extends IService<SysMenu> {
      * @return 权限列表
      */
     Set<String> selectMenuPermsByUserId(Long userId);
-
-    /**
-     * 获取用户权限信息
-     * @param user 用户信息
-     * @return 权限信息
-     */
-    Collection<GrantedAuthority> mapToGrantedAuthorities(SysUser user);
 
     /**
      * 根据用户ID查询菜单树信息

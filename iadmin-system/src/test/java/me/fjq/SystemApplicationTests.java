@@ -1,7 +1,6 @@
 package me.fjq;
 
 
-import me.fjq.system.entity.SysUser;
 import me.fjq.system.mapper.SysUserMapper;
 import me.fjq.system.service.SysUserService;
 import org.junit.Test;
@@ -21,9 +20,7 @@ public class SystemApplicationTests {
 
     @Test
     public void contextLoads() {
-//        SysUser sysUser = userService.selectUserById(1L);
-        SysUser sysUser = sysUserMapper.selectUserByUserName("admin");
-        System.out.println(sysUser);
+
     }
 
 }

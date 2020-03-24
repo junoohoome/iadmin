@@ -1,9 +1,10 @@
 package me.fjq.system.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
-import me.fjq.system.mapper.SysUserMapper;
 import me.fjq.system.entity.SysUser;
+import me.fjq.system.mapper.SysUserMapper;
 import me.fjq.system.service.SysUserService;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
      */
     @Override
     public SysUser selectUserByUserName(String userName) {
-        return sysUserMapper.selectUserByUserName(userName);
+        return sysUserMapper.selectOne(new QueryWrapper<SysUser>().lambda().eq(SysUser::getUserName, userName));
     }
 }
