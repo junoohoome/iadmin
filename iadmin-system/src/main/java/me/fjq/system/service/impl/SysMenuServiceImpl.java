@@ -78,7 +78,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
     private String getRouterPath(SysMenu menu) {
         String routerPath = menu.getPath();
         // 非外链并且是一级目录
-        if (0 == menu.getParentId() && "1".equals(menu.getIsFrame())) {
+        if (0 == menu.getParentId() && 1 == menu.getIsFrame()) {
             routerPath = "/" + menu.getPath();
         }
         return routerPath;
