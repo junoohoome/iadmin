@@ -38,8 +38,8 @@ public class IndexController {
         // 管理员拥有所有权限
         boolean isAdmin = SecurityUtils.isAdmin(user.getId());
         if (isAdmin) {
-            roles.add("admin");
-            permissions.add("*:*:*");
+            roles.add("superadmin");
+            permissions.add("superadmin");
         } else {
             roles.addAll(roleService.selectRolePermsByUserId(user.getId()));
             permissions.addAll(menuService.selectMenuPermsByUserId(user.getId()));

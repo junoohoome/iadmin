@@ -1,6 +1,8 @@
 package me.fjq.utils;
 
 
+import me.fjq.exception.BadRequestException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -54,6 +56,22 @@ public class SecurityUtils {
         }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication;
+    }
+
+
+    /**
+     * 获取当前登录用户信息
+     *
+     * @return UserDetails
+     */
+    public static UserDetails getUserDetails() {
+        UserDetails userDetails;
+        try {
+            userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        } catch (Exception e) {
+            throw new BadRequestException(HttpStatus.UNAUTHORIZED, "登录状态过期");
+        }
+        return userDetails;
     }
 
     /**

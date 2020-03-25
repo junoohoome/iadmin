@@ -8,6 +8,7 @@ import me.fjq.exception.BadRequestException;
 import me.fjq.system.entity.SysUser;
 import me.fjq.system.service.SysMenuService;
 import me.fjq.system.service.SysUserService;
+import me.fjq.utils.SecurityUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -44,6 +45,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new BadRequestException("账号未激活");
         }
         Set<String> permissions = menuService.selectMenuPermsByUserId(user.getUserId());
+        // 设置管理员权限
+        if(SecurityUtils.isAdmin(user.getUserId())) {
+            permissions.add("superadmin");
+        }
         List<GrantedAuthority> authorities = permissions.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
