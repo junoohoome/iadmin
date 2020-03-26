@@ -48,6 +48,14 @@ public class Constants {
      * 超级管理员ID
      */
     public static final String SYS_ADMIN_ID = "sysadmin";
+    /**
+     * 超级管理员角色
+     */
+    public static final String SYS_ADMIN_ROLE = "superadmin";
+    /**
+     * 超级管理员权限
+     */
+    public static final String SYS_ADMIN_PERMISSION = "admin";
 
     /**
      * 顶级ID

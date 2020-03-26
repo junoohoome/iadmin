@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @RestController
-@RequestMapping
+@RequestMapping("auth")
 public class LoginController {
 
     @Value("${rsa.private_key}")
@@ -47,7 +47,7 @@ public class LoginController {
     }
 
 
-    @PostMapping(value = "auth/login")
+    @PostMapping(value = "login")
     public HttpResult login(@Validated @RequestBody AuthUser authUser) {
         // 密码解密
         RSA rsa = new RSA(privateKey, null);
@@ -67,7 +67,7 @@ public class LoginController {
         return HttpResult.ok(properties.getTokenStartWith().concat(token));
     }
 
-    @GetMapping(value = "auth/code")
+    @GetMapping(value = "code")
     public HttpResult getCode() {
         // 算术类型
         ArithmeticCaptcha captcha = new ArithmeticCaptcha(111, 36);
@@ -86,8 +86,9 @@ public class LoginController {
         return HttpResult.ok(imgResult);
     }
 
-    @DeleteMapping(value = "/logout")
+    @DeleteMapping(value = "logout")
     public HttpResult logout() {
+        //todo case: remove token
         return HttpResult.ok();
     }
 

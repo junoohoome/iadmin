@@ -2,6 +2,7 @@ package me.fjq.system.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.fjq.constant.Constants;
 import me.fjq.core.HttpResult;
 import me.fjq.security.JwtTokenService;
 import me.fjq.security.JwtUserDetails;
@@ -38,8 +39,8 @@ public class IndexController {
         // 管理员拥有所有权限
         boolean isAdmin = SecurityUtils.isAdmin(user.getId());
         if (isAdmin) {
-            roles.add("superadmin");
-            permissions.add("superadmin");
+            roles.add(Constants.SYS_ADMIN_ROLE);
+            permissions.add(Constants.SYS_ADMIN_PERMISSION);
         } else {
             roles.addAll(roleService.selectRolePermsByUserId(user.getId()));
             permissions.addAll(menuService.selectMenuPermsByUserId(user.getId()));

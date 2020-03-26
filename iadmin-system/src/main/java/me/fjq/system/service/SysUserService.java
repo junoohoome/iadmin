@@ -1,7 +1,11 @@
 package me.fjq.system.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import me.fjq.system.entity.SysUser;
+import me.fjq.system.query.SysUserQuery;
+import me.fjq.system.vo.system.SysUserVo;
+import org.springframework.data.repository.query.Param;
 
 /**
  * 用户信息表(SysUser)表服务接口
@@ -11,12 +15,6 @@ import me.fjq.system.entity.SysUser;
  */
 public interface SysUserService extends IService<SysUser> {
 
-    /**
-     * 通过用户名查询用户
-     *
-     * @param userName 用户名
-     * @return 用户对象信息
-     */
-    SysUser selectUserByUserName(String userName);
+    Page<SysUserVo> selectPage(Page page, @Param("query") SysUserQuery query);
 
 }

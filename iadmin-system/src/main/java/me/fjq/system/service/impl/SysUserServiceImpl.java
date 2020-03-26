@@ -1,11 +1,13 @@
 package me.fjq.system.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
 import me.fjq.system.entity.SysUser;
 import me.fjq.system.mapper.SysUserMapper;
+import me.fjq.system.query.SysUserQuery;
 import me.fjq.system.service.SysUserService;
+import me.fjq.system.vo.system.SysUserVo;
 import org.springframework.stereotype.Service;
 
 /**
@@ -20,14 +22,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     private final SysUserMapper sysUserMapper;
 
-    /**
-     * 通过用户名查询用户
-     *
-     * @param userName 用户名
-     * @return 用户对象信息
-     */
     @Override
-    public SysUser selectUserByUserName(String userName) {
-        return sysUserMapper.selectOne(new QueryWrapper<SysUser>().lambda().eq(SysUser::getUserName, userName));
+    public Page<SysUserVo> selectPage(Page page, SysUserQuery query) {
+        return page.setRecords(this.sysUserMapper.selectPage(page, query));
     }
 }

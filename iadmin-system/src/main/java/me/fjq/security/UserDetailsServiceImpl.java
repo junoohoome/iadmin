@@ -1,8 +1,10 @@
 package me.fjq.security;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.fjq.constant.Constants;
 import me.fjq.enums.UserStatus;
 import me.fjq.exception.BadRequestException;
 import me.fjq.system.entity.SysUser;
@@ -37,7 +39,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        SysUser user = userService.selectUserByUserName(username);
+        SysUser user = userService.getOne(new QueryWrapper<SysUser>().lambda().eq(SysUser::getUserName, username));;
         if (user == null) {
             throw new BadRequestException("账号不存在");
         }
@@ -47,7 +49,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         Set<String> permissions = menuService.selectMenuPermsByUserId(user.getUserId());
         // 设置管理员权限
         if(SecurityUtils.isAdmin(user.getUserId())) {
-            permissions.add("superadmin");
+            permissions.add(Constants.SYS_ADMIN_PERMISSION);
         }
         List<GrantedAuthority> authorities = permissions.stream()
                 .map(SimpleGrantedAuthority::new)
