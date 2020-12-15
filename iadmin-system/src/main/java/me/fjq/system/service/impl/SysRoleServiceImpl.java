@@ -1,17 +1,18 @@
 package me.fjq.system.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
 import me.fjq.system.entity.SysRole;
+import me.fjq.system.entity.SysRoleMenu;
 import me.fjq.system.mapper.SysRoleMapper;
+import me.fjq.system.mapper.SysRoleMenuMapper;
 import me.fjq.system.service.SysRoleService;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 角色信息表(SysRole)表服务实现类
@@ -24,6 +25,7 @@ import java.util.Set;
 public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> implements SysRoleService {
 
     private final SysRoleMapper roleMapper;
+    private final SysRoleMenuMapper roleMenuMapper;
 
     @Override
     public Set<String> selectRolePermsByUserId(Long userId) {
@@ -35,6 +37,12 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
             }
         }
         return perms;
+    }
+
+    @Override
+    public List<Long> selectRoleMenuListByRoleId(Long roleId) {
+        return roleMenuMapper.selectList(new QueryWrapper<SysRoleMenu>().lambda().eq(SysRoleMenu::getRoleId, roleId))
+                .stream().map(SysRoleMenu::getMenuId).collect(Collectors.toList());
     }
 
 }

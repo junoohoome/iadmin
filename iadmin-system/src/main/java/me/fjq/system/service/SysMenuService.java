@@ -3,6 +3,7 @@ package me.fjq.system.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import me.fjq.system.entity.SysMenu;
 import me.fjq.system.vo.RouterVo;
+import me.fjq.system.vo.TreeSelect;
 
 import java.util.List;
 import java.util.Set;
@@ -32,7 +33,7 @@ public interface SysMenuService extends IService<SysMenu> {
      * @param userId 用户ID
      * @return 菜单列表
      */
-    List<SysMenu> selectMenuTreeByUserId(Long userId);
+    List<SysMenu> selectMenuTreeByUserId(Long userId, String menuName, Boolean isRouterSelect);
 
     /**
      * 构建前端路由所需要的菜单
@@ -42,4 +43,11 @@ public interface SysMenuService extends IService<SysMenu> {
      */
     List<RouterVo> buildMenus(List<SysMenu> menus);
 
+    /**
+     * 构建前端所需要下拉树结构
+     *
+     * @param menus 菜单列表
+     * @return 下拉树结构列表
+     */
+    List<TreeSelect> buildMenuTreeSelect(List<SysMenu> menus);
 }

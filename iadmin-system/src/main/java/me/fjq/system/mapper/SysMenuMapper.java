@@ -24,16 +24,20 @@ public interface SysMenuMapper extends BaseMapper<SysMenu> {
     /**
      * 根据用户ID查询菜单
      *
+     * @param menuName       菜单名称
+     * @param isRouterSelect 是否是路由菜单查询
      * @return 菜单列表
      */
-    List<SysMenu> selectMenuTreeAll();
+    List<SysMenu> selectMenuTreeAll(String menuName, Boolean isRouterSelect);
 
     /**
      * 根据用户ID查询菜单
      *
-     * @param userId 用户ID
+     * @param userId         用户ID
+     * @param menuName       菜单名称
+     * @param isRouterSelect 是否是路由菜单查询
      * @return 菜单列表
      */
-    List<SysMenu> selectMenuTreeByUserId(Long userId);
+    List<SysMenu> selectMenuTreeByUserId(Long userId, String menuName, Boolean isRouterSelect);
 
 }

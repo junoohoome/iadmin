@@ -1,12 +1,12 @@
 package me.fjq.system.controller;
 
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.api.ApiController;
-import com.baomidou.mybatisplus.extension.api.R;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import me.fjq.core.HttpResult;
+import me.fjq.security.JwtTokenService;
+import me.fjq.security.JwtUserDetails;
 import me.fjq.system.entity.SysMenu;
 import me.fjq.system.service.SysMenuService;
+import me.fjq.utils.ServletUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -22,23 +22,34 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("sysMenu")
-public class SysMenuController extends ApiController {
+public class SysMenuController {
     /**
      * 服务对象
      */
     @Resource
     private SysMenuService sysMenuService;
+    @Resource
+    private JwtTokenService jwtTokenService;
 
     /**
-     * 分页查询所有数据
-     *
-     * @param page 分页对象
-     * @param sysMenu 查询实体
-     * @return 所有数据
+     * 获取菜单列表
      */
-    @GetMapping
-    public R selectAll(Page<SysMenu> page, SysMenu sysMenu) {
-        return success(this.sysMenuService.page(page, new QueryWrapper<>(sysMenu)));
+    @GetMapping("list")
+    public HttpResult list(String menuName) {
+        JwtUserDetails user = jwtTokenService.getJwtUserDetails(ServletUtils.getRequest());
+        List<SysMenu> menus = sysMenuService.selectMenuTreeByUserId(user.getId(), menuName, false);
+        return HttpResult.ok(menus);
+    }
+
+    /**
+     * 获取菜单下拉树列表
+     * isRouterSelect: true 因为不需要查询增删查改操作菜单
+     */
+    @GetMapping("treeSelect")
+    public HttpResult treeSelect(String menuName) {
+        JwtUserDetails user = jwtTokenService.getJwtUserDetails(ServletUtils.getRequest());
+        List<SysMenu> menus = sysMenuService.selectMenuTreeByUserId(user.getId(), menuName, true);
+        return HttpResult.ok(sysMenuService.buildMenuTreeSelect(menus));
     }
 
     /**
@@ -48,8 +59,8 @@ public class SysMenuController extends ApiController {
      * @return 单条数据
      */
     @GetMapping("{id}")
-    public R selectOne(@PathVariable Serializable id) {
-        return success(this.sysMenuService.getById(id));
+    public HttpResult selectOne(@PathVariable Serializable id) {
+        return HttpResult.ok(this.sysMenuService.getById(id));
     }
 
     /**
@@ -59,8 +70,8 @@ public class SysMenuController extends ApiController {
      * @return 新增结果
      */
     @PostMapping
-    public R insert(@RequestBody SysMenu sysMenu) {
-        return success(this.sysMenuService.save(sysMenu));
+    public HttpResult insert(@RequestBody SysMenu sysMenu) {
+        return HttpResult.ok(this.sysMenuService.save(sysMenu));
     }
 
     /**
@@ -70,8 +81,8 @@ public class SysMenuController extends ApiController {
      * @return 修改结果
      */
     @PutMapping
-    public R update(@RequestBody SysMenu sysMenu) {
-        return success(this.sysMenuService.updateById(sysMenu));
+    public HttpResult update(@RequestBody SysMenu sysMenu) {
+        return HttpResult.ok(this.sysMenuService.updateById(sysMenu));
     }
 
     /**
@@ -81,7 +92,7 @@ public class SysMenuController extends ApiController {
      * @return 删除结果
      */
     @DeleteMapping
-    public R delete(@RequestParam("idList") List<Long> idList) {
-        return success(this.sysMenuService.removeByIds(idList));
+    public HttpResult delete(@RequestParam("idList") List<Long> idList) {
+        return HttpResult.ok(this.sysMenuService.removeByIds(idList));
     }
 }

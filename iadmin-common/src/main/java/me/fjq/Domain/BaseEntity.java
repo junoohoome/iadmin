@@ -16,7 +16,7 @@ import java.util.Date;
 @Setter
 public class BaseEntity implements Serializable {
 
-    /**
+     /**
      * 创建者
      */
     private String createBy;

@@ -1,16 +1,14 @@
 package me.fjq.system.controller;
 
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.api.ApiController;
-import com.baomidou.mybatisplus.extension.api.R;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import me.fjq.core.HttpResult;
 import me.fjq.system.entity.SysDictData;
 import me.fjq.system.service.SysDictDataService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.io.Serializable;
 import java.util.List;
 
 
@@ -22,7 +20,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("sysDictData")
-public class SysDictDataController extends ApiController {
+public class SysDictDataController {
     /**
      * 服务对象
      */
@@ -30,26 +28,20 @@ public class SysDictDataController extends ApiController {
     private SysDictDataService sysDictDataService;
 
     /**
-     * 分页查询所有数据
+     * 通过字典类型查询数据
      *
-     * @param page 分页对象
-     * @param sysDictData 查询实体
-     * @return 所有数据
+     * @param dictType 字典类型
+     * @return 查询字典类型数据
      */
-    @GetMapping
-    public R selectAll(Page<SysDictData> page, SysDictData sysDictData) {
-        return success(this.sysDictDataService.page(page, new QueryWrapper<>(sysDictData)));
-    }
+    @GetMapping("{dictType}")
+    public HttpResult selectListByDictType(@PathVariable String dictType) {
+        if (StrUtil.isBlank(dictType)) {
+            return HttpResult.ok();
+        }
 
-    /**
-     * 通过主键查询单条数据
-     *
-     * @param id 主键
-     * @return 单条数据
-     */
-    @GetMapping("{id}")
-    public R selectOne(@PathVariable Serializable id) {
-        return success(this.sysDictDataService.getById(id));
+        return HttpResult.ok(this.sysDictDataService.list(
+                Wrappers.<SysDictData>lambdaQuery().eq(SysDictData::getDictType, dictType)
+        ));
     }
 
     /**
@@ -59,8 +51,8 @@ public class SysDictDataController extends ApiController {
      * @return 新增结果
      */
     @PostMapping
-    public R insert(@RequestBody SysDictData sysDictData) {
-        return success(this.sysDictDataService.save(sysDictData));
+    public HttpResult insert(@RequestBody SysDictData sysDictData) {
+        return HttpResult.ok(this.sysDictDataService.save(sysDictData));
     }
 
     /**
@@ -70,8 +62,8 @@ public class SysDictDataController extends ApiController {
      * @return 修改结果
      */
     @PutMapping
-    public R update(@RequestBody SysDictData sysDictData) {
-        return success(this.sysDictDataService.updateById(sysDictData));
+    public HttpResult update(@RequestBody SysDictData sysDictData) {
+        return HttpResult.ok(this.sysDictDataService.updateById(sysDictData));
     }
 
     /**
@@ -81,7 +73,8 @@ public class SysDictDataController extends ApiController {
      * @return 删除结果
      */
     @DeleteMapping
-    public R delete(@RequestParam("idList") List<Long> idList) {
-        return success(this.sysDictDataService.removeByIds(idList));
+    public HttpResult delete(@RequestParam("idList") List<Long> idList) {
+        return HttpResult.ok(this.sysDictDataService.removeByIds(idList));
     }
+
 }

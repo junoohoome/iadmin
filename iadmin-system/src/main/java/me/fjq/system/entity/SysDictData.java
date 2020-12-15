@@ -19,8 +19,8 @@ import me.fjq.Domain.BaseEntity;
 public class SysDictData extends BaseEntity {
 
     /**字典编码*/
-    @TableId(value = "dict_code", type = IdType.AUTO)
-    private Long dictCode;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
     /**字典排序*/
     private Integer dictSort;
     /**字典标签*/

@@ -1,5 +1,6 @@
 package me.fjq.system.controller;
 
+import ch.qos.logback.core.joran.action.IADataForComplexProperty;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fjq.constant.Constants;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author fjq
@@ -60,7 +63,8 @@ public class IndexController {
     @GetMapping("getRouters")
     public HttpResult getRouters() {
         JwtUserDetails user = jwtTokenService.getJwtUserDetails(ServletUtils.getRequest());
-        List<SysMenu> menus = menuService.selectMenuTreeByUserId(user.getId());
+
+        List<SysMenu> menus = menuService.selectMenuTreeByUserId(user.getId(), "", true);
         List<RouterVo> routerVos = menuService.buildMenus(menus);
         return HttpResult.ok(routerVos);
     }

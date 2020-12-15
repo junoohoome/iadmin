@@ -3,6 +3,7 @@ package me.fjq.system.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import me.fjq.system.entity.SysRole;
 
+import java.util.List;
 import java.util.Set;
 
 
@@ -21,5 +22,7 @@ public interface SysRoleService extends IService<SysRole> {
      * @return 权限列表
      */
     Set<String> selectRolePermsByUserId(Long userId);
+
+    List<Long> selectRoleMenuListByRoleId(Long roleId);
 
 }

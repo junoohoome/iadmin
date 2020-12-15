@@ -9,6 +9,7 @@ import org.lionsoul.ip2region.DbSearcher;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.regex.Pattern;
 
 /**
  * 获取地址类
@@ -48,6 +49,20 @@ public class AddressUtils {
 
         }
         return "";
+    }
+
+    private static boolean dealSeqValid(String str) {
+//        if (StringUtils.contains(str, "〔") && StringUtils.contains(str, "〕")) {
+//            return true;
+//        }
+//        return false;
+//[\u4e00-\u9fa5_a-zA-Z0-9]
+        return Pattern.matches("^[\\u4e00-\\u9fa5\\-_a-zA-Z0-9]{1,20}[\\〔|\\[][0-9]{4}\\〕[\\u4e00-\\u9fa5_a-zA-Z0-9]{1,10}", str);
+//        return Pattern.matches("^[\\u4e00-\\u9fa5_a-zA-Z0-9]+\\〔[0-9]{4}\\〕+[\\u4e00-\\u9fa5_a-zA-Z0-9]", str);
+    }
+    public static void main(String[] args) {
+        String s = "asdf黑发_-发顿发[1234〕asdfasd顿发a";
+        System.out.println(dealSeqValid(s));
     }
 
 }

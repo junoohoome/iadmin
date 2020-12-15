@@ -3,6 +3,7 @@ package me.fjq.system.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
+import me.fjq.system.vo.TreeSelect;
 import me.fjq.utils.SecurityUtils;
 import me.fjq.system.entity.SysMenu;
 import me.fjq.system.mapper.SysMenuMapper;
@@ -13,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 菜单权限表(SysMenu)表服务实现类
@@ -39,12 +41,12 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
     }
 
     @Override
-    public List<SysMenu> selectMenuTreeByUserId(Long userId) {
+    public List<SysMenu> selectMenuTreeByUserId(Long userId, String menuName, Boolean isRouterSelect) {
         List<SysMenu> menus;
         if (SecurityUtils.isAdmin(userId)) {
-            menus = menuMapper.selectMenuTreeAll();
+            menus = menuMapper.selectMenuTreeAll(menuName, isRouterSelect);
         } else {
-            menus = menuMapper.selectMenuTreeByUserId(userId);
+            menus = menuMapper.selectMenuTreeByUserId(userId, menuName, isRouterSelect);
         }
         return getChildMenuTree(menus, 0);
     }
@@ -67,6 +69,11 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
             routers.add(router);
         }
         return routers;
+    }
+
+    @Override
+    public List<TreeSelect> buildMenuTreeSelect(List<SysMenu> menus) {
+        return menus.stream().map(TreeSelect::new).collect(Collectors.toList());
     }
 
     /**
@@ -95,11 +102,15 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
         List<SysMenu> returnList = new ArrayList<>();
         for (Iterator<SysMenu> iterator = list.iterator(); iterator.hasNext(); ) {
             SysMenu t = iterator.next();
-            // 一、根据传入的某个父节点ID,遍历该父节点的所有子节点
+            // 根据传入的某个父节点ID,遍历该父节点的所有子节点
             if (t.getParentId() == parentId) {
                 recursionFn(list, t);
                 returnList.add(t);
             }
+        }
+        // 如果不是从根结点开始获取，那么就直接返回原数据
+        if (returnList.isEmpty()) {
+            returnList = list;
         }
         return returnList;
     }
@@ -145,7 +156,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
      * 判断是否有子节点
      */
     private boolean hasChild(List<SysMenu> list, SysMenu t) {
-        return getChildList(list, t).size() > 0 ? true : false;
+        return getChildList(list, t).size() > 0;
     }
 
 }
