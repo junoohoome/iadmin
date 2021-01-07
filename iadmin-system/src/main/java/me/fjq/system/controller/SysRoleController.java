@@ -2,6 +2,7 @@ package me.fjq.system.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import me.fjq.core.HttpResult;
 import me.fjq.system.entity.SysRole;
@@ -107,5 +108,15 @@ public class SysRoleController {
     public HttpResult<List<Long>> findRoleMenuListByRoleId(@RequestParam("roleId") String roleId) {
         return HttpResult.ok(this.sysRoleService.selectRoleMenuListByRoleId(Long.valueOf(roleId)));
     }
+
+    @PutMapping("update/permissions")
+    public HttpResult updatePermissions(@RequestParam("roleId") String roleId, @RequestParam("menuIds") String menuIds) {
+        if (ObjectUtils.isNull(roleId, menuIds)) {
+            return HttpResult.error("参数有误");
+        }
+        sysRoleService.updatePermissions(Long.valueOf(roleId), menuIds);
+        return HttpResult.ok();
+    }
+
 
 }

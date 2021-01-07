@@ -181,9 +181,9 @@ public class JwtTokenService {
             Authentication authentication = getAuthenticationFromToken(token);
             // 设置登录认证信息到上下文
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            log.info("set Authentication to security context for '{}', uri: {}", authentication.getName(), requestRri);
+            log.debug("set Authentication to security context for '{}', uri: {}", authentication.getName(), requestRri);
         } else {
-            log.info("no valid JWT token found, uri: {}", requestRri);
+            log.error("no valid JWT token found, uri: {}", requestRri);
         }
     }
 

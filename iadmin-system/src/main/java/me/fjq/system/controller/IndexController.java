@@ -1,25 +1,26 @@
 package me.fjq.system.controller;
 
-import ch.qos.logback.core.joran.action.IADataForComplexProperty;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.fjq.constant.Constants;
 import me.fjq.core.HttpResult;
 import me.fjq.security.JwtTokenService;
 import me.fjq.security.JwtUserDetails;
-import me.fjq.utils.SecurityUtils;
 import me.fjq.system.entity.SysMenu;
 import me.fjq.system.service.SysMenuService;
 import me.fjq.system.service.SysRoleService;
 import me.fjq.system.vo.RouterVo;
+import me.fjq.utils.SecurityUtils;
 import me.fjq.utils.ServletUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author fjq

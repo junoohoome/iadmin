@@ -9,6 +9,7 @@ import me.fjq.system.entity.SysRoleMenu;
 import me.fjq.system.mapper.SysRoleMapper;
 import me.fjq.system.mapper.SysRoleMenuMapper;
 import me.fjq.system.service.SysRoleService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -45,4 +46,15 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
                 .stream().map(SysRoleMenu::getMenuId).collect(Collectors.toList());
     }
 
+    @Override
+    public void updatePermissions(Long roleId, String menuIds) {
+        String[] split = StringUtils.split(menuIds, ",");
+        roleMenuMapper.delete(new QueryWrapper<SysRoleMenu>().lambda().eq(SysRoleMenu::getRoleId, roleId));
+        for (String menuId : split) {
+            SysRoleMenu roleMenu = new SysRoleMenu();
+            roleMenu.setMenuId(Long.parseLong(menuId));
+            roleMenu.setRoleId(roleId);
+            roleMenuMapper.insert(roleMenu);
+        }
+    }
 }

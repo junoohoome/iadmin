@@ -1,13 +1,14 @@
 package me.fjq.system.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Getter;
 import lombok.Setter;
 import me.fjq.Domain.BaseEntity;
 
 import java.util.Date;
-
+import java.util.List;
 
 
 /**
@@ -47,5 +48,10 @@ public class SysUser extends BaseEntity {
     private String loginIp;
     /**最后登陆时间*/
     private Date loginDate;
+    /**用户角色IDS*/
+    private String roleIds;
+    /**用户角色名称*/
+    @TableField(exist = false)
+    private List<String> roleNames;
 
 }

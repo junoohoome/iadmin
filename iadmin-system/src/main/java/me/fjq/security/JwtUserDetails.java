@@ -70,7 +70,7 @@ public class JwtUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return status.equals("0") ? true : false;
+        return "0".equals(status);
     }
 
 }

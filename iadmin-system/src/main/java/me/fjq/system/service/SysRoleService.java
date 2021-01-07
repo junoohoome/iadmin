@@ -25,4 +25,6 @@ public interface SysRoleService extends IService<SysRole> {
 
     List<Long> selectRoleMenuListByRoleId(Long roleId);
 
+    void updatePermissions(Long roleId, String menuIds);
+
 }

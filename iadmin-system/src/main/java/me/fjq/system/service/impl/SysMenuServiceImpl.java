@@ -3,17 +3,23 @@ package me.fjq.system.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
-import me.fjq.system.vo.TreeSelect;
-import me.fjq.utils.SecurityUtils;
 import me.fjq.system.entity.SysMenu;
 import me.fjq.system.mapper.SysMenuMapper;
 import me.fjq.system.service.SysMenuService;
 import me.fjq.system.vo.MetaVo;
 import me.fjq.system.vo.RouterVo;
+import me.fjq.system.vo.TreeSelect;
+import me.fjq.utils.SecurityUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
