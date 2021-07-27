@@ -1,7 +1,9 @@
 package me.fjq;
 
+import me.fjq.utils.SpringContextHolder;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class SystemApplication {
@@ -10,9 +12,9 @@ public class SystemApplication {
         SpringApplication.run(SystemApplication.class, args);
     }
 
-//    @Bean
-//    public SpringContextHolder springContextHolder() {
-//        return new SpringContextHolder();
-//    }
+    @Bean
+    public SpringContextHolder springContextHolder() {
+        return new SpringContextHolder();
+    }
 
 }
