@@ -77,6 +77,7 @@ public class LoginController {
         // 获取验证码文本
         String result = captcha.text();
         String uuid = Constants.CODE_KEY + IdUtil.simpleUUID();
+        log.info("验证码: {} -> {}", uuid, result); // 临时调试日志
         // 保存
         redisUtils.set(uuid, result, Constants.CODE_EXPIRE_TIME, TimeUnit.MINUTES);
         // 验证码信息
