@@ -8,13 +8,15 @@ import me.fjq.security.handle.JwtAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.CorsFilter;
 
@@ -29,8 +31,8 @@ import java.util.Set;
 @AllArgsConstructor
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
+public class WebSecurityConfig {
 
     private final JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
     private final CorsFilter corsFilter;
@@ -43,47 +45,55 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-    @Override
-    protected void configure(HttpSecurity httpSecurity) throws Exception {
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         Set<String> anonymousUrls = new HashSet<>();
         anonymousUrls.add("/auth/code");
         anonymousUrls.add("/auth/login");
 
         httpSecurity
                 // 禁用 CSRF
-                .csrf().disable()
+                .csrf(csrf -> csrf.disable())
+                // 添加 CORS 过滤器
                 .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
-                // 授权异常
-                .exceptionHandling()
-                .authenticationEntryPoint(authenticationErrorHandler)
-                .accessDeniedHandler(jwtAccessDeniedHandler)
+                // 授权异常处理
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(authenticationErrorHandler)
+                        .accessDeniedHandler(jwtAccessDeniedHandler)
+                )
                 // 防止iframe 造成跨域
-                .and().headers().frameOptions().disable()
-
+                .headers(headers -> headers.frameOptions().disable())
                 // 不创建会话
-                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().authorizeRequests()
-                // 静态资源等等
-                .antMatchers(HttpMethod.GET, "/*.html", "/**/*.html", "/**/*.css", "/**/*.js", "/webSocket/**")
-                .permitAll()
-                // swagger 文档
-                .antMatchers("/swagger-ui.html").permitAll()
-                .antMatchers("/swagger-resources/**").permitAll()
-                .antMatchers("/webjars/**").permitAll()
-                .antMatchers("/*/api-docs").permitAll()
-                // 文件
-                .antMatchers("/avatar/**").permitAll()
-                .antMatchers("/file/**").permitAll()
-                // 阿里巴巴 druid
-                .antMatchers("/druid/**").permitAll()
-                // 放行OPTIONS请求
-                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                // 自定义匿名访问所有url放行 ： 允许匿名和带权限以及登录用户访问
-                .antMatchers(anonymousUrls.toArray(new String[0])).anonymous()
-                // 所有请求都需要认证
-                .anyRequest().authenticated();
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                // 授权配置
+                .authorizeHttpRequests(auth -> auth
+                        // 静态资源 - Spring Boot 默认已处理，这里只放行特定目录
+                        .requestMatchers("/webSocket/**").permitAll()
+                        // SpringDoc 文档
+                        .requestMatchers("/swagger-ui.html", "/swagger-ui/**",
+                                "/v3/api-docs/**", "/swagger-resources/**",
+                                "/webjars/**", "/api-docs/**").permitAll()
+                        // 文件
+                        .requestMatchers("/avatar/**", "/file/**").permitAll()
+                        // 阿里巴巴 druid
+                        .requestMatchers("/druid/**").permitAll()
+                        // 自定义匿名访问所有url放行 ： 允许匿名和带权限以及登录用户访问
+                        .requestMatchers(anonymousUrls.toArray(new String[0])).permitAll()
+                        // 所有请求都需要认证
+                        .anyRequest().authenticated()
+                );
+
         // 添加JWT filter
         httpSecurity.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return httpSecurity.build();
     }
 
 }

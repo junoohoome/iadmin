@@ -14,42 +14,26 @@
 	<name>iadmin-system</name>
 	<description>系统核心模块</description>
 
-	<properties>
-		<java.version>1.8</java.version>
-		<jwt.version>0.9.1</jwt.version>
-	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>me.fjq</groupId>
 			<artifactId>iadmin-common</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-		<!--jwt-->
-		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt</artifactId>
-			<version>${jwt.version}</version>
-		</dependency>
+
+		<!-- 验证码 -->
 		<dependency>
 			<groupId>com.github.whvcse</groupId>
 			<artifactId>easy-captcha</artifactId>
 			<version>1.6.2</version>
 		</dependency>
 	</dependencies>
+
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-			<!-- 跳过单元测试 -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<skipTests>true</skipTests>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>

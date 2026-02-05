@@ -5,7 +5,7 @@
 	<property name="log.path" value="./logs" />
     <property name="log.charset" value="utf-8" />
     <!-- 日志输出格式 -->
-    <property name="log.pattern" value="%black(%contextName-) %red(%d{yyyy-MM-dd HH:mm:ss}) %green([%thread]) %highlight(%-5level) %boldMagenta(%logger{34}) - %gray(%msg%n)" />
+    <property name="log.pattern" value="%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n" />
     <!-- 控制台输出 -->
 	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>

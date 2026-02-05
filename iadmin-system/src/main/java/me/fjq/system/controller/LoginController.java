@@ -3,7 +3,8 @@ package me.fjq.system.controller;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.RSA;
-import com.wf.captcha.ArithmeticCaptcha;
+import com.wf.captcha.SpecCaptcha;
+import com.wf.captcha.base.Captcha;
 import lombok.extern.slf4j.Slf4j;
 import me.fjq.constant.Constants;
 import me.fjq.core.HttpResult;
@@ -69,11 +70,11 @@ public class LoginController {
 
     @GetMapping(value = "code")
     public HttpResult getCode() {
-        // 算术类型
-        ArithmeticCaptcha captcha = new ArithmeticCaptcha(111, 36);
-        // 几位数运算，默认是两位
-        captcha.setLen(2);
-        // 获取运算的结果
+        // 字符类型验证码
+        SpecCaptcha captcha = new SpecCaptcha(111, 36);
+        // 几位字符，默认是4位
+        captcha.setLen(4);
+        // 获取验证码文本
         String result = captcha.text();
         String uuid = Constants.CODE_KEY + IdUtil.simpleUUID();
         // 保存

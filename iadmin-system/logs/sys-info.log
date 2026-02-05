@@ -1,0 +1,11 @@
+[30mIAdmin-[0;39m [31m2026-02-06 00:22:44[0;39m [32m[SpringApplicationShutdownHook][0;39m [34mINFO [0;39m [1;35mc.a.druid.pool.DruidDataSource[0;39m - [1;30m{dataSource-0} closing ...
+[0;39m[30mIAdmin-[0;39m [31m2026-02-06 00:23:17[0;39m [32m[main][0;39m [34mINFO [0;39m [1;35mme.fjq.SystemApplication[0;39m - [1;30mStarting SystemApplication using Java 21.0.7 with PID 18876 (/Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system/target/classes started by fangjunqiang in /Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system)
+[0;39m[30mIAdmin-[0;39m [31m2026-02-06 00:23:17[0;39m [32m[main][0;39m [34mINFO [0;39m [1;35mme.fjq.SystemApplication[0;39m - [1;30mThe following 1 profile is active: "dev"
+[0;39m[30mIAdmin-[0;39m [31m2026-02-06 00:23:19[0;39m [32m[main][0;39m [34mINFO [0;39m [1;35mo.a.c.http11.Http11NioProtocol[0;39m - [1;30mInitializing ProtocolHandler ["http-nio-8080"]
+[0;39m[30mIAdmin-[0;39m [31m2026-02-06 00:23:19[0;39m [32m[main][0;39m [34mINFO [0;39m [1;35mo.a.catalina.core.StandardService[0;39m - [1;30mStarting service [Tomcat]
+[0;39m[30mIAdmin-[0;39m [31m2026-02-06 00:23:19[0;39m [32m[main][0;39m [34mINFO [0;39m [1;35mo.a.catalina.core.StandardEngine[0;39m - [1;30mStarting Servlet engine: [Apache Tomcat/10.1.20]
+[0;39m[30mIAdmin-[0;39m [31m2026-02-06 00:23:19[0;39m [32m[main][0;39m [34mINFO [0;39m [1;35mo.a.c.c.C.[Tomcat].[localhost].[/][0;39m - [1;30mInitializing Spring embedded WebApplicationContext
+[0;39m[30mIAdmin-[0;39m [31m2026-02-06 00:23:22[0;39m [32m[main][0;39m [34mINFO [0;39m [1;35mo.a.c.http11.Http11NioProtocol[0;39m - [1;30mStarting ProtocolHandler ["http-nio-8080"]
+[0;39m[30mIAdmin-[0;39m [31m2026-02-06 00:23:22[0;39m [32m[main][0;39m [34mINFO [0;39m [1;35mme.fjq.SystemApplication[0;39m - [1;30mStarted SystemApplication in 5.423 seconds (process running for 5.803)
+[0;39m[30mIAdmin-[0;39m [31m2026-02-06 00:26:21[0;39m [32m[http-nio-8080-exec-1][0;39m [34mINFO [0;39m [1;35mo.a.c.c.C.[Tomcat].[localhost].[/][0;39m - [1;30mInitializing Spring DispatcherServlet 'dispatcherServlet'
+[0;39m

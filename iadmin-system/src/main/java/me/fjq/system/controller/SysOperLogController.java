@@ -2,17 +2,17 @@ package me.fjq.system.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.api.ApiController;
-import com.baomidou.mybatisplus.extension.api.R;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import me.fjq.core.HttpResult;
 import me.fjq.system.entity.SysOperLog;
 import me.fjq.system.service.SysOperLogService;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
-
+import java.util.stream.Collectors;
 
 
 /**
@@ -23,7 +23,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("sysOperLog")
-public class SysOperLogController extends ApiController {
+public class SysOperLogController {
     /**
      * 服务对象
      */
@@ -38,8 +38,8 @@ public class SysOperLogController extends ApiController {
      * @return 所有数据
      */
     @GetMapping
-    public R selectAll(Page<SysOperLog> page, SysOperLog sysOperLog) {
-        return success(this.sysOperLogService.page(page, new QueryWrapper<>(sysOperLog)));
+    public HttpResult selectAll(Page<SysOperLog> page, SysOperLog sysOperLog) {
+        return HttpResult.ok(this.sysOperLogService.page(page, new QueryWrapper<>(sysOperLog)));
     }
 
     /**
@@ -49,8 +49,8 @@ public class SysOperLogController extends ApiController {
      * @return 单条数据
      */
     @GetMapping("{id}")
-    public R selectOne(@PathVariable Serializable id) {
-        return success(this.sysOperLogService.getById(id));
+    public HttpResult selectOne(@PathVariable Serializable id) {
+        return HttpResult.ok(this.sysOperLogService.getById(id));
     }
 
     /**
@@ -60,8 +60,8 @@ public class SysOperLogController extends ApiController {
      * @return 新增结果
      */
     @PostMapping
-    public R insert(@RequestBody SysOperLog sysOperLog) {
-        return success(this.sysOperLogService.save(sysOperLog));
+    public HttpResult insert(@RequestBody SysOperLog sysOperLog) {
+        return HttpResult.ok(this.sysOperLogService.save(sysOperLog));
     }
 
     /**
@@ -71,18 +71,21 @@ public class SysOperLogController extends ApiController {
      * @return 修改结果
      */
     @PutMapping
-    public R update(@RequestBody SysOperLog sysOperLog) {
-        return success(this.sysOperLogService.updateById(sysOperLog));
+    public HttpResult update(@RequestBody SysOperLog sysOperLog) {
+        return HttpResult.ok(this.sysOperLogService.updateById(sysOperLog));
     }
 
     /**
      * 删除数据
      *
-     * @param idList 主键结合
+     * @param idList 主键结合 (comma-separated string)
      * @return 删除结果
      */
-    @DeleteMapping
-    public R delete(@RequestParam("idList") List<Long> idList) {
-        return success(this.sysOperLogService.removeByIds(idList));
+    @DeleteMapping("{idList}")
+    public HttpResult delete(@PathVariable String idList) {
+        List<Long> ids = Arrays.stream(idList.split(","))
+            .map(Long::valueOf)
+            .collect(Collectors.toList());
+        return HttpResult.ok(this.sysOperLogService.removeByIds(ids));
     }
 }

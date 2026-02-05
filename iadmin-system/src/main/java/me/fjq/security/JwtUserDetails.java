@@ -2,13 +2,18 @@ package me.fjq.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import me.fjq.system.entity.SysRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.List;
 
 
 /**
@@ -17,6 +22,8 @@ import java.util.Date;
 
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
 @AllArgsConstructor
 public class JwtUserDetails implements UserDetails {
 
@@ -43,6 +50,21 @@ public class JwtUserDetails implements UserDetails {
     private String status;
 
     private Date createTime;
+
+    /**
+     * 部门ID
+     */
+    private Long deptId;
+
+    /**
+     * 祖级列表（用于数据权限）
+     */
+    private String ancestors;
+
+    /**
+     * 角色列表（用于数据权限）
+     */
+    private List<SysRole> roles;
 
     @JsonIgnore
     @Override

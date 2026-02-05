@@ -50,6 +50,10 @@ public class SysUser extends BaseEntity {
     private Date loginDate;
     /**用户角色IDS*/
     private String roleIds;
+    /**部门ID*/
+    private Long deptId;
+    /**祖级列表*/
+    private String ancestors;
     /**用户角色名称*/
     @TableField(exist = false)
     private List<String> roleNames;

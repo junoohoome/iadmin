@@ -55,18 +55,22 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
 
-        return new JwtUserDetails(
-                user.getUserId(),
-                user.getUserName(),
-                user.getNickName(),
-                user.getSex(),
-                user.getPassword(),
-                user.getAvatar(),
-                user.getEmail(),
-                user.getMobile(),
-                authorities,
-                user.getStatus(),
-                user.getCreateTime());
+        return JwtUserDetails.builder()
+                .id(user.getUserId())
+                .username(user.getUserName())
+                .nickName(user.getNickName())
+                .sex(user.getSex())
+                .password(user.getPassword())
+                .avatar(user.getAvatar())
+                .email(user.getEmail())
+                .mobile(user.getMobile())
+                .authorities(authorities)
+                .status(user.getStatus())
+                .createTime(user.getCreateTime())
+                .deptId(user.getDeptId())
+                .ancestors(user.getAncestors())
+                .roles(null) // 角色列表将在后续加载
+                .build();
     }
 
 }

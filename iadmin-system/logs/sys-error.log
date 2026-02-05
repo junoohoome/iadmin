@@ -1,0 +1,17 @@
+[30mIAdmin-[0;39m [31m2026-02-06 00:22:48[0;39m [32m[main][0;39m [1;31mERROR[0;39m [1;35mo.s.b.d.LoggingFailureAnalysisReporter[0;39m - [1;30m
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+
+[0;39m[30mIAdmin-[0;39m [31m2026-02-06 00:26:21[0;39m [32m[http-nio-8080-exec-1][0;39m [1;31mERROR[0;39m [1;35mme.fjq.security.JwtTokenService[0;39m - [1;30mno valid JWT token found, uri: /swagger-ui.html
+[0;39m[30mIAdmin-[0;39m [31m2026-02-06 00:26:21[0;39m [32m[http-nio-8080-exec-1][0;39m [1;31mERROR[0;39m [1;35mme.fjq.security.JwtTokenService[0;39m - [1;30mno valid JWT token found, uri: /swagger-ui.html
+[0;39m

@@ -21,4 +21,8 @@ public class JwtTokenException extends RuntimeException {
         super(msg);
         this.status = status.value();
     }
+
+    public Integer getStatus() {
+        return status;
+    }
 }

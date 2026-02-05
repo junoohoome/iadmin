@@ -71,7 +71,7 @@ public class RedisUtils {
             result.add(new String(cursor.next()));
         }
         try {
-            RedisConnectionUtils.releaseConnection(rc, factory, true);
+            RedisConnectionUtils.releaseConnection(rc, factory);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -109,7 +109,7 @@ public class RedisUtils {
             cursor.next();
         }
         try {
-            RedisConnectionUtils.releaseConnection(rc, factory,true);
+            RedisConnectionUtils.releaseConnection(rc, factory);
         } catch (Exception e) {
             e.printStackTrace();
         }

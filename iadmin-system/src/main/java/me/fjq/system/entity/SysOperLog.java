@@ -49,5 +49,11 @@ public class SysOperLog {
     private String errorMsg;
     /**操作时间*/
     private Date operTime;
+    /**请求参数（新增，JSON格式）*/
+    private String requestParam;
+    /**响应结果（新增，JSON格式）*/
+    private String responseResult;
+    /**执行时长（新增，毫秒）*/
+    private Long costTime;
 
 }

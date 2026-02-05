@@ -4,9 +4,11 @@ package me.fjq.security;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.json.JSONUtil;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import me.fjq.exception.JwtTokenException;
 import me.fjq.properties.SecurityProperties;
+import me.fjq.system.service.OnlineUserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -17,8 +19,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
 import java.util.*;
+import javax.crypto.SecretKey;
 import java.util.stream.Collectors;
 
 /**
@@ -43,9 +48,19 @@ public class JwtTokenService {
      */
     private static final String AUTHORITIES = "authorities";
     private final SecurityProperties properties;
+    private final OnlineUserService onlineUserService;
 
-    public JwtTokenService(SecurityProperties properties) {
+    public JwtTokenService(SecurityProperties properties, OnlineUserService onlineUserService) {
         this.properties = properties;
+        this.onlineUserService = onlineUserService;
+    }
+
+    /**
+     * 获取签名密钥
+     */
+    private SecretKey getSignInKey() {
+        byte[] keyBytes = properties.getBase64Secret().getBytes(StandardCharsets.UTF_8);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     /**
@@ -132,6 +147,11 @@ public class JwtTokenService {
      */
     private Boolean validateToken(String token) {
         try {
+            // 检查 token 是否在黑名单中
+            if (onlineUserService.isBlacklisted(token)) {
+                log.warn("Token is blacklisted: {}", token);
+                return false;
+            }
             return !isTokenExpired(token);
         } catch (SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT signature.");
@@ -183,7 +203,7 @@ public class JwtTokenService {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             log.debug("set Authentication to security context for '{}', uri: {}", authentication.getName(), requestRri);
         } else {
-            log.error("no valid JWT token found, uri: {}", requestRri);
+            log.debug("no valid JWT token found, uri: {}", requestRri);
         }
     }
 
@@ -225,9 +245,9 @@ public class JwtTokenService {
     private String generateToken(Map<String, Object> claims) {
         Date expirationDate = new Date(System.currentTimeMillis() + properties.getTokenValidityInSeconds());
         return Jwts.builder()
-                .setClaims(claims)
-                .setExpiration(expirationDate)
-                .signWith(SignatureAlgorithm.HS512, properties.base64Secret)
+                .claims(claims)
+                .expiration(expirationDate)
+                .signWith(getSignInKey())
                 .compact();
     }
 
@@ -239,9 +259,10 @@ public class JwtTokenService {
      */
     private Claims getClaimsFromToken(String token) {
         return Jwts.parser()
-                .setSigningKey(properties.getBase64Secret())
-                .parseClaimsJws(token)
-                .getBody();
+                .verifyWith(getSignInKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
 }

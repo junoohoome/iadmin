@@ -1,17 +1,36 @@
 server:
   name: iadmin
-  port: 8090
+  port: 8080
 
 spring:
   profiles:
     active: dev
+  application:
+    name: iadmin
   jackson:
     # 设置时区
     time-zone: GMT+8
+    # 日期格式
+    date-format: yyyy-MM-dd HH:mm:ss
+    # 序列化时忽略 null 值
+    default-property-inclusion: non_null
+    # 禁止将数字写成科学计数法
+    serialization:
+      write-bigdecimal-as-plain: true
+    # 反序列化时忽略未知属性
+    deserialization:
+      fail-on-unknown-properties: false
   data:
     redis:
       repositories:
         enabled: false
+  # Servlet 配置
+  servlet:
+    multipart:
+      # 单个文件最大大小
+      max-file-size: 10MB
+      # 请求最大大小
+      max-request-size: 20MB
 
 mybatis-plus:
   # 启动时是否检查MyBatis XML文件是否存在
@@ -20,10 +39,12 @@ mybatis-plus:
   configuration:
     # 字段名称下划线转驼峰命名
     map-underscore-to-camel-case: true
+    # 日志实现
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
   global-config:
     db-config:
-      # 全局默认主键类型
-#      id-type: id_worker
+      # 主键类型（AUTO 数据库自增）
+      id-type: auto
       # 逻辑已删除值(默认为 1)
       logic-delete-value: 1
       # 逻辑未删除值(默认为 0)
@@ -31,6 +52,25 @@ mybatis-plus:
     banner: false
   # mapper xml映射路径
   mapper-locations: classpath*:mapper/**/*Mapper.xml
+
+# SpringDoc 配置
+springdoc:
+  api-docs:
+    # 是否启用 API 文档
+    enabled: true
+    # API 文档路径
+    path: /v3/api-docs
+  swagger-ui:
+    # 是否启用 Swagger UI
+    enabled: true
+    # Swagger UI 路径
+    path: /swagger-ui.html
+    # 默认展开的标签
+    default-models-expand-depth: 2
+    # 默认模型展开深度
+    default-model-expand-depth: 2
+  # 是否显示 YAML 格式的 API 文档
+  show-actuator: false
 
 #密码加密传输，前端公钥加密，后端私钥解密
 rsa:

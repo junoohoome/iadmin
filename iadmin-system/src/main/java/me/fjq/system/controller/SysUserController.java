@@ -24,7 +24,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -97,13 +99,16 @@ public class SysUserController {
     /**
      * 删除数据
      *
-     * @param idList 主键结合
+     * @param idList 主键结合 (comma-separated string)
      * @return 删除结果
      */
     @PreAuthorize("@ss.hasPerms('admin,system:user:del')")
-    @DeleteMapping
-    public HttpResult delete(@RequestParam("idList") List<Long> idList) {
-        return HttpResult.ok(this.sysUserService.removeByIds(idList));
+    @DeleteMapping("{idList}")
+    public HttpResult delete(@PathVariable String idList) {
+        List<Long> ids = Arrays.stream(idList.split(","))
+            .map(Long::valueOf)
+            .collect(Collectors.toList());
+        return HttpResult.ok(this.sysUserService.removeByIds(ids));
     }
 
     @PutMapping("update/status")

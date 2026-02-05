@@ -1,6 +1,5 @@
 package me.fjq.system.entity;
 
-import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,10 +14,8 @@ import lombok.Setter;
 public class SysUserRole {
 
     /**用户ID*/
-    @TableId(value = "user_id")
     private Long userId;
     /**角色ID*/
-    @TableId(value = "role_id")
     private Long roleId;
 
 }

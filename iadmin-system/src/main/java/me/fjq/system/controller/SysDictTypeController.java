@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -89,11 +91,14 @@ public class SysDictTypeController {
     /**
      * 删除数据
      *
-     * @param idList 主键结合
+     * @param idList 主键结合 (comma-separated string)
      * @return 删除结果
      */
-    @DeleteMapping
-    public HttpResult delete(@RequestParam("idList") List<Long> idList) {
-        return HttpResult.ok(this.sysDictTypeService.removeByIds(idList));
+    @DeleteMapping("{idList}")
+    public HttpResult delete(@PathVariable String idList) {
+        List<Long> ids = Arrays.stream(idList.split(","))
+            .map(Long::valueOf)
+            .collect(Collectors.toList());
+        return HttpResult.ok(this.sysDictTypeService.removeByIds(ids));
     }
 }
