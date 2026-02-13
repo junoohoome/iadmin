@@ -62,10 +62,17 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
         List<RouterVo> routers = new LinkedList<>();
         for (SysMenu menu : menus) {
             RouterVo router = new RouterVo();
+            router.setId(menu.getMenuId());
+            router.setParentId(menu.getParentId());
             router.setName(StringUtils.capitalize(menu.getPath()));
             router.setPath(getRouterPath(menu));
             router.setComponent(StringUtils.isEmpty(menu.getComponent()) ? "Layout" : menu.getComponent());
             router.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon()));
+            // visible="0" 表示隐藏, "1" 表示可见，需要转换为 hidden（含义相反）
+            router.setHidden("0".equals(menu.getVisible()) ? "1" : "0");
+            router.setVisible(menu.getVisible());
+            router.setType(menu.getMenuType());
+            router.setSort(menu.getSort());
             List<SysMenu> cMenus = menu.getChildren();
             if (CollectionUtil.isNotEmpty(cMenus) && "M".equals(menu.getMenuType())) {
                 router.setAlwaysShow(true);
@@ -75,6 +82,13 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
             routers.add(router);
         }
         return routers;
+    }
+
+    /**
+     * 构建前端路由（带完整字段）
+     */
+    public List<RouterVo> buildMenusForFront(List<SysMenu> menus) {
+        return buildMenus(menus);
     }
 
     @Override

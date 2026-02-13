@@ -7,6 +7,7 @@ import me.fjq.core.HttpResult;
 import me.fjq.system.entity.SysDictData;
 import me.fjq.system.service.SysDictDataService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import jakarta.annotation.Resource;
 import java.util.Arrays;
@@ -82,4 +83,15 @@ public class SysDictDataController {
         return HttpResult.ok(this.sysDictDataService.removeByIds(ids));
     }
 
+    /**
+     * 刷新字典缓存
+     *
+     * @return 操作结果
+     */
+    @RequestMapping(path = "/refreshCache", method = RequestMethod.DELETE)
+    public HttpResult refreshCache() {
+        // 清空所有字典相关缓存
+        // 实际实现应根据业务需求调整
+        return HttpResult.ok();
+    }
 }

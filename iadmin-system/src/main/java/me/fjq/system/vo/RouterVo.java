@@ -12,6 +12,16 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class RouterVo {
     /**
+     * 路由ID
+     */
+    private Long id;
+
+    /**
+     * 父路由ID
+     */
+    private Long parentId;
+
+    /**
      * 路由名字
      */
     private String name;
@@ -27,6 +37,11 @@ public class RouterVo {
     private String hidden;
 
     /**
+     * 是否显示
+     */
+    private String visible;
+
+    /**
      * 重定向地址，当设置 noRedirect 的时候该路由在面包屑导航中不可被点击
      */
     private String redirect;
@@ -35,6 +50,16 @@ public class RouterVo {
      * 组件地址
      */
     private String component;
+
+    /**
+     * 菜单类型
+     */
+    private String type;
+
+    /**
+     * 排序
+     */
+    private Integer sort;
 
     /**
      * 当你一个路由下面的 children 声明的路由大于1个时，自动会变成嵌套的模式--如组件页面

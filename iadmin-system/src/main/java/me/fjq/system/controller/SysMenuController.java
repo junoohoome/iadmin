@@ -100,4 +100,14 @@ public class SysMenuController {
             .collect(Collectors.toList());
         return HttpResult.ok(this.sysMenuService.removeByIds(ids));
     }
+
+    /**
+     * 获取路由菜单（前端动态路由使用）
+     */
+    @GetMapping("getRouters")
+    public HttpResult getRouters() {
+        JwtUserDetails user = jwtTokenService.getJwtUserDetails(ServletUtils.getRequest());
+        List<SysMenu> menus = sysMenuService.selectMenuTreeByUserId(user.getId(), null, false);
+        return HttpResult.ok(sysMenuService.buildMenusForFront(menus));
+    }
 }

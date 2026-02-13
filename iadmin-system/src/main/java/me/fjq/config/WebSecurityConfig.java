@@ -55,6 +55,7 @@ public class WebSecurityConfig {
         Set<String> anonymousUrls = new HashSet<>();
         anonymousUrls.add("/auth/code");
         anonymousUrls.add("/auth/login");
+        anonymousUrls.add("/auth/testLogin");  // 测试登录接口（仅开发环境）
 
         httpSecurity
                 // 禁用 CSRF

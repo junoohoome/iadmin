@@ -27,6 +27,6 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
      * @return 用户列表
      */
     @DataScope(deptAlias = "u", userAlias = "u")
-    List<SysUserVo> selectPage(Page page, @Param("query") SysUserQuery query);
+    Page<SysUserVo> selectPage(Page page, @Param("query") SysUserQuery query);
 
 }

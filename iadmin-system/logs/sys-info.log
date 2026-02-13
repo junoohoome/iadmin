@@ -1,60 +1,82 @@
-[30mIAdmin-[0;39m [31m2026-02-06 00:22:44[0;39m [32m[SpringApplicationShutdownHook][0;39m [34mINFO [0;39m [1;35mc.a.druid.pool.DruidDataSource[0;39m - [1;30m{dataSource-0} closing ...
-[0;39m[30mIAdmin-[0;39m [31m2026-02-06 00:23:17[0;39m [32m[main][0;39m [34mINFO [0;39m [1;35mme.fjq.SystemApplication[0;39m - [1;30mStarting SystemApplication using Java 21.0.7 with PID 18876 (/Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system/target/classes started by fangjunqiang in /Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system)
-[0;39m[30mIAdmin-[0;39m [31m2026-02-06 00:23:17[0;39m [32m[main][0;39m [34mINFO [0;39m [1;35mme.fjq.SystemApplication[0;39m - [1;30mThe following 1 profile is active: "dev"
-[0;39m[30mIAdmin-[0;39m [31m2026-02-06 00:23:19[0;39m [32m[main][0;39m [34mINFO [0;39m [1;35mo.a.c.http11.Http11NioProtocol[0;39m - [1;30mInitializing ProtocolHandler ["http-nio-8080"]
-[0;39m[30mIAdmin-[0;39m [31m2026-02-06 00:23:19[0;39m [32m[main][0;39m [34mINFO [0;39m [1;35mo.a.catalina.core.StandardService[0;39m - [1;30mStarting service [Tomcat]
-[0;39m[30mIAdmin-[0;39m [31m2026-02-06 00:23:19[0;39m [32m[main][0;39m [34mINFO [0;39m [1;35mo.a.catalina.core.StandardEngine[0;39m - [1;30mStarting Servlet engine: [Apache Tomcat/10.1.20]
-[0;39m[30mIAdmin-[0;39m [31m2026-02-06 00:23:19[0;39m [32m[main][0;39m [34mINFO [0;39m [1;35mo.a.c.c.C.[Tomcat].[localhost].[/][0;39m - [1;30mInitializing Spring embedded WebApplicationContext
-[0;39m[30mIAdmin-[0;39m [31m2026-02-06 00:23:22[0;39m [32m[main][0;39m [34mINFO [0;39m [1;35mo.a.c.http11.Http11NioProtocol[0;39m - [1;30mStarting ProtocolHandler ["http-nio-8080"]
-[0;39m[30mIAdmin-[0;39m [31m2026-02-06 00:23:22[0;39m [32m[main][0;39m [34mINFO [0;39m [1;35mme.fjq.SystemApplication[0;39m - [1;30mStarted SystemApplication in 5.423 seconds (process running for 5.803)
-[0;39m[30mIAdmin-[0;39m [31m2026-02-06 00:26:21[0;39m [32m[http-nio-8080-exec-1][0;39m [34mINFO [0;39m [1;35mo.a.c.c.C.[Tomcat].[localhost].[/][0;39m - [1;30mInitializing Spring DispatcherServlet 'dispatcherServlet'
-[0;39m2026-02-06 02:51:53 [main] INFO  me.fjq.SystemApplication - Starting SystemApplication using Java 21.0.7 with PID 32377 (/Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system/target/classes started by fangjunqiang in /Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system)
-2026-02-06 02:51:53 [main] INFO  me.fjq.SystemApplication - The following 1 profile is active: "dev"
-2026-02-06 02:51:54 [main] INFO  me.fjq.SystemApplication - Starting SystemApplication using Java 21.0.7 with PID 32382 (/Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system/target/classes started by fangjunqiang in /Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system)
-2026-02-06 02:51:54 [main] INFO  me.fjq.SystemApplication - The following 1 profile is active: "dev"
-2026-02-06 02:51:55 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
-2026-02-06 02:51:55 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2026-02-06 02:51:55 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
-2026-02-06 02:51:55 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2026-02-06 02:51:56 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
-2026-02-06 02:51:56 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2026-02-06 02:51:56 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
-2026-02-06 02:51:56 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2026-02-06 02:51:57 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
-2026-02-06 02:51:57 [main] INFO  c.alibaba.druid.pool.DruidDataSource - {dataSource-0} closing ...
-2026-02-06 02:51:58 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
-2026-02-06 02:51:58 [main] INFO  c.alibaba.druid.pool.DruidDataSource - {dataSource-0} closing ...
-2026-02-06 02:52:50 [main] INFO  me.fjq.SystemApplication - Starting SystemApplication using Java 21.0.7 with PID 32505 (/Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system/target/classes started by fangjunqiang in /Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system)
-2026-02-06 02:52:50 [main] INFO  me.fjq.SystemApplication - The following 1 profile is active: "dev"
-2026-02-06 02:52:52 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
-2026-02-06 02:52:52 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2026-02-06 02:52:52 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
-2026-02-06 02:52:52 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2026-02-06 02:52:54 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
-2026-02-06 02:52:54 [main] INFO  c.alibaba.druid.pool.DruidDataSource - {dataSource-0} closing ...
-2026-02-06 02:53:42 [main] INFO  me.fjq.SystemApplication - Starting SystemApplication using Java 21.0.7 with PID 32636 (/Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system/target/classes started by fangjunqiang in /Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system)
-2026-02-06 02:53:42 [main] INFO  me.fjq.SystemApplication - The following 1 profile is active: "dev"
-2026-02-06 02:53:43 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
-2026-02-06 02:53:43 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2026-02-06 02:53:43 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
-2026-02-06 02:53:43 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2026-02-06 02:53:45 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
-2026-02-06 02:53:45 [main] INFO  me.fjq.SystemApplication - Started SystemApplication in 4.118 seconds (process running for 4.567)
-2026-02-06 02:55:02 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-02-06 02:55:02 [http-nio-8080-exec-1] INFO  m.f.s.controller.LoginController - 验证码: code_key3074516334fb4224b5c7af733437b337 -> CbR9
-2026-02-06 03:11:43 [http-nio-8080-exec-3] INFO  c.alibaba.druid.pool.DruidDataSource - {dataSource-1} inited
-2026-02-06 03:12:43 [http-nio-8080-exec-5] INFO  m.f.s.controller.LoginController - 验证码: code_keye8b016550d4d4318b83d4d187323d7b2 -> vqUQ
-2026-02-06 03:12:57 [http-nio-8080-exec-6] INFO  m.f.s.controller.LoginController - 验证码: code_key14227b8b002b42baa330e04f8939c49b -> kDNP
-2026-02-06 03:13:01 [http-nio-8080-exec-7] INFO  m.f.s.controller.LoginController - 验证码: code_keyf2237f56fbe54974b1974d95ee9b6abc -> UfTE
-2026-02-06 03:13:13 [http-nio-8080-exec-8] INFO  m.f.s.controller.LoginController - 验证码: code_key009fa6679a5f45e4a9fde849b3725e6a -> C2X5
-2026-02-06 03:13:18 [http-nio-8080-exec-9] INFO  m.f.s.controller.LoginController - 验证码: code_key96d1b859f9d74bec87dbed233e82cda8 -> dHff
-2026-02-06 03:15:00 [main] INFO  me.fjq.SystemApplication - Starting SystemApplication using Java 21.0.7 with PID 34091 (/Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system/target/classes started by fangjunqiang in /Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system)
-2026-02-06 03:15:00 [main] INFO  me.fjq.SystemApplication - The following 1 profile is active: "dev"
-2026-02-06 03:15:02 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
-2026-02-06 03:15:02 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2026-02-06 03:15:02 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
-2026-02-06 03:15:02 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-2026-02-06 03:15:04 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
-2026-02-06 03:15:04 [main] INFO  me.fjq.SystemApplication - Started SystemApplication in 4.806 seconds (process running for 5.42)
-2026-02-06 03:18:09 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-02-06 03:18:09 [http-nio-8080-exec-1] INFO  m.f.s.controller.LoginController - 验证码: code_key45241bc724a2457fa6a7639a3cadd95a -> Hf8h
+2026-02-14 00:01:12 [main] INFO  me.fjq.SystemApplication - Starting SystemApplication using Java 21.0.7 with PID 55428 (/Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system/target/classes started by fangjunqiang in /Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system)
+2026-02-14 00:01:12 [main] INFO  me.fjq.SystemApplication - The following 1 profile is active: "dev"
+2026-02-14 00:01:14 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8090"]
+2026-02-14 00:01:14 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-02-14 00:01:14 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
+2026-02-14 00:01:14 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-02-14 00:01:16 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8090"]
+2026-02-14 00:01:16 [main] INFO  me.fjq.SystemApplication - Started SystemApplication in 4.429 seconds (process running for 4.871)
+2026-02-14 00:01:31 [http-nio-8090-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-02-14 00:01:31 [http-nio-8090-exec-1] INFO  m.f.s.controller.LoginController - Captcha generated - UUID: code_keye7a0e905d64340e1ac7556d2c6439f75, Code: gQQR
+2026-02-14 00:01:38 [http-nio-8090-exec-2] INFO  m.f.s.controller.LoginController - Captcha generated - UUID: code_key174b9cb8e5444f66966cb7194446c9a5, Code: B5bz
+2026-02-14 00:02:25 [http-nio-8090-exec-4] INFO  c.alibaba.druid.pool.DruidDataSource - {dataSource-1} inited
+2026-02-14 00:07:03 [http-nio-8090-exec-2] INFO  m.f.s.controller.LoginController - Captcha generated - UUID: code_key57bda030817f43439d82ffc921c74aa7, Code: kePq
+2026-02-14 00:19:39 [main] INFO  me.fjq.SystemApplication - Starting SystemApplication using Java 21.0.7 with PID 56274 (/Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system/target/classes started by fangjunqiang in /Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system)
+2026-02-14 00:19:39 [main] INFO  me.fjq.SystemApplication - The following 1 profile is active: "dev"
+2026-02-14 00:19:41 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8090"]
+2026-02-14 00:19:41 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-02-14 00:19:41 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
+2026-02-14 00:19:41 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-02-14 00:19:44 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8090"]
+2026-02-14 00:19:44 [main] INFO  c.alibaba.druid.pool.DruidDataSource - {dataSource-0} closing ...
+2026-02-14 00:19:47 [http-nio-8090-exec-8] INFO  m.f.s.controller.LoginController - Captcha generated - UUID: code_key21dfd199738b45fcb39e358e8716a2f6, Code: Zeze
+2026-02-14 00:20:26 [http-nio-8090-exec-7] INFO  m.f.s.controller.LoginController - Captcha generated - UUID: code_keycfe9a93e08d5464d92053d58a1f5912e, Code: sF2T
+2026-02-14 00:21:14 [main] INFO  me.fjq.SystemApplication - Starting SystemApplication using Java 21.0.7 with PID 56473 (/Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system/target/classes started by fangjunqiang in /Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system)
+2026-02-14 00:21:14 [main] INFO  me.fjq.SystemApplication - The following 1 profile is active: "dev"
+2026-02-14 00:21:16 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8090"]
+2026-02-14 00:21:16 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-02-14 00:21:16 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
+2026-02-14 00:21:16 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-02-14 00:21:19 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8090"]
+2026-02-14 00:21:19 [main] INFO  c.alibaba.druid.pool.DruidDataSource - {dataSource-0} closing ...
+2026-02-14 00:21:37 [main] INFO  me.fjq.SystemApplication - Starting SystemApplication using Java 21.0.7 with PID 56534 (/Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system/target/classes started by fangjunqiang in /Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system)
+2026-02-14 00:21:37 [main] INFO  me.fjq.SystemApplication - The following 1 profile is active: "dev"
+2026-02-14 00:21:39 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8090"]
+2026-02-14 00:21:39 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-02-14 00:21:39 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
+2026-02-14 00:21:39 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-02-14 00:21:41 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8090"]
+2026-02-14 00:21:41 [main] INFO  c.alibaba.druid.pool.DruidDataSource - {dataSource-0} closing ...
+2026-02-14 00:21:47 [http-nio-8090-exec-8] INFO  m.f.s.controller.LoginController - Captcha generated - UUID: code_key0bab9924897a4e79ae26d5bb145de782, Code: XB83
+2026-02-14 00:22:10 [main] INFO  me.fjq.SystemApplication - Starting SystemApplication using Java 21.0.7 with PID 56877 (/Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system/target/classes started by fangjunqiang in /Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system)
+2026-02-14 00:22:10 [main] INFO  me.fjq.SystemApplication - The following 1 profile is active: "dev"
+2026-02-14 00:22:12 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8090"]
+2026-02-14 00:22:12 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-02-14 00:22:12 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
+2026-02-14 00:22:12 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-02-14 00:22:14 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8090"]
+2026-02-14 00:22:14 [main] INFO  me.fjq.SystemApplication - Started SystemApplication in 4.217 seconds (process running for 4.695)
+2026-02-14 00:22:17 [http-nio-8090-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-02-14 00:22:17 [http-nio-8090-exec-1] INFO  m.f.s.controller.LoginController - Captcha generated - UUID: code_key6bcb86be8471446a9293968790056b80, Code: hkKm
+2026-02-14 00:22:20 [http-nio-8090-exec-3] INFO  c.alibaba.druid.pool.DruidDataSource - {dataSource-1} inited
+2026-02-14 00:22:41 [main] INFO  me.fjq.SystemApplication - Starting SystemApplication using Java 21.0.7 with PID 56942 (/Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system/target/classes started by fangjunqiang in /Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system)
+2026-02-14 00:22:41 [main] INFO  me.fjq.SystemApplication - The following 1 profile is active: "dev"
+2026-02-14 00:22:42 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8090"]
+2026-02-14 00:22:42 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-02-14 00:22:42 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
+2026-02-14 00:22:42 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-02-14 00:22:44 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8090"]
+2026-02-14 00:22:44 [main] INFO  me.fjq.SystemApplication - Started SystemApplication in 4.142 seconds (process running for 4.591)
+2026-02-14 00:22:52 [http-nio-8090-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-02-14 00:24:05 [http-nio-8090-exec-1] INFO  c.alibaba.druid.pool.DruidDataSource - {dataSource-1} inited
+2026-02-14 00:25:28 [main] INFO  me.fjq.SystemApplication - Starting SystemApplication using Java 21.0.7 with PID 57352 (/Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system/target/classes started by fangjunqiang in /Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system)
+2026-02-14 00:25:28 [main] INFO  me.fjq.SystemApplication - The following 1 profile is active: "dev"
+2026-02-14 00:25:30 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8090"]
+2026-02-14 00:25:30 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-02-14 00:25:30 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
+2026-02-14 00:25:30 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-02-14 00:25:32 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8090"]
+2026-02-14 00:25:32 [main] INFO  me.fjq.SystemApplication - Started SystemApplication in 4.351 seconds (process running for 4.841)
+2026-02-14 00:25:50 [http-nio-8090-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-02-14 00:25:50 [http-nio-8090-exec-1] INFO  m.f.s.controller.LoginController - Captcha generated - UUID: code_key3c15efe7798741e4a2fed13f4194418f, Code: kz9q
+2026-02-14 00:25:58 [http-nio-8090-exec-2] INFO  m.f.s.controller.LoginController - Captcha generated - UUID: code_keye8d6568654774f28aeb4697f49c8852d, Code: Jb2E
+2026-02-14 00:26:15 [http-nio-8090-exec-3] INFO  m.f.s.controller.LoginController - Captcha generated - UUID: code_key290fddbd338e458eb77fd36ffe5af11d, Code: euCB
+2026-02-14 00:26:18 [http-nio-8090-exec-5] INFO  c.alibaba.druid.pool.DruidDataSource - {dataSource-1} inited
+2026-02-14 00:34:54 [main] INFO  me.fjq.SystemApplication - Starting SystemApplication using Java 21.0.7 with PID 58101 (/Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system/target/classes started by fangjunqiang in /Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system)
+2026-02-14 00:34:54 [main] INFO  me.fjq.SystemApplication - The following 1 profile is active: "dev"
+2026-02-14 00:34:58 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8090"]
+2026-02-14 00:34:58 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-02-14 00:34:58 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
+2026-02-14 00:34:58 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-02-14 00:35:03 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8090"]
+2026-02-14 00:35:03 [main] INFO  c.alibaba.druid.pool.DruidDataSource - {dataSource-0} closing ...

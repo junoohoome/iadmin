@@ -50,4 +50,12 @@ public interface SysMenuService extends IService<SysMenu> {
      * @return 下拉树结构列表
      */
     List<TreeSelect> buildMenuTreeSelect(List<SysMenu> menus);
+
+    /**
+     * 构建前端路由（完整字段）
+     *
+     * @param menus 菜单列表
+     * @return 路由列表
+     */
+    List<RouterVo> buildMenusForFront(List<SysMenu> menus);
 }

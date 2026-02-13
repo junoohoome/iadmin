@@ -27,6 +27,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import me.fjq.system.vo.system.SysUserVo;
 
 
 /**
@@ -57,7 +58,9 @@ public class SysUserController {
     @PreAuthorize("@ss.hasPerms('admin,system:user:list')")
     @GetMapping
     public HttpResult selectAll(Page page, SysUserQuery query) {
-        return HttpResult.ok(this.sysUserService.selectPage(page, query));
+        Page<SysUserVo> result = this.sysUserService.selectPage(page, query);
+        System.out.println("DEBUG: selectPage result - records: " + (result.getRecords() != null ? result.getRecords().size() : 0) + ", total: " + result.getTotal());
+        return HttpResult.ok(result);
     }
 
     /**
@@ -147,5 +150,21 @@ public class SysUserController {
             return HttpResult.ok();
         }
         return HttpResult.error("修改密码错误");
+    }
+
+    /**
+     * 重置用户密码（管理员功能）
+     *
+     * @param userId 用户ID
+     * @param password 新密码
+     * @return 操作结果
+     */
+    @PreAuthorize("@ss.hasPerms('admin,system:user:resetPwd')")
+    @PostMapping("resetPwd")
+    public HttpResult<Boolean> resetPassword(@RequestParam("userId") Long userId, @RequestParam("password") String password) {
+        SysUser sysUser = new SysUser();
+        sysUser.setUserId(userId);
+        sysUser.setPassword(passwordEncoder.encode(password));
+        return HttpResult.ok(sysUserService.updateById(sysUser));
     }
 }

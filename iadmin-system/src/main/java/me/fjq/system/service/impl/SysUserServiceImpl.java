@@ -24,6 +24,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     @Override
     public Page<SysUserVo> selectPage(Page page, SysUserQuery query) {
-        return page.setRecords(this.sysUserMapper.selectPage(page, query));
+        return this.sysUserMapper.selectPage(page, query);
     }
 }
