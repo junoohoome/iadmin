@@ -42,3 +42,19 @@
 2026-02-06 02:53:45 [main] INFO  me.fjq.SystemApplication - Started SystemApplication in 4.118 seconds (process running for 4.567)
 2026-02-06 02:55:02 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
 2026-02-06 02:55:02 [http-nio-8080-exec-1] INFO  m.f.s.controller.LoginController - 验证码: code_key3074516334fb4224b5c7af733437b337 -> CbR9
+2026-02-06 03:11:43 [http-nio-8080-exec-3] INFO  c.alibaba.druid.pool.DruidDataSource - {dataSource-1} inited
+2026-02-06 03:12:43 [http-nio-8080-exec-5] INFO  m.f.s.controller.LoginController - 验证码: code_keye8b016550d4d4318b83d4d187323d7b2 -> vqUQ
+2026-02-06 03:12:57 [http-nio-8080-exec-6] INFO  m.f.s.controller.LoginController - 验证码: code_key14227b8b002b42baa330e04f8939c49b -> kDNP
+2026-02-06 03:13:01 [http-nio-8080-exec-7] INFO  m.f.s.controller.LoginController - 验证码: code_keyf2237f56fbe54974b1974d95ee9b6abc -> UfTE
+2026-02-06 03:13:13 [http-nio-8080-exec-8] INFO  m.f.s.controller.LoginController - 验证码: code_key009fa6679a5f45e4a9fde849b3725e6a -> C2X5
+2026-02-06 03:13:18 [http-nio-8080-exec-9] INFO  m.f.s.controller.LoginController - 验证码: code_key96d1b859f9d74bec87dbed233e82cda8 -> dHff
+2026-02-06 03:15:00 [main] INFO  me.fjq.SystemApplication - Starting SystemApplication using Java 21.0.7 with PID 34091 (/Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system/target/classes started by fangjunqiang in /Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/iadmin-system)
+2026-02-06 03:15:00 [main] INFO  me.fjq.SystemApplication - The following 1 profile is active: "dev"
+2026-02-06 03:15:02 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-02-06 03:15:02 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-02-06 03:15:02 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.20]
+2026-02-06 03:15:02 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-02-06 03:15:04 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-02-06 03:15:04 [main] INFO  me.fjq.SystemApplication - Started SystemApplication in 4.806 seconds (process running for 5.42)
+2026-02-06 03:18:09 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-02-06 03:18:09 [http-nio-8080-exec-1] INFO  m.f.s.controller.LoginController - 验证码: code_key45241bc724a2457fa6a7639a3cadd95a -> Hf8h

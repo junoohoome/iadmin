@@ -1,8 +1,17 @@
-HELP.md
+# Maven
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**
 !**/src/test/**
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
 
 ### STS ###
 .apt_generated
@@ -14,10 +23,11 @@ target/
 .sts4-cache
 
 ### IntelliJ IDEA ###
-.idea
+.idea/
 *.iws
 *.iml
 *.ipr
+out/
 
 ### NetBeans ###
 /nbproject/private/
@@ -30,5 +40,47 @@ build/
 ### VS Code ###
 .vscode/
 
+### Eclipse ###
+.classpath
+.project
+.settings/
+.metadata
+.recommenders
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+.settings/
+.buildpath
+.loadpath
+
+### Log Files ###
+logs/
+*.log
+log/
+
+### OS ###
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
 ### Worktrees ###
 .worktrees/
+
+### Temporary Files ###
+*.tmp
+*.temp
+*.patch
+*.diff
+*.bak
+
+### Application Specific ###
+iadmin-system/logs/
+*.hprof
+jrebel
