@@ -9,7 +9,6 @@ import me.fjq.system.service.SysMenuService;
 import me.fjq.utils.ServletUtils;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.annotation.Resource;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
@@ -25,13 +24,14 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("sysMenu")
 public class SysMenuController {
-    /**
-     * 服务对象
-     */
-    @Resource
-    private SysMenuService sysMenuService;
-    @Resource
-    private JwtTokenService jwtTokenService;
+
+    private final SysMenuService sysMenuService;
+    private final JwtTokenService jwtTokenService;
+
+    public SysMenuController(SysMenuService sysMenuService, JwtTokenService jwtTokenService) {
+        this.sysMenuService = sysMenuService;
+        this.jwtTokenService = jwtTokenService;
+    }
 
     /**
      * 获取菜单列表

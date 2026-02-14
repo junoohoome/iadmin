@@ -72,28 +72,36 @@ public class DataScopeInterceptor implements Interceptor {
      * @return 注入后的SQL
      */
     private String injectDataScopeSql(String originalSql, String dataScopeSql) {
-        String sql = originalSql.toLowerCase();
+        // 使用正则表达式进行大小写不敏感的关键字查找
+        // 这样可以避免 toLowerCase() 破坏数据库关键字和字段名的大小写敏感性
+        java.util.regex.Pattern wherePattern = java.util.regex.Pattern.compile("\\bWHERE\\b", java.util.regex.Pattern.CASE_INSENSITIVE);
+        java.util.regex.Pattern andPattern = java.util.regex.Pattern.compile("\\bAND\\b", java.util.regex.Pattern.CASE_INSENSITIVE);
 
-        // 查找 WHERE 子句位置
-        int whereIndex = sql.indexOf(" where ");
-        int andIndex = sql.indexOf(" and ");
+        java.util.regex.Matcher whereMatcher = wherePattern.matcher(originalSql);
+        java.util.regex.Matcher andMatcher = andPattern.matcher(originalSql);
 
-        if (whereIndex == -1) {
+        boolean hasWhere = whereMatcher.find();
+        boolean hasAnd = andMatcher.find();
+
+        if (!hasWhere) {
             // 没有 WHERE 子句，直接添加
             return originalSql + " WHERE " + dataScopeSql;
         }
 
-        // 找到最后一个 WHERE 或 AND 的位置
-        int insertPos = andIndex > whereIndex ? andIndex : whereIndex;
+        // 找到最后一个关键字的位置作为插入点
+        int insertPos = -1;
+        java.util.regex.Matcher matcher = hasAnd ? andMatcher : whereMatcher;
+        while (matcher.find()) {
+            insertPos = matcher.start();
+        }
 
-        // 插入 AND 条件
+        // 插入条件
         String prefix = originalSql.substring(0, insertPos);
         String suffix = originalSql.substring(insertPos);
 
-        // 判断需要添加 AND 还是直接添加
-        if (insertPos == whereIndex) {
-            // WHERE 后面没有其他条件，直接添加
-            return prefix + " WHERE " + dataScopeSql + " AND " + suffix.substring(6);
+        // 如果是在 WHERE 后面（没有其他条件），添加 AND 前的条件
+        if (!hasAnd || insertPos == whereMatcher.start()) {
+            return prefix + " WHERE " + dataScopeSql + " AND " + suffix.substring(5);
         } else {
             // 已有 AND 条件，添加新的 AND
             return prefix + " AND " + dataScopeSql + " " + suffix;

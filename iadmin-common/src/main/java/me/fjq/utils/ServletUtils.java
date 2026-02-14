@@ -1,5 +1,6 @@
 package me.fjq.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import cn.hutool.core.convert.Convert;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -13,6 +14,7 @@ import java.io.IOException;
 /**
  * 客户端工具类
  */
+@Slf4j
 public class ServletUtils {
     /**
      * 获取String参数
@@ -82,7 +84,7 @@ public class ServletUtils {
             response.setCharacterEncoding("utf-8");
             response.getWriter().print(string);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("渲染字符串失败", e);
         }
         return null;
     }

@@ -1,6 +1,7 @@
 package me.fjq.utils;
 
 
+import lombok.extern.slf4j.Slf4j;
 import eu.bitwalker.useragentutils.Browser;
 import eu.bitwalker.useragentutils.UserAgent;
 
@@ -11,6 +12,7 @@ import java.net.UnknownHostException;
 /**
  * 获取IP方法
  */
+@Slf4j
 public class IpUtils {
 
     private static final String UNKNOWN = "unknown";
@@ -39,6 +41,7 @@ public class IpUtils {
             try {
                 ip = InetAddress.getLocalHost().getHostAddress();
             } catch (UnknownHostException e) {
+                log.error("获取IP地址失败", e);
                 e.printStackTrace();
             }
         }

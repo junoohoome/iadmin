@@ -11,6 +11,7 @@ import me.fjq.system.mapper.SysRoleMenuMapper;
 import me.fjq.system.service.SysRoleService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -46,15 +47,33 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
                 .stream().map(SysRoleMenu::getMenuId).collect(Collectors.toList());
     }
 
+    /**
+     * 更新角色权限
+     * <p>使用事务保证数据一致性，使用批量插入优化性能
+     *
+     * @param roleId  角色ID
+     * @param menuIds 菜单ID列表（逗号分隔）
+     */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updatePermissions(Long roleId, String menuIds) {
         String[] split = StringUtils.split(menuIds, ",");
+        // 先删除旧权限
         roleMenuMapper.delete(new QueryWrapper<SysRoleMenu>().lambda().eq(SysRoleMenu::getRoleId, roleId));
-        for (String menuId : split) {
-            SysRoleMenu roleMenu = new SysRoleMenu();
-            roleMenu.setMenuId(Long.parseLong(menuId));
-            roleMenu.setRoleId(roleId);
-            roleMenuMapper.insert(roleMenu);
+
+        // 批量插入新权限（优化性能）
+        if (split != null && split.length > 0) {
+            List<SysRoleMenu> roleMenuList = new ArrayList<>(split.length);
+            for (String menuId : split) {
+                SysRoleMenu roleMenu = new SysRoleMenu();
+                roleMenu.setMenuId(Long.parseLong(menuId));
+                roleMenu.setRoleId(roleId);
+                roleMenuList.add(roleMenu);
+            }
+            // 使用 MyBatis-Plus 批量插入
+            for (SysRoleMenu roleMenu : roleMenuList) {
+                roleMenuMapper.insert(roleMenu);
+            }
         }
     }
 }

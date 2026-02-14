@@ -23,24 +23,12 @@ public class GlobalExceptionHandler {
 
     /**
      * 处理所有不可知的异常
-     * 使用 Java 21 instanceof 模式匹配进行类型判断
+     * <p>仅处理未在下面特定处理器中定义的异常
      */
     @ExceptionHandler(Throwable.class)
     public HttpResult handleException(Throwable e) {
-        log.error(ThrowableUtil.getStackTrace(e));
-
-        // Java 21 instanceof 模式匹配：同时进行类型检查和类型转换
-        // 变量 bre, bce, iae 自动转换为目标类型，无需手动强制转换
-        if (e instanceof BadRequestException bre) {
-            return HttpResult.error(bre.getStatus(), bre.getMessage());
-        } else if (e instanceof BadCredentialsException bce) {
-            String message = "坏的凭证".equals(bce.getMessage()) ? "用户名或密码不正确" : bce.getMessage();
-            return HttpResult.error(message);
-        } else if (e instanceof IllegalArgumentException iae) {
-            return HttpResult.error(iae.getMessage());
-        }
-
-        return HttpResult.error(e.getMessage());
+        log.error("未处理的异常: {}", ThrowableUtil.getStackTrace(e));
+        return HttpResult.error("系统异常，请稍后重试");
     }
 
     /**

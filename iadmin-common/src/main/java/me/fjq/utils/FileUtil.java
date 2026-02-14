@@ -1,5 +1,6 @@
 package me.fjq.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.IdUtil;
@@ -23,6 +24,7 @@ import java.util.Map;
 /**
  * File工具类，扩展 hutool 工具包
  */
+@Slf4j
 public class FileUtil extends cn.hutool.core.io.FileUtil {
 
     /**
@@ -58,7 +60,7 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
             // MultipartFile to File
             multipartFile.transferTo(file);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("IO操作失败", e);
         }
         return file;
     }
@@ -151,7 +153,7 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
             file.transferTo(dest);
             return dest;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("文件操作失败", e);
         }
         return null;
     }
@@ -246,7 +248,7 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
                 e.printStackTrace();
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            log.error("文件未找到", e);
             return null;
         }
         return b;
@@ -269,7 +271,7 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
             }
             return new String(str);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("文件操作失败", e);
         }
         return null;
     }
@@ -291,7 +293,7 @@ public class FileUtil extends cn.hutool.core.io.FileUtil {
             IOUtils.copy(fis, response.getOutputStream());
             response.flushBuffer();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("文件操作失败", e);
         } finally {
             if (fis != null) {
                 try {

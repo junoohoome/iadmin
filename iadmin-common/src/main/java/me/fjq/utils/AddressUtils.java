@@ -1,5 +1,6 @@
 package me.fjq.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import cn.hutool.core.io.resource.ClassPathResource;
 import me.fjq.constant.Constants;
 import org.lionsoul.ip2region.DataBlock;
@@ -14,6 +15,7 @@ import java.util.regex.Pattern;
 /**
  * 获取地址类
  */
+@Slf4j
 public class AddressUtils {
 
     /**
@@ -38,7 +40,7 @@ public class AddressUtils {
             }
             return address.equals(Constants.REGION) ? "内网IP" : address;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("获取地址信息失败", e);
         } finally {
             if (searcher != null) {
                 try {

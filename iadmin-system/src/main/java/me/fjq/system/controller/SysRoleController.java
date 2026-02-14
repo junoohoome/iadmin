@@ -4,13 +4,13 @@ package me.fjq.system.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import me.fjq.constant.Constants;
 import me.fjq.core.HttpResult;
 import me.fjq.system.entity.SysRole;
 import me.fjq.system.service.SysRoleService;
 import me.fjq.system.vo.SelectOptions;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.annotation.Resource;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
@@ -26,11 +26,12 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("sysRole")
 public class SysRoleController {
-    /**
-     * 服务对象
-     */
-    @Resource
-    private SysRoleService sysRoleService;
+
+    private final SysRoleService sysRoleService;
+
+    public SysRoleController(SysRoleService sysRoleService) {
+        this.sysRoleService = sysRoleService;
+    }
 
     /**
      * 分页查询所有数据
@@ -116,7 +117,7 @@ public class SysRoleController {
     @PutMapping("update/permissions")
     public HttpResult updatePermissions(@RequestParam("roleId") String roleId, @RequestParam("menuIds") String menuIds) {
         if (ObjectUtils.isNull(roleId, menuIds)) {
-            return HttpResult.error("参数有误");
+            return HttpResult.error(Constants.INVALID_PARAMS);
         }
         sysRoleService.updatePermissions(Long.valueOf(roleId), menuIds);
         return HttpResult.ok();

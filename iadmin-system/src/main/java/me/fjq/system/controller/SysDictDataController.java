@@ -9,7 +9,6 @@ import me.fjq.system.service.SysDictDataService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import jakarta.annotation.Resource;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,11 +23,12 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("sysDictData")
 public class SysDictDataController {
-    /**
-     * 服务对象
-     */
-    @Resource
-    private SysDictDataService sysDictDataService;
+
+    private final SysDictDataService sysDictDataService;
+
+    public SysDictDataController(SysDictDataService sysDictDataService) {
+        this.sysDictDataService = sysDictDataService;
+    }
 
     /**
      * 通过字典类型查询数据

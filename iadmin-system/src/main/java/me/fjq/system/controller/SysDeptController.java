@@ -8,7 +8,6 @@ import me.fjq.system.entity.SysDept;
 import me.fjq.system.service.SysDeptService;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.annotation.Resource;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
@@ -23,11 +22,12 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("sysDept")
 public class SysDeptController {
-    /**
-     * 服务对象
-     */
-    @Resource
-    private SysDeptService sysDeptService;
+
+    private final SysDeptService sysDeptService;
+
+    public SysDeptController(SysDeptService sysDeptService) {
+        this.sysDeptService = sysDeptService;
+    }
 
     /**
      * 分页查询所有数据

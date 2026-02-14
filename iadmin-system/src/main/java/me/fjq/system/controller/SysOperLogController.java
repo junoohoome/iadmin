@@ -8,7 +8,6 @@ import me.fjq.system.entity.SysOperLog;
 import me.fjq.system.service.SysOperLogService;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.annotation.Resource;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
@@ -24,11 +23,12 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("sysOperLog")
 public class SysOperLogController {
-    /**
-     * 服务对象
-     */
-    @Resource
-    private SysOperLogService sysOperLogService;
+
+    private final SysOperLogService sysOperLogService;
+
+    public SysOperLogController(SysOperLogService sysOperLogService) {
+        this.sysOperLogService = sysOperLogService;
+    }
 
     /**
      * 分页查询所有数据

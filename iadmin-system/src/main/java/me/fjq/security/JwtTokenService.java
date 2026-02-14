@@ -154,17 +154,13 @@ public class JwtTokenService {
             }
             return !isTokenExpired(token);
         } catch (SecurityException | MalformedJwtException e) {
-            log.info("Invalid JWT signature.");
-            e.printStackTrace();
+            log.warn("Invalid JWT signature: {}", e.getMessage());
         } catch (ExpiredJwtException e) {
-            log.info("Expired JWT token.");
-            e.printStackTrace();
+            log.warn("Expired JWT token: {}", e.getMessage());
         } catch (UnsupportedJwtException e) {
-            log.info("Unsupported JWT token.");
-            e.printStackTrace();
+            log.warn("Unsupported JWT token: {}", e.getMessage());
         } catch (IllegalArgumentException e) {
-            log.info("JWT token compact of handler are invalid.");
-            e.printStackTrace();
+            log.warn("JWT token compact of handler are invalid: {}", e.getMessage());
         }
         return false;
     }

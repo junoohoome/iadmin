@@ -76,4 +76,19 @@ public class Constants {
      * 验证码有效时间/分钟
      */
     public static final Long CODE_EXPIRE_TIME = 3L;
+
+    /**
+     * 参数错误提示
+     */
+    public static final String INVALID_PARAMS = "参数有误";
+
+    /**
+     * 验证码不存在或已过期
+     */
+    public static final String CAPTCHA_NOT_EXIST = "验证码不存在或已过期";
+
+    /**
+     * 验证码错误
+     */
+    public static final String CAPTCHA_ERROR = "验证码错误";
 }

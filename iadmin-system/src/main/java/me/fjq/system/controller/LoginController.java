@@ -12,8 +12,10 @@ import me.fjq.properties.SecurityProperties;
 import me.fjq.security.JwtTokenService;
 import me.fjq.system.vo.AuthUser;
 import me.fjq.utils.RedisUtils;
+import me.fjq.utils.ServletUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -39,14 +41,17 @@ public class LoginController {
     private final JwtTokenService jwtTokenService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final String activeProfile;
+    private final me.fjq.system.service.OnlineUserService onlineUserService;
 
     public LoginController(SecurityProperties properties, RedisUtils redisUtils,
                            JwtTokenService jwtTokenService, AuthenticationManagerBuilder authenticationManagerBuilder,
+                           me.fjq.system.service.OnlineUserService onlineUserService,
                            @org.springframework.beans.factory.annotation.Value("${spring.profiles.active:dev}") String activeProfile) {
         this.properties = properties;
         this.redisUtils = redisUtils;
         this.jwtTokenService = jwtTokenService;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
+        this.onlineUserService = onlineUserService;
         this.activeProfile = activeProfile;
     }
 
@@ -63,10 +68,10 @@ public class LoginController {
             // 清除验证码
             redisUtils.del(authUser.getUuid());
             if (StringUtils.isBlank(code)) {
-                return HttpResult.error("验证码不存在或已过期");
+                return HttpResult.error(Constants.CAPTCHA_NOT_EXIST);
             }
             if (StringUtils.isBlank(authUser.getCode()) || !authUser.getCode().equalsIgnoreCase(code)) {
-                return HttpResult.error("验证码错误");
+                return HttpResult.error(Constants.CAPTCHA_ERROR);
             }
         }
 
@@ -86,7 +91,8 @@ public class LoginController {
         // 获取验证码文本
         String result = captcha.text();
         String uuid = Constants.CODE_KEY + IdUtil.simpleUUID();
-        log.info("Captcha generated - UUID: {}, Code: {}", uuid, result);
+        // 安全：不记录验证码明文到日志
+        log.debug("Captcha generated - UUID: {}", uuid);
         // 保存到 Redis
         redisUtils.set(uuid, result, Constants.CODE_EXPIRE_TIME, TimeUnit.MINUTES);
         // 验证码信息
@@ -97,10 +103,27 @@ public class LoginController {
         return HttpResult.ok(imgResult);
     }
 
+    /**
+     * 用户登出
+     * <p>将当前用户的 token 加入黑名单，使其失效
+     *
+     * @return 操作结果
+     */
     @DeleteMapping(value = "logout")
     public HttpResult logout() {
-        //todo case: remove token
-        return HttpResult.ok();
+        try {
+            // 获取当前请求的 token
+            String token = jwtTokenService.getToken(ServletUtils.getRequest());
+            if (token != null) {
+                // 将 token 加入黑名单，使其失效
+                onlineUserService.addToBlacklist(token);
+                log.info("用户登出成功");
+            }
+            return HttpResult.ok();
+        } catch (Exception e) {
+            log.error("登出失败", e);
+            return HttpResult.ok();  // 即使失败也返回成功，避免前端错误提示
+        }
     }
 
     /**
@@ -116,7 +139,11 @@ public class LoginController {
             return HttpResult.error("用户名和密码不能为空");
         }
 
-        // 直接使用明文密码登录（仅测试环境）
+        // 仅在开发环境允许明文密码登录
+        if (!"dev".equals(activeProfile)) {
+            return HttpResult.error("测试接口仅限开发环境");
+        }
+
         String token = jwtTokenService.login(username, password, authenticationManagerBuilder);
         return HttpResult.ok(properties.getTokenStartWith().concat(token));
     }

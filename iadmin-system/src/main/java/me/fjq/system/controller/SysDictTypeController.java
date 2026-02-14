@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.annotation.Resource;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
@@ -33,11 +32,12 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("sysDictType")
 public class SysDictTypeController {
-    /**
-     * 服务对象
-     */
-    @Resource
-    private SysDictTypeService sysDictTypeService;
+
+    private final SysDictTypeService sysDictTypeService;
+
+    public SysDictTypeController(SysDictTypeService sysDictTypeService) {
+        this.sysDictTypeService = sysDictTypeService;
+    }
 
     /**
      * 分页查询所有数据

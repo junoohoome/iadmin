@@ -1,6 +1,7 @@
 package me.fjq.system.controller;
 
 
+import lombok.extern.slf4j.Slf4j;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.AllArgsConstructor;
 import me.fjq.core.HttpResult;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -39,6 +41,7 @@ import me.fjq.system.vo.system.SysUserVo;
 @AllArgsConstructor
 @RestController
 @RequestMapping("sysUser")
+@Slf4j
 public class SysUserController {
     /**
      * 服务对象
@@ -59,7 +62,7 @@ public class SysUserController {
     @GetMapping
     public HttpResult selectAll(Page page, SysUserQuery query) {
         Page<SysUserVo> result = this.sysUserService.selectPage(page, query);
-        System.out.println("DEBUG: selectPage result - records: " + (result.getRecords() != null ? result.getRecords().size() : 0) + ", total: " + result.getTotal());
+        log.debug("selectPage result - records: {}, total: {}", result.getRecords() != null ? result.getRecords().size() : 0, result.getTotal());
         return HttpResult.ok(result);
     }
 
@@ -122,10 +125,16 @@ public class SysUserController {
         return HttpResult.ok(this.sysUserService.updateById(sysUser));
     }
 
+    /**
+     * 获取当前登录用户信息
+     * <p>直接从 JWT Token 中获取，避免重复查询数据库
+     *
+     * @return 用户信息
+     */
     @GetMapping("profile")
     public HttpResult<Object> getUserProfile() {
         JwtUserDetails jwtUserDetails = jwtTokenService.getJwtUserDetails(ServletUtils.getRequest());
-        return HttpResult.ok(sysUserService.getById(jwtUserDetails.getId()));
+        return HttpResult.ok(jwtUserDetails);
     }
 
     @PutMapping("profile")
@@ -166,5 +175,30 @@ public class SysUserController {
         sysUser.setUserId(userId);
         sysUser.setPassword(passwordEncoder.encode(password));
         return HttpResult.ok(sysUserService.updateById(sysUser));
+    }
+
+    /**
+     * 上传用户头像
+     * <p>待实现：需要配置文件存储策略（本地/云存储）
+     *
+     * @param avatarFile 头像文件
+     * @return 上传结果
+     * @impl 需要实现：
+     * 1. 文件类型和大小验证
+     * 2. 文件存储（本地磁盘 or OSS/S3）
+     * 3. 更新 sys_user.avatar 字段
+     * 4. 返回新的头像 URL
+     */
+    @PostMapping("profile/avatar")
+    public HttpResult<String> uploadAvatar(@RequestParam("avatarFile") MultipartFile avatarFile) {
+        JwtUserDetails jwtUserDetails = jwtTokenService.getJwtUserDetails(ServletUtils.getRequest());
+        SysUser user = sysUserService.getById(jwtUserDetails.getId());
+
+        if (user == null) {
+            return HttpResult.error("用户不存在");
+        }
+
+        // 待实现：文件上传和存储逻辑
+        return HttpResult.ok("头像上传功能待实现");
     }
 }

@@ -7,7 +7,6 @@ import me.fjq.system.entity.SysLogininfor;
 import me.fjq.system.service.SysLogininforService;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.annotation.Resource;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
@@ -22,11 +21,12 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("sysLogininfor")
 public class SysLogininforController {
-    /**
-     * 服务对象
-     */
-    @Resource
-    private SysLogininforService sysLogininforService;
+
+    private final SysLogininforService sysLogininforService;
+
+    public SysLogininforController(SysLogininforService sysLogininforService) {
+        this.sysLogininforService = sysLogininforService;
+    }
 
     /**
      * 分页查询所有数据

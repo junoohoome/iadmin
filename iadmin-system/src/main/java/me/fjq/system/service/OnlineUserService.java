@@ -111,7 +111,7 @@ public class OnlineUserService {
     }
 
     /**
-     * 获取所有在线用户（使用虚拟线程优化并发查询）
+     * 获取所有在线用户（使用批量操作优化性能）
      *
      * @return 在线用户列表
      */
@@ -123,37 +123,24 @@ public class OnlineUserService {
             Set<Object> tokens = redisUtils.sGet(RedisConstants.ONLINE_USERS_KEY);
 
             if (tokens != null && !tokens.isEmpty()) {
-                // 使用 Java 21 虚拟线程并发查询 Redis
-                try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
-                    List<Future<OnlineUser>> futures = new ArrayList<>();
+                // 使用 Redis multiGet 批量获取（替代原来的 N+1 查询）
+                List<String> tokenKeys = tokens.stream()
+                        .map(token -> RedisConstants.ONLINE_TOKEN_KEY + token)
+                        .collect(java.util.stream.Collectors.toList());
 
-                    for (Object token : tokens) {
-                        Future<OnlineUser> future = executor.submit(() -> {
-                            try {
-                                String tokenKey = RedisConstants.ONLINE_TOKEN_KEY + token;
-                                Object userObj = redisUtils.get(tokenKey);
+                List<Object> userObjects = redisUtils.multiGet(tokenKeys);
 
-                                if (userObj != null) {
-                                    return objectMapper.readValue(userObj.toString(), OnlineUser.class);
-                                }
-                            } catch (JsonProcessingException e) {
-                                log.error("解析在线用户数据失败, token: {}", token, e);
-                            }
-                            return null;
-                        });
-                        futures.add(future);
-                    }
-
-                    // 收集结果
-                    for (Future<OnlineUser> future : futures) {
-                        try {
-                            OnlineUser user = future.get();
-                            if (user != null) {
-                                onlineUsers.add(user);
-                            }
-                        } catch (InterruptedException | ExecutionException e) {
-                            log.error("获取在线用户数据失败", e);
+                // 解析返回的用户数据
+                for (int i = 0; i < tokenKeys.size() && i < userObjects.size(); i++) {
+                    try {
+                        Object userObj = userObjects.get(i);
+                        if (userObj != null) {
+                            OnlineUser user = objectMapper.readValue(userObj.toString(), OnlineUser.class);
+                            onlineUsers.add(user);
                         }
+                    } catch (JsonProcessingException e) {
+                        Object token = tokens.toArray()[i];
+                        log.error("解析在线用户数据失败, token: {}", token, e);
                     }
                 }
             }
