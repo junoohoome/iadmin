@@ -51,7 +51,7 @@ spring:
         # 登录名
         login-username: admin
         # 登录密码
-        login-password: 123456
+        login-password: Druid@2025Admin!
 
   data:
     redis:

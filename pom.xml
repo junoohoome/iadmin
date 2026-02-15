@@ -30,7 +30,7 @@
 		<java.version>21</java.version>
 		<maven.compiler.source>21</maven.compiler.source>
 		<maven.compiler.target>21</maven.compiler.target>
-		<druid.version>1.2.23</druid.version>
+		<druid.version>1.2.27</druid.version>
 		<mapstruct.version>1.6.3</mapstruct.version>
 		<mybatis-plus-boot-starter.version>3.5.8</mybatis-plus-boot-starter.version>
 		<hutool.version>5.8.28</hutool.version>
