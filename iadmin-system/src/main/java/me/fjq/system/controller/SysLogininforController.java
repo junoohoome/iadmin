@@ -35,7 +35,7 @@ public class SysLogininforController {
      * @param sysLogininfor 查询实体
      * @return 所有数据
      */
-    @GetMapping
+    @GetMapping("/list")
     public HttpResult selectAll(Page<SysLogininfor> page, SysLogininfor sysLogininfor) {
         return HttpResult.ok(this.sysLogininforService.page(page, new QueryWrapper<>(sysLogininfor)));
     }
