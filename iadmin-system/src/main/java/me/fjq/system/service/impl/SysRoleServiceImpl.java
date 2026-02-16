@@ -3,6 +3,7 @@ package me.fjq.system.service.impl;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.extension.toolkit.Db;
 import lombok.AllArgsConstructor;
 import me.fjq.system.entity.SysRole;
 import me.fjq.system.entity.SysRoleMenu;
@@ -61,19 +62,18 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         // 先删除旧权限
         roleMenuMapper.delete(new QueryWrapper<SysRoleMenu>().lambda().eq(SysRoleMenu::getRoleId, roleId));
 
-        // 批量插入新权限（优化性能）
+        // 批量插入新权限（优化：使用 Db.saveBatch 替代循环单条插入）
         if (split != null && split.length > 0) {
-            List<SysRoleMenu> roleMenuList = new ArrayList<>(split.length);
-            for (String menuId : split) {
-                SysRoleMenu roleMenu = new SysRoleMenu();
-                roleMenu.setMenuId(Long.parseLong(menuId));
-                roleMenu.setRoleId(roleId);
-                roleMenuList.add(roleMenu);
-            }
-            // 使用 MyBatis-Plus 批量插入
-            for (SysRoleMenu roleMenu : roleMenuList) {
-                roleMenuMapper.insert(roleMenu);
-            }
+            List<SysRoleMenu> roleMenuList = Arrays.stream(split)
+                    .map(menuId -> {
+                        SysRoleMenu roleMenu = new SysRoleMenu();
+                        roleMenu.setMenuId(Long.parseLong(menuId));
+                        roleMenu.setRoleId(roleId);
+                        return roleMenu;
+                    })
+                    .collect(Collectors.toList());
+            // 使用 MyBatis-Plus 批量插入（一条 SQL 插入多条数据）
+            Db.saveBatch(roleMenuList);
         }
     }
 }
