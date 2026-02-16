@@ -31,4 +31,14 @@ public class SystemSecurityUtils extends SecurityUtils {
         return null;
     }
 
+    /**
+     * 获取当前登录用户名
+     *
+     * @return 用户名
+     */
+    public static String getCurrentUsername() {
+        JwtUserDetails user = getCurrentUser();
+        return user != null ? user.getUsername() : null;
+    }
+
 }

@@ -10,13 +10,16 @@ import me.fjq.constant.Constants;
 import me.fjq.core.HttpResult;
 import me.fjq.properties.SecurityProperties;
 import me.fjq.security.JwtTokenService;
+import me.fjq.system.service.SysLogininforService;
 import me.fjq.system.vo.AuthUser;
+import me.fjq.utils.IpUtils;
 import me.fjq.utils.RedisUtils;
 import me.fjq.utils.ServletUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,21 +45,29 @@ public class LoginController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final String activeProfile;
     private final me.fjq.system.service.OnlineUserService onlineUserService;
+    private final SysLogininforService logininforService;
 
     public LoginController(SecurityProperties properties, RedisUtils redisUtils,
                            JwtTokenService jwtTokenService, AuthenticationManagerBuilder authenticationManagerBuilder,
                            me.fjq.system.service.OnlineUserService onlineUserService,
+                           SysLogininforService logininforService,
                            @org.springframework.beans.factory.annotation.Value("${spring.profiles.active:dev}") String activeProfile) {
         this.properties = properties;
         this.redisUtils = redisUtils;
         this.jwtTokenService = jwtTokenService;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.onlineUserService = onlineUserService;
+        this.logininforService = logininforService;
         this.activeProfile = activeProfile;
     }
 
     @PostMapping(value = "login")
     public HttpResult login(@Validated @RequestBody AuthUser authUser) {
+        String username = authUser.getUsername();
+        String ipaddr = IpUtils.getIp(ServletUtils.getRequest());
+        String browser = IpUtils.getBrowser(ServletUtils.getRequest());
+        String os = IpUtils.getOs(ServletUtils.getRequest());
+
         // 密码解密
         RSA rsa = new RSA(privateKey, null);
         String password = new String(rsa.decrypt(authUser.getPassword(), KeyType.PrivateKey));
@@ -68,16 +79,26 @@ public class LoginController {
             // 清除验证码
             redisUtils.del(authUser.getUuid());
             if (StringUtils.isBlank(code)) {
+                logininforService.recordLoginFail(username, ipaddr, browser, os, "验证码不存在");
                 return HttpResult.error(Constants.CAPTCHA_NOT_EXIST);
             }
             if (StringUtils.isBlank(authUser.getCode()) || !authUser.getCode().equalsIgnoreCase(code)) {
+                logininforService.recordLoginFail(username, ipaddr, browser, os, "验证码错误");
                 return HttpResult.error(Constants.CAPTCHA_ERROR);
             }
         }
 
         // 系统登录认证并返回令牌
-        String token = jwtTokenService.login(authUser.getUsername(), password, authenticationManagerBuilder);
-        return HttpResult.ok(properties.getTokenStartWith().concat(token));
+        try {
+            String token = jwtTokenService.login(username, password, authenticationManagerBuilder);
+            // 记录登录成功日志
+            logininforService.recordLoginSuccess(username, ipaddr, browser, os);
+            return HttpResult.ok(properties.getTokenStartWith().concat(token));
+        } catch (AuthenticationException e) {
+            // 记录登录失败日志
+            logininforService.recordLoginFail(username, ipaddr, browser, os, e.getMessage());
+            throw e;
+        }
     }
 
     @GetMapping(value = "code")
@@ -134,8 +155,12 @@ public class LoginController {
     public HttpResult testLogin(@RequestBody Map<String, String> params) {
         String username = params.get("username");
         String password = params.get("password");
+        String ipaddr = IpUtils.getIp(ServletUtils.getRequest());
+        String browser = IpUtils.getBrowser(ServletUtils.getRequest());
+        String os = IpUtils.getOs(ServletUtils.getRequest());
 
         if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
+            logininforService.recordLoginFail(username, ipaddr, browser, os, "用户名和密码不能为空");
             return HttpResult.error("用户名和密码不能为空");
         }
 
@@ -144,8 +169,14 @@ public class LoginController {
             return HttpResult.error("测试接口仅限开发环境");
         }
 
-        String token = jwtTokenService.login(username, password, authenticationManagerBuilder);
-        return HttpResult.ok(properties.getTokenStartWith().concat(token));
+        try {
+            String token = jwtTokenService.login(username, password, authenticationManagerBuilder);
+            logininforService.recordLoginSuccess(username, ipaddr, browser, os);
+            return HttpResult.ok(properties.getTokenStartWith().concat(token));
+        } catch (AuthenticationException e) {
+            logininforService.recordLoginFail(username, ipaddr, browser, os, e.getMessage());
+            throw e;
+        }
     }
 
 }

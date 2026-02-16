@@ -4,6 +4,7 @@ package me.fjq.system.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import me.fjq.annotation.Log;
 import me.fjq.constant.Constants;
 import me.fjq.core.HttpResult;
 import me.fjq.system.entity.SysRole;
@@ -79,6 +80,7 @@ public class SysRoleController {
      * @param sysRole 实体对象
      * @return 新增结果
      */
+    @Log(title = "角色管理", businessType = 1)
     @PostMapping
     public HttpResult insert(@RequestBody SysRole sysRole) {
         return HttpResult.ok(this.sysRoleService.save(sysRole));
@@ -90,6 +92,7 @@ public class SysRoleController {
      * @param sysRole 实体对象
      * @return 修改结果
      */
+    @Log(title = "角色管理", businessType = 2)
     @PutMapping
     public HttpResult update(@RequestBody SysRole sysRole) {
         return HttpResult.ok(this.sysRoleService.updateById(sysRole));
@@ -101,6 +104,7 @@ public class SysRoleController {
      * @param idList 主键结合 (comma-separated string)
      * @return 删除结果
      */
+    @Log(title = "角色管理", businessType = 3)
     @DeleteMapping("{idList}")
     public HttpResult delete(@PathVariable String idList) {
         List<Long> ids = Arrays.stream(idList.split(","))

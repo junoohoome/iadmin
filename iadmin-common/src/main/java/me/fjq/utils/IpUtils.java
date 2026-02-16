@@ -69,4 +69,12 @@ public class IpUtils {
         Browser browser = userAgent.getBrowser();
         return browser.getName();
     }
+
+    /**
+     * 获取操作系统
+     */
+    public static String getOs(HttpServletRequest request) {
+        UserAgent userAgent = UserAgent.parseUserAgentString(request.getHeader("User-Agent"));
+        return userAgent.getOperatingSystem().getName();
+    }
 }

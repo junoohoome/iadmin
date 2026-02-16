@@ -4,6 +4,7 @@ package me.fjq.system.controller;
 import lombok.extern.slf4j.Slf4j;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.AllArgsConstructor;
+import me.fjq.annotation.Log;
 import me.fjq.core.HttpResult;
 import me.fjq.security.JwtTokenService;
 import me.fjq.security.JwtUserDetails;
@@ -83,6 +84,7 @@ public class SysUserController {
      * @param sysUser 实体对象
      * @return 新增结果
      */
+    @Log(title = "用户管理", businessType = 1)
     @PreAuthorize("@ss.hasPerms('admin,system:user:add')")
     @PostMapping
     public HttpResult insert(@RequestBody SysUser sysUser) {
@@ -96,6 +98,7 @@ public class SysUserController {
      * @param sysUser 实体对象
      * @return 修改结果
      */
+    @Log(title = "用户管理", businessType = 2)
     @PreAuthorize("@ss.hasPerms('admin,system:user:edit')")
     @PutMapping
     public HttpResult update(@RequestBody SysUser sysUser) {
@@ -108,6 +111,7 @@ public class SysUserController {
      * @param idList 主键结合 (comma-separated string)
      * @return 删除结果
      */
+    @Log(title = "用户管理", businessType = 3)
     @PreAuthorize("@ss.hasPerms('admin,system:user:del')")
     @DeleteMapping("{idList}")
     public HttpResult delete(@PathVariable String idList) {
