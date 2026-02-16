@@ -37,7 +37,7 @@ public class SysOperLogController {
      * @param sysOperLog 查询实体
      * @return 所有数据
      */
-    @GetMapping
+    @GetMapping("/list")
     public HttpResult selectAll(Page<SysOperLog> page, SysOperLog sysOperLog) {
         return HttpResult.ok(this.sysOperLogService.page(page, new QueryWrapper<>(sysOperLog)));
     }
