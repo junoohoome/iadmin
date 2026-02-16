@@ -13,6 +13,7 @@ import me.fjq.system.query.SysUserQuery;
 import me.fjq.system.service.SysRoleService;
 import me.fjq.system.service.SysUserService;
 import me.fjq.utils.ServletUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,9 +27,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import me.fjq.system.vo.system.SysUserVo;
 
@@ -39,7 +43,6 @@ import me.fjq.system.vo.system.SysUserVo;
  * @author fjq
  * @since 2020-03-23 22:43:49
  */
-@AllArgsConstructor
 @RestController
 @RequestMapping("sysUser")
 @Slf4j
@@ -51,6 +54,20 @@ public class SysUserController {
     private final SysRoleService sysRoleService;
     private final JwtTokenService jwtTokenService;
     private final PasswordEncoder passwordEncoder;
+
+    @Value("${file.avatar:./avatar/}")
+    private String avatarPath;
+
+    @Value("${file.avatarMaxSize:5}")
+    private int avatarMaxSize;
+
+    public SysUserController(SysUserService sysUserService, SysRoleService sysRoleService,
+                            JwtTokenService jwtTokenService, PasswordEncoder passwordEncoder) {
+        this.sysUserService = sysUserService;
+        this.sysRoleService = sysRoleService;
+        this.jwtTokenService = jwtTokenService;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     /**
      * 分页查询所有数据
@@ -183,16 +200,11 @@ public class SysUserController {
 
     /**
      * 上传用户头像
-     * <p>待实现：需要配置文件存储策略（本地/云存储）
      *
      * @param avatarFile 头像文件
-     * @return 上传结果
-     * @impl 需要实现：
-     * 1. 文件类型和大小验证
-     * 2. 文件存储（本地磁盘 or OSS/S3）
-     * 3. 更新 sys_user.avatar 字段
-     * 4. 返回新的头像 URL
+     * @return 上传结果（头像访问URL）
      */
+    @Log(title = "用户管理", function = "上传头像")
     @PostMapping("profile/avatar")
     public HttpResult<String> uploadAvatar(@RequestParam("avatarFile") MultipartFile avatarFile) {
         JwtUserDetails jwtUserDetails = jwtTokenService.getJwtUserDetails(ServletUtils.getRequest());
@@ -202,7 +214,54 @@ public class SysUserController {
             return HttpResult.error("用户不存在");
         }
 
-        // 待实现：文件上传和存储逻辑
-        return HttpResult.ok("头像上传功能待实现");
+        // 1. 文件校验
+        if (avatarFile == null || avatarFile.isEmpty()) {
+            return HttpResult.error("请选择要上传的文件");
+        }
+
+        // 2. 文件类型校验
+        String contentType = avatarFile.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            return HttpResult.error("只能上传图片文件");
+        }
+
+        // 3. 文件大小校验（MB）
+        long fileSizeMB = avatarFile.getSize() / (1024 * 1024);
+        if (fileSizeMB > avatarMaxSize) {
+            return HttpResult.error("文件大小不能超过" + avatarMaxSize + "MB");
+        }
+
+        try {
+            // 4. 生成唯一文件名
+            String originalFilename = avatarFile.getOriginalFilename();
+            String extension = originalFilename != null && originalFilename.contains(".")
+                    ? originalFilename.substring(originalFilename.lastIndexOf("."))
+                    : ".jpg";
+            String fileName = UUID.randomUUID().toString().replace("-", "") + extension;
+
+            // 5. 确保目录存在
+            File dir = new File(avatarPath);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            // 6. 保存文件
+            File destFile = new File(avatarPath + fileName);
+            avatarFile.transferTo(destFile);
+
+            // 7. 更新用户头像字段
+            String avatarUrl = "/avatar/" + fileName;
+            SysUser updateUser = new SysUser();
+            updateUser.setUserId(user.getUserId());
+            updateUser.setAvatar(avatarUrl);
+            sysUserService.updateById(updateUser);
+
+            log.info("用户头像上传成功: userId={}, avatar={}", user.getUserId(), avatarUrl);
+            return HttpResult.ok(avatarUrl);
+
+        } catch (IOException e) {
+            log.error("头像上传失败", e);
+            return HttpResult.error("文件上传失败，请稍后重试");
+        }
     }
 }
