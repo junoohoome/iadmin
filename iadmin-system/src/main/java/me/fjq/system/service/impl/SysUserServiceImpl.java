@@ -9,6 +9,7 @@ import me.fjq.system.query.SysUserQuery;
 import me.fjq.system.service.SysUserService;
 import me.fjq.system.vo.system.SysUserVo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 用户信息表(SysUser)表服务实现类
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
  */
 @AllArgsConstructor
 @Service("sysUserService")
+@Transactional(rollbackFor = Exception.class)
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
 
     private final SysUserMapper sysUserMapper;

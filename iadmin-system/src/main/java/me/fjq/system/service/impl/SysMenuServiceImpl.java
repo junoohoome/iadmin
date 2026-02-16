@@ -3,6 +3,7 @@ package me.fjq.system.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
+import me.fjq.constant.MenuConstants;
 import me.fjq.system.entity.SysMenu;
 import me.fjq.system.mapper.SysMenuMapper;
 import me.fjq.system.service.SysMenuService;
@@ -12,6 +13,7 @@ import me.fjq.system.vo.TreeSelect;
 import me.fjq.utils.SecurityUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +32,7 @@ import java.util.stream.Collectors;
  */
 @AllArgsConstructor
 @Service("sysMenuService")
+@Transactional(rollbackFor = Exception.class)
 public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> implements SysMenuService {
 
     private final SysMenuMapper menuMapper;
@@ -54,7 +57,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
         } else {
             menus = menuMapper.selectMenuTreeByUserId(userId, menuName, isRouterSelect);
         }
-        return getChildMenuTree(menus, 0);
+        return getChildMenuTree(menus, MenuConstants.ROOT_PARENT_ID.intValue());
     }
 
     @Override
@@ -66,17 +69,17 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
             router.setParentId(menu.getParentId());
             router.setName(StringUtils.capitalize(menu.getPath()));
             router.setPath(getRouterPath(menu));
-            router.setComponent(StringUtils.isEmpty(menu.getComponent()) ? "Layout" : menu.getComponent());
+            router.setComponent(StringUtils.isEmpty(menu.getComponent()) ? MenuConstants.LAYOUT_COMPONENT : menu.getComponent());
             router.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon()));
             // visible="0" 表示隐藏, "1" 表示可见，需要转换为 hidden（含义相反）
-            router.setHidden("0".equals(menu.getVisible()) ? "1" : "0");
+            router.setHidden(MenuConstants.VISIBLE_SHOW.equals(menu.getVisible()) ? "1" : "0");
             router.setVisible(menu.getVisible());
             router.setType(menu.getMenuType());
             router.setSort(menu.getSort());
             List<SysMenu> cMenus = menu.getChildren();
-            if (CollectionUtil.isNotEmpty(cMenus) && "M".equals(menu.getMenuType())) {
+            if (CollectionUtil.isNotEmpty(cMenus) && MenuConstants.MENU_TYPE_DIR.equals(menu.getMenuType())) {
                 router.setAlwaysShow(true);
-                router.setRedirect("noRedirect");
+                router.setRedirect(MenuConstants.NO_REDIRECT);
                 router.setChildren(buildMenus(cMenus));
             }
             routers.add(router);
@@ -105,7 +108,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
     private String getRouterPath(SysMenu menu) {
         String routerPath = menu.getPath();
         // 非外链并且是一级目录
-        if (0 == menu.getParentId() && 1 == menu.getIsFrame()) {
+        if (MenuConstants.ROOT_PARENT_ID.equals(menu.getParentId()) && MenuConstants.IS_FRAME_NO.equals(menu.getIsFrame())) {
             routerPath = "/" + menu.getPath();
         }
         return routerPath;

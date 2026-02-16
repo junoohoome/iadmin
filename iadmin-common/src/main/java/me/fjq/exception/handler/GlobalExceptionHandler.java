@@ -5,9 +5,14 @@ import me.fjq.core.HttpResult;
 import me.fjq.exception.BadRequestException;
 import me.fjq.exception.JwtTokenException;
 import me.fjq.utils.ThrowableUtil;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.validation.BindException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.stream.Collectors;
 
 /**
  * 全局异常处理
@@ -20,6 +25,30 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    /**
+     * 处理参数校验异常（@RequestBody）
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public HttpResult handleValidationException(MethodArgumentNotValidException e) {
+        String message = e.getBindingResult().getAllErrors().stream()
+                .map(error -> error.getDefaultMessage())
+                .collect(Collectors.joining(", "));
+        log.warn("参数校验失败: {}", message);
+        return HttpResult.error(HttpStatus.BAD_REQUEST.value(), message);
+    }
+
+    /**
+     * 处理参数绑定异常（@ModelAttribute）
+     */
+    @ExceptionHandler(BindException.class)
+    public HttpResult handleBindException(BindException e) {
+        String message = e.getBindingResult().getAllErrors().stream()
+                .map(error -> error.getDefaultMessage())
+                .collect(Collectors.joining(", "));
+        log.warn("参数绑定失败: {}", message);
+        return HttpResult.error(HttpStatus.BAD_REQUEST.value(), message);
+    }
 
     /**
      * 处理所有不可知的异常
