@@ -2,6 +2,7 @@ package me.fjq.system.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import me.fjq.config.AsyncConfig;
 import me.fjq.system.entity.SysLogininfor;
 import me.fjq.system.mapper.SysLogininforMapper;
 import me.fjq.system.service.SysLogininforService;
@@ -31,7 +32,7 @@ public class SysLogininforServiceImpl extends ServiceImpl<SysLogininforMapper, S
      * @param os            操作系统
      * @param msg           提示消息
      */
-    @Async
+    @Async(AsyncConfig.TASK_EXECUTOR)
     @Override
     public void recordLoginLog(String userName, String status, String ipaddr,
                                String loginLocation, String browser, String os, String msg) {

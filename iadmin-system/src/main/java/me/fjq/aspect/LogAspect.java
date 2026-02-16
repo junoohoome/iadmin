@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import me.fjq.annotation.Log;
+import me.fjq.config.AsyncConfig;
 import me.fjq.system.entity.SysOperLog;
 import me.fjq.system.service.SysOperLogService;
 import me.fjq.utils.IpUtils;
@@ -15,6 +16,7 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -24,7 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 /**
  * 操作日志记录切面
@@ -40,9 +42,11 @@ import java.util.concurrent.CompletableFuture;
 public class LogAspect {
 
     private final SysOperLogService operLogService;
+    private final Executor taskExecutor;
 
-    public LogAspect(SysOperLogService operLogService) {
+    public LogAspect(SysOperLogService operLogService, @Qualifier(AsyncConfig.TASK_EXECUTOR) Executor taskExecutor) {
         this.operLogService = operLogService;
+        this.taskExecutor = taskExecutor;
     }
 
     /**
@@ -137,7 +141,7 @@ public class LogAspect {
 
             // 异步保存日志
             final SysOperLog finalOperLog = operLog;
-            CompletableFuture.runAsync(() -> {
+            taskExecutor.execute(() -> {
                 try {
                     operLogService.save(finalOperLog);
                     log.debug("操作日志记录成功: {}", finalOperLog.getTitle());
