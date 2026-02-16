@@ -151,6 +151,7 @@ public class LoginController {
      * 测试登录接口 - 跳过验证码检查
      * 仅用于自动化测试，生产环境应禁用
      */
+    @Profile("dev")
     @PostMapping(value = "testLogin")
     public HttpResult testLogin(@RequestBody Map<String, String> params) {
         String username = params.get("username");
@@ -162,11 +163,6 @@ public class LoginController {
         if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
             logininforService.recordLoginFail(username, ipaddr, browser, os, "用户名和密码不能为空");
             return HttpResult.error("用户名和密码不能为空");
-        }
-
-        // 仅在开发环境允许明文密码登录
-        if (!"dev".equals(activeProfile)) {
-            return HttpResult.error("测试接口仅限开发环境");
         }
 
         try {

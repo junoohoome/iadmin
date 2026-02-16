@@ -3,11 +3,12 @@ package me.fjq.system.controller;
 
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import me.fjq.annotation.Log;
 import me.fjq.core.HttpResult;
 import me.fjq.system.entity.SysDictData;
 import me.fjq.system.service.SysDictDataService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.Arrays;
 import java.util.List;
@@ -53,6 +54,8 @@ public class SysDictDataController {
      * @param sysDictData 实体对象
      * @return 新增结果
      */
+    @PreAuthorize("@ss.hasPerms('system:dict:add')")
+    @Log(title = "字典数据", businessType = 1)
     @PostMapping
     public HttpResult insert(@RequestBody SysDictData sysDictData) {
         return HttpResult.ok(this.sysDictDataService.save(sysDictData));
@@ -64,6 +67,8 @@ public class SysDictDataController {
      * @param sysDictData 实体对象
      * @return 修改结果
      */
+    @PreAuthorize("@ss.hasPerms('system:dict:edit')")
+    @Log(title = "字典数据", businessType = 2)
     @PutMapping
     public HttpResult update(@RequestBody SysDictData sysDictData) {
         return HttpResult.ok(this.sysDictDataService.updateById(sysDictData));
@@ -75,6 +80,8 @@ public class SysDictDataController {
      * @param idList 主键结合 (comma-separated string)
      * @return 删除结果
      */
+    @PreAuthorize("@ss.hasPerms('system:dict:del')")
+    @Log(title = "字典数据", businessType = 3)
     @DeleteMapping("{idList}")
     public HttpResult delete(@PathVariable String idList) {
         List<Long> ids = Arrays.stream(idList.split(","))
@@ -88,10 +95,11 @@ public class SysDictDataController {
      *
      * @return 操作结果
      */
-    @RequestMapping(path = "/refreshCache", method = RequestMethod.DELETE)
+    @PreAuthorize("@ss.hasPerms('system:dict:edit')")
+    @DeleteMapping("refreshCache")
     public HttpResult refreshCache() {
         // 清空所有字典相关缓存
         // 实际实现应根据业务需求调整
-        return HttpResult.ok();
+        return HttpResult.ok("缓存刷新成功");
     }
 }

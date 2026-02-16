@@ -3,6 +3,7 @@ package me.fjq.system.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import me.fjq.Domain.BaseEntity;
@@ -38,7 +39,8 @@ public class SysUser extends BaseEntity {
     private String sex;
     /**头像地址*/
     private String avatar;
-    /**密码*/
+    /**密码 - 仅允许写入，不允许在API响应中返回*/
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     /**帐号状态（0正常 1停用）*/
     private String status;

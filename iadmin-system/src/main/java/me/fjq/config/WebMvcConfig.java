@@ -25,14 +25,30 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Value("${file.avatar}")
     private String avatar;
 
+    @Value("${cors.allowed-origins:http://localhost:3000}")
+    private String[] allowedOrigins;
+
+    @Value("${spring.profiles.active:dev}")
+    private String activeProfile;
+
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOriginPattern("*");
+
+        // 生产环境使用配置的域名，开发环境允许所有来源
+        if ("prod".equals(activeProfile)) {
+            for (String origin : allowedOrigins) {
+                config.addAllowedOrigin(origin);
+            }
+        } else {
+            config.addAllowedOriginPattern("*");
+        }
+
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
+        config.setMaxAge(3600L);
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }

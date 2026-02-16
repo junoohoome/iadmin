@@ -3,9 +3,11 @@ package me.fjq.system.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import me.fjq.annotation.Log;
 import me.fjq.core.HttpResult;
 import me.fjq.system.entity.SysDept;
 import me.fjq.system.service.SysDeptService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
@@ -36,6 +38,7 @@ public class SysDeptController {
      * @param sysDept 查询实体
      * @return 所有数据
      */
+    @PreAuthorize("@ss.hasPerms('system:dept:list')")
     @GetMapping
     public HttpResult selectAll(Page<SysDept> page, SysDept sysDept) {
         return HttpResult.ok(this.sysDeptService.page(page,
@@ -51,6 +54,7 @@ public class SysDeptController {
      *
      * @return 树形数据
      */
+    @PreAuthorize("@ss.hasPerms('system:dept:list')")
     @GetMapping("list")
     public HttpResult list() {
         List<SysDept> list = this.sysDeptService.list(
@@ -66,6 +70,7 @@ public class SysDeptController {
      * @param id 主键
      * @return 单条数据
      */
+    @PreAuthorize("@ss.hasPerms('system:dept:list')")
     @GetMapping("{id}")
     public HttpResult selectOne(@PathVariable Serializable id) {
         return HttpResult.ok(this.sysDeptService.getById(id));
@@ -77,6 +82,8 @@ public class SysDeptController {
      * @param sysDept 实体对象
      * @return 新增结果
      */
+    @PreAuthorize("@ss.hasPerms('system:dept:add')")
+    @Log(title = "部门管理", businessType = 1)
     @PostMapping
     public HttpResult insert(@RequestBody SysDept sysDept) {
         return HttpResult.ok(this.sysDeptService.save(sysDept));
@@ -88,6 +95,8 @@ public class SysDeptController {
      * @param sysDept 实体对象
      * @return 修改结果
      */
+    @PreAuthorize("@ss.hasPerms('system:dept:edit')")
+    @Log(title = "部门管理", businessType = 2)
     @PutMapping
     public HttpResult update(@RequestBody SysDept sysDept) {
         return HttpResult.ok(this.sysDeptService.updateById(sysDept));
@@ -99,6 +108,8 @@ public class SysDeptController {
      * @param idList 主键结合 (comma-separated string)
      * @return 删除结果
      */
+    @PreAuthorize("@ss.hasPerms('system:dept:del')")
+    @Log(title = "部门管理", businessType = 3)
     @DeleteMapping("{idList}")
     public HttpResult delete(@PathVariable String idList) {
         List<Long> ids = Arrays.stream(idList.split(","))

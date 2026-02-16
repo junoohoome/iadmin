@@ -10,6 +10,7 @@ import me.fjq.core.HttpResult;
 import me.fjq.system.entity.SysRole;
 import me.fjq.system.service.SysRoleService;
 import me.fjq.system.vo.SelectOptions;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
@@ -41,6 +42,7 @@ public class SysRoleController {
      * @param sysRole 查询实体
      * @return 所有数据
      */
+    @PreAuthorize("@ss.hasPerms('system:role:list')")
     @GetMapping
     public HttpResult selectAll(Page<SysRole> page, SysRole sysRole) {
         return HttpResult.ok(this.sysRoleService.page(page, new QueryWrapper<>(sysRole)));
@@ -69,6 +71,7 @@ public class SysRoleController {
      * @param id 主键
      * @return 单条数据
      */
+    @PreAuthorize("@ss.hasPerms('system:role:list')")
     @GetMapping("{id}")
     public HttpResult selectOne(@PathVariable Serializable id) {
         return HttpResult.ok(this.sysRoleService.getById(id));
@@ -80,6 +83,7 @@ public class SysRoleController {
      * @param sysRole 实体对象
      * @return 新增结果
      */
+    @PreAuthorize("@ss.hasPerms('system:role:add')")
     @Log(title = "角色管理", businessType = 1)
     @PostMapping
     public HttpResult insert(@RequestBody SysRole sysRole) {
@@ -92,6 +96,7 @@ public class SysRoleController {
      * @param sysRole 实体对象
      * @return 修改结果
      */
+    @PreAuthorize("@ss.hasPerms('system:role:edit')")
     @Log(title = "角色管理", businessType = 2)
     @PutMapping
     public HttpResult update(@RequestBody SysRole sysRole) {
@@ -104,6 +109,7 @@ public class SysRoleController {
      * @param idList 主键结合 (comma-separated string)
      * @return 删除结果
      */
+    @PreAuthorize("@ss.hasPerms('system:role:del')")
     @Log(title = "角色管理", businessType = 3)
     @DeleteMapping("{idList}")
     public HttpResult delete(@PathVariable String idList) {
@@ -113,11 +119,14 @@ public class SysRoleController {
         return HttpResult.ok(this.sysRoleService.removeByIds(ids));
     }
 
+    @PreAuthorize("@ss.hasPerms('system:role:list')")
     @GetMapping("selectMenuIds")
     public HttpResult<List<Long>> findRoleMenuListByRoleId(@RequestParam("roleId") String roleId) {
         return HttpResult.ok(this.sysRoleService.selectRoleMenuListByRoleId(Long.valueOf(roleId)));
     }
 
+    @PreAuthorize("@ss.hasPerms('system:role:edit')")
+    @Log(title = "角色管理", businessType = 4)
     @PutMapping("update/permissions")
     public HttpResult updatePermissions(@RequestParam("roleId") String roleId, @RequestParam("menuIds") String menuIds) {
         if (ObjectUtils.isNull(roleId, menuIds)) {
