@@ -33,10 +33,10 @@
 		<druid.version>1.2.27</druid.version>
 		<mapstruct.version>1.6.3</mapstruct.version>
 		<mybatis-plus-boot-starter.version>3.5.8</mybatis-plus-boot-starter.version>
-		<hutool.version>5.8.28</hutool.version>
-		<poi.version>5.3.0</poi.version>
+		<hutool.version>5.8.43</hutool.version>
+		<poi.version>5.5.1</poi.version>
 		<springdoc.version>2.5.0</springdoc.version>
-		<jwt.version>0.12.6</jwt.version>
+		<jwt.version>0.13.0</jwt.version>
 	</properties>
 
 	<dependencies>
