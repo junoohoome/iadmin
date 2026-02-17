@@ -21,6 +21,20 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
+		<!-- 监控模块 -->
+		<dependency>
+			<groupId>me.fjq</groupId>
+			<artifactId>iadmin-monitor</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<!-- 定时任务模块 -->
+		<dependency>
+			<groupId>me.fjq</groupId>
+			<artifactId>iadmin-quartz</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
 		<!-- 验证码 -->
 		<dependency>
 			<groupId>com.github.whvcse</groupId>
