@@ -10,6 +10,7 @@ import me.fjq.exception.BadRequestException;
 import me.fjq.system.entity.SysUser;
 import me.fjq.system.service.SysMenuService;
 import me.fjq.system.service.SysUserService;
+import me.fjq.utils.RedisUtils;
 import me.fjq.utils.SecurityUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -34,7 +35,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final SysUserService userService;
     private final SysMenuService menuService;
-    private final UserCacheService userCacheService;
 
     @Override
     public UserDetails loadUserByUsername(String username) {
@@ -47,21 +47,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new BadRequestException("账号未激活");
         }
 
-        // 2. 尝试从缓存获取权限
-        Set<String> permissions = userCacheService.getCachedPermissions(user.getUserId());
-
-        if (permissions == null) {
-            // 缓存未命中，从数据库查询
-            permissions = menuService.selectMenuPermsByUserId(user.getUserId());
-            // 设置管理员权限
-            if (SecurityUtils.isAdmin(user.getUserId())) {
-                permissions.add(Constants.SYS_ADMIN_PERMISSION);
-            }
-            // 写入缓存
-            userCacheService.cachePermissions(user.getUserId(), permissions);
-            log.debug("权限信息从数据库加载并缓存: userId={}", user.getUserId());
-        } else {
-            log.debug("权限信息从缓存加载: userId={}", user.getUserId());
+        // 2. 从数据库查询权限（暂时禁用缓存，避免序列化问题）
+        Set<String> permissions = menuService.selectMenuPermsByUserId(user.getUserId());
+        // 设置管理员权限
+        if (SecurityUtils.isAdmin(user.getUserId())) {
+            permissions.add(Constants.SYS_ADMIN_PERMISSION);
         }
 
         List<GrantedAuthority> authorities = permissions.stream()

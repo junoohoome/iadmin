@@ -3,7 +3,6 @@ package me.fjq.system.service.impl;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
-import me.fjq.security.UserCacheService;
 import me.fjq.system.entity.SysUser;
 import me.fjq.system.mapper.SysUserMapper;
 import me.fjq.system.query.SysUserQuery;
@@ -24,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
 
     private final SysUserMapper sysUserMapper;
-    private final UserCacheService userCacheService;
 
     @Override
     public Page<SysUserVo> selectPage(Page page, SysUserQuery query) {
@@ -32,17 +30,14 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     }
 
     /**
-     * 更新用户信息并清除缓存
+     * 更新用户信息
+     * TODO: 后续启用用户缓存时，需在此处添加缓存清除逻辑
      *
      * @param user 用户实体
      * @return 更新结果
      */
     @Override
     public boolean updateUser(SysUser user) {
-        boolean result = this.updateById(user);
-        if (result && user.getUserId() != null) {
-            userCacheService.evictUserCache(user.getUserId());
-        }
-        return result;
+        return this.updateById(user);
     }
 }

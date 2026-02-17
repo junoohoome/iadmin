@@ -80,3 +80,29 @@
 2026-02-14 00:34:58 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
 2026-02-14 00:35:03 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8090"]
 2026-02-14 00:35:03 [main] INFO  c.alibaba.druid.pool.DruidDataSource - {dataSource-0} closing ...
+2026-02-17 19:21:03 [main] INFO  me.fjq.SystemApplication - Starting SystemApplication using Java 21.0.7 with PID 63413 (/Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/.worktrees/auth-optimization/iadmin-system/target/classes started by fangjunqiang in /Users/fangjunqiang/MyWorkspace/IdeaProjects/my-project/iadmin-all/iadmin/.worktrees/auth-optimization/iadmin-system)
+2026-02-17 19:21:03 [main] INFO  me.fjq.SystemApplication - The following 1 profile is active: "dev"
+2026-02-17 19:21:05 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8090"]
+2026-02-17 19:21:05 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-02-17 19:21:05 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.42]
+2026-02-17 19:21:05 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-02-17 19:21:08 [main] INFO  org.quartz.impl.StdSchedulerFactory - Using default implementation for ThreadExecutor
+2026-02-17 19:21:08 [main] INFO  o.quartz.core.SchedulerSignalerImpl - Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl
+2026-02-17 19:21:08 [main] INFO  org.quartz.core.QuartzScheduler - Quartz Scheduler v.2.3.2 created.
+2026-02-17 19:21:08 [main] INFO  org.quartz.simpl.RAMJobStore - RAMJobStore initialized.
+2026-02-17 19:21:08 [main] INFO  org.quartz.core.QuartzScheduler - Scheduler meta-data: Quartz Scheduler (v2.3.2) 'quartzScheduler' with instanceId 'NON_CLUSTERED'
+  Scheduler class: 'org.quartz.core.QuartzScheduler' - running locally.
+  NOT STARTED.
+  Currently in standby mode.
+  Number of jobs executed: 0
+  Using thread pool 'org.quartz.simpl.SimpleThreadPool' - with 10 threads.
+  Using job-store 'org.quartz.simpl.RAMJobStore' - which does not support persistence. and is not clustered.
+
+2026-02-17 19:21:08 [main] INFO  org.quartz.impl.StdSchedulerFactory - Quartz scheduler 'quartzScheduler' initialized from an externally provided properties instance.
+2026-02-17 19:21:08 [main] INFO  org.quartz.impl.StdSchedulerFactory - Quartz scheduler version: 2.3.2
+2026-02-17 19:21:08 [main] INFO  org.quartz.core.QuartzScheduler - JobFactory set to: org.springframework.scheduling.quartz.SpringBeanJobFactory@4ac77269
+2026-02-17 19:21:08 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8090"]
+2026-02-17 19:21:08 [main] INFO  org.quartz.core.QuartzScheduler - Scheduler quartzScheduler_$_NON_CLUSTERED started.
+2026-02-17 19:21:09 [main] INFO  me.fjq.SystemApplication - Started SystemApplication in 6.351 seconds (process running for 6.971)
+2026-02-17 19:21:30 [http-nio-8090-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-02-17 19:22:06 [http-nio-8090-exec-7] INFO  c.alibaba.druid.pool.DruidDataSource - {dataSource-1} inited
