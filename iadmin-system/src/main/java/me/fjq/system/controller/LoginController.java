@@ -11,7 +11,8 @@ import me.fjq.core.HttpResult;
 import me.fjq.properties.SecurityProperties;
 import me.fjq.security.JwtTokenService;
 import me.fjq.monitor.service.OnlineService;
-import me.fjq.monitor.service.LogininforService;
+import me.fjq.event.LoginRecordEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import me.fjq.system.vo.AuthUser;
 import me.fjq.utils.IpUtils;
 import me.fjq.utils.RedisUtils;
@@ -46,19 +47,19 @@ public class LoginController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final String activeProfile;
     private final OnlineService onlineService;
-    private final LogininforService logininforService;
+    private final ApplicationEventPublisher eventPublisher;
 
     public LoginController(SecurityProperties properties, RedisUtils redisUtils,
                            JwtTokenService jwtTokenService, AuthenticationManagerBuilder authenticationManagerBuilder,
                            OnlineService onlineService,
-                           LogininforService logininforService,
+                           ApplicationEventPublisher eventPublisher,
                            @org.springframework.beans.factory.annotation.Value("${spring.profiles.active:dev}") String activeProfile) {
         this.properties = properties;
         this.redisUtils = redisUtils;
         this.jwtTokenService = jwtTokenService;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.onlineService = onlineService;
-        this.logininforService = logininforService;
+        this.eventPublisher = eventPublisher;
         this.activeProfile = activeProfile;
     }
 
@@ -80,11 +81,11 @@ public class LoginController {
             // 清除验证码
             redisUtils.del(authUser.getUuid());
             if (StringUtils.isBlank(code)) {
-                logininforService.recordLoginFail(username, ipaddr, browser, os, "验证码不存在");
+                eventPublisher.publishEvent(LoginRecordEvent.fail(username, ipaddr, browser, os, "验证码不存在"));
                 return HttpResult.error(Constants.CAPTCHA_NOT_EXIST);
             }
             if (StringUtils.isBlank(authUser.getCode()) || !authUser.getCode().equalsIgnoreCase(code)) {
-                logininforService.recordLoginFail(username, ipaddr, browser, os, "验证码错误");
+                eventPublisher.publishEvent(LoginRecordEvent.fail(username, ipaddr, browser, os, "验证码错误"));
                 return HttpResult.error(Constants.CAPTCHA_ERROR);
             }
         }
@@ -93,11 +94,11 @@ public class LoginController {
         try {
             String token = jwtTokenService.login(username, password, authenticationManagerBuilder);
             // 记录登录成功日志
-            logininforService.recordLoginSuccess(username, ipaddr, browser, os);
+            eventPublisher.publishEvent(LoginRecordEvent.success(username, ipaddr, browser, os));
             return HttpResult.ok(properties.getTokenStartWith().concat(token));
         } catch (AuthenticationException e) {
             // 记录登录失败日志
-            logininforService.recordLoginFail(username, ipaddr, browser, os, e.getMessage());
+            eventPublisher.publishEvent(LoginRecordEvent.fail(username, ipaddr, browser, os, e.getMessage()));
             throw e;
         }
     }
@@ -162,16 +163,16 @@ public class LoginController {
         String os = IpUtils.getOs(ServletUtils.getRequest());
 
         if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
-            logininforService.recordLoginFail(username, ipaddr, browser, os, "用户名和密码不能为空");
+            eventPublisher.publishEvent(LoginRecordEvent.fail(username, ipaddr, browser, os, "用户名和密码不能为空"));
             return HttpResult.error("用户名和密码不能为空");
         }
 
         try {
             String token = jwtTokenService.login(username, password, authenticationManagerBuilder);
-            logininforService.recordLoginSuccess(username, ipaddr, browser, os);
+            eventPublisher.publishEvent(LoginRecordEvent.success(username, ipaddr, browser, os));
             return HttpResult.ok(properties.getTokenStartWith().concat(token));
         } catch (AuthenticationException e) {
-            logininforService.recordLoginFail(username, ipaddr, browser, os, e.getMessage());
+            eventPublisher.publishEvent(LoginRecordEvent.fail(username, ipaddr, browser, os, e.getMessage()));
             throw e;
         }
     }
