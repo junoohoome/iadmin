@@ -1,7 +1,7 @@
-package me.fjq.system.service;
+package me.fjq.monitor.service;
 
 import lombok.extern.slf4j.Slf4j;
-import me.fjq.system.domain.Server;
+import me.fjq.monitor.entity.Server;
 import org.springframework.stereotype.Service;
 
 /**

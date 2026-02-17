@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
-import me.fjq.Domain.BaseEntity;
+import me.fjq.domain.BaseEntity;
 
 import java.util.Date;
 import java.util.List;

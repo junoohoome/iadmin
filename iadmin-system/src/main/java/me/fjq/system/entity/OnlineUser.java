@@ -1,4 +1,4 @@
-package me.fjq.system.domain;
+package me.fjq.system.entity;
 
 import java.time.LocalDateTime;
 

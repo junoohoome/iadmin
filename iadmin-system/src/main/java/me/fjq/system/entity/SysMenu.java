@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import me.fjq.Domain.BaseEntity;
+import me.fjq.domain.BaseEntity;
 
 import java.util.ArrayList;
 import java.util.List;

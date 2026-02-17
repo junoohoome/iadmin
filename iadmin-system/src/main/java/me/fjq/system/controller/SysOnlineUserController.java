@@ -2,7 +2,7 @@ package me.fjq.system.controller;
 
 import lombok.AllArgsConstructor;
 import me.fjq.core.HttpResult;
-import me.fjq.system.domain.OnlineUser;
+import me.fjq.system.entity.OnlineUser;
 import me.fjq.system.service.OnlineUserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;

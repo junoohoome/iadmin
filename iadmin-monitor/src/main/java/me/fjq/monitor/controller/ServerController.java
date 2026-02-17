@@ -1,9 +1,9 @@
-package me.fjq.controller;
+package me.fjq.monitor.controller;
 
 import lombok.AllArgsConstructor;
 import me.fjq.core.HttpResult;
-import me.fjq.system.domain.Server;
-import me.fjq.system.service.ServerService;
+import me.fjq.monitor.entity.Server;
+import me.fjq.monitor.service.ServerService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

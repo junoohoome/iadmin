@@ -1,4 +1,4 @@
-package me.fjq.system.domain.server;
+package me.fjq.monitor.entity.server;
 
 import lombok.Getter;
 import lombok.Setter;

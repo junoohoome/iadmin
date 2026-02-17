@@ -1,9 +1,9 @@
-package me.fjq.system.domain;
+package me.fjq.monitor.entity;
 
 
 import lombok.Getter;
 import lombok.Setter;
-import me.fjq.system.domain.server.*;
+import me.fjq.monitor.entity.server.*;
 import me.fjq.utils.Arith;
 import me.fjq.utils.IpUtils;
 import oshi.SystemInfo;

@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Getter;
 import lombok.Setter;
-import me.fjq.Domain.BaseEntity;
+import me.fjq.domain.BaseEntity;
 
 /**
  * 角色信息表(SysRole)表实体类
