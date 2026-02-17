@@ -178,6 +178,19 @@ public class OnlineService {
     }
 
     /**
+     * 添加 token 到黑名单（带自定义TTL，用于Token续期场景）
+     *
+     * @param token      登录令牌
+     * @param ttlSeconds 过期时间（秒）
+     */
+    public void addToBlacklist(String token, long ttlSeconds) {
+        String blacklistKey = RedisConstants.BLACKLISTED_TOKEN_KEY + token;
+        redisUtils.set(blacklistKey, "1", ttlSeconds);
+
+        log.debug("添加 token 到黑名单（TTL: {}s）: {}", ttlSeconds, token);
+    }
+
+    /**
      * 检查 token 是否在黑名单中
      *
      * @param token 登录令牌

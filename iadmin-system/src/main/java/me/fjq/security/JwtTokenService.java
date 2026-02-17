@@ -253,7 +253,7 @@ public class JwtTokenService {
      * @param token 令牌
      * @return 数据声明
      */
-    private Claims getClaimsFromToken(String token) {
+    public Claims getClaimsFromToken(String token) {
         return Jwts.parser()
                 .verifyWith(getSignInKey())
                 .build()
