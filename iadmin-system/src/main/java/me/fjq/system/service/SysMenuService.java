@@ -58,4 +58,18 @@ public interface SysMenuService extends IService<SysMenu> {
      * @return 路由列表
      */
     List<RouterVo> buildMenusForFront(List<SysMenu> menus);
+
+    /**
+     * 清除用户权限缓存
+     *
+     * @param userId 用户ID
+     */
+    void clearUserPermissionCache(Long userId);
+
+    /**
+     * 批量清除用户权限缓存
+     *
+     * @param userIds 用户ID列表
+     */
+    void clearUserPermissionCacheBatch(List<Long> userIds);
 }

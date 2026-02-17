@@ -91,4 +91,14 @@ public class Constants {
      * 验证码错误
      */
     public static final String CAPTCHA_ERROR = "验证码错误";
+
+    /**
+     * 用户权限缓存 Key 前缀
+     */
+    public static final String USER_PERMISSIONS_KEY = "user:permissions:";
+
+    /**
+     * 用户权限缓存过期时间/分钟
+     */
+    public static final Long USER_PERMISSIONS_EXPIRE_TIME = 30L;
 }

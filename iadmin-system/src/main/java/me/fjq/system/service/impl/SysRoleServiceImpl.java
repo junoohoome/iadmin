@@ -5,10 +5,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import me.fjq.system.entity.SysRole;
 import me.fjq.system.entity.SysRoleMenu;
+import me.fjq.system.entity.SysUserRole;
 import me.fjq.system.mapper.SysRoleMapper;
 import me.fjq.system.mapper.SysRoleMenuMapper;
+import me.fjq.system.mapper.SysUserRoleMapper;
+import me.fjq.system.service.SysMenuService;
 import me.fjq.system.service.SysRoleService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -23,12 +27,15 @@ import java.util.stream.Collectors;
  * @author fjq
  * @since 2020-03-23 22:43:49
  */
+@Slf4j
 @AllArgsConstructor
 @Service("sysRoleService")
 public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> implements SysRoleService {
 
     private final SysRoleMapper roleMapper;
     private final SysRoleMenuMapper roleMenuMapper;
+    private final SysUserRoleMapper userRoleMapper;
+    private final SysMenuService menuService;
 
     @Override
     public Set<String> selectRolePermsByUserId(Long userId) {
@@ -74,6 +81,31 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
                     .collect(Collectors.toList());
             // 使用 MyBatis-Plus 批量插入（一条 SQL 插入多条数据）
             Db.saveBatch(roleMenuList);
+        }
+
+        // 清除该角色下所有用户的权限缓存
+        clearPermissionCacheByRoleId(roleId);
+    }
+
+    /**
+     * 清除角色下所有用户的权限缓存
+     *
+     * @param roleId 角色ID
+     */
+    private void clearPermissionCacheByRoleId(Long roleId) {
+        try {
+            // 查询该角色下的所有用户ID
+            List<SysUserRole> userRoles = userRoleMapper.selectList(
+                    new QueryWrapper<SysUserRole>().lambda().eq(SysUserRole::getRoleId, roleId));
+            List<Long> userIds = userRoles.stream()
+                    .map(SysUserRole::getUserId)
+                    .collect(Collectors.toList());
+
+            // 批量清除缓存
+            menuService.clearUserPermissionCacheBatch(userIds);
+            log.info("角色权限变更，已清除用户缓存, roleId: {}, userCount: {}", roleId, userIds.size());
+        } catch (Exception e) {
+            log.warn("清除角色用户缓存失败, roleId: {}, error: {}", roleId, e.getMessage());
         }
     }
 }
