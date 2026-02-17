@@ -17,4 +17,12 @@ public interface SysUserService extends IService<SysUser> {
 
     Page<SysUserVo> selectPage(Page page, @Param("query") SysUserQuery query);
 
+    /**
+     * 更新用户信息并清除缓存
+     *
+     * @param user 用户实体
+     * @return 更新结果
+     */
+    boolean updateUser(SysUser user);
+
 }
