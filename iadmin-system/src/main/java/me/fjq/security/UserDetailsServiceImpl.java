@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-;
-
 /**
  * @author fjq
  */
@@ -36,21 +34,36 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final SysUserService userService;
     private final SysMenuService menuService;
+    private final UserCacheService userCacheService;
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        SysUser user = userService.getOne(new QueryWrapper<SysUser>().lambda().eq(SysUser::getUserName, username));;
+        // 1. 查询用户（仍需从数据库获取，因为需要验证密码）
+        SysUser user = userService.getOne(new QueryWrapper<SysUser>().lambda().eq(SysUser::getUserName, username));
         if (user == null) {
             throw new BadRequestException("账号不存在");
         }
         if (user.getStatus().equals(UserStatus.DISABLE.getCode())) {
             throw new BadRequestException("账号未激活");
         }
-        Set<String> permissions = menuService.selectMenuPermsByUserId(user.getUserId());
-        // 设置管理员权限
-        if(SecurityUtils.isAdmin(user.getUserId())) {
-            permissions.add(Constants.SYS_ADMIN_PERMISSION);
+
+        // 2. 尝试从缓存获取权限
+        Set<String> permissions = userCacheService.getCachedPermissions(user.getUserId());
+
+        if (permissions == null) {
+            // 缓存未命中，从数据库查询
+            permissions = menuService.selectMenuPermsByUserId(user.getUserId());
+            // 设置管理员权限
+            if (SecurityUtils.isAdmin(user.getUserId())) {
+                permissions.add(Constants.SYS_ADMIN_PERMISSION);
+            }
+            // 写入缓存
+            userCacheService.cachePermissions(user.getUserId(), permissions);
+            log.debug("权限信息从数据库加载并缓存: userId={}", user.getUserId());
+        } else {
+            log.debug("权限信息从缓存加载: userId={}", user.getUserId());
         }
+
         List<GrantedAuthority> authorities = permissions.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
@@ -69,7 +82,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .createTime(user.getCreateTime())
                 .deptId(user.getDeptId())
                 .ancestors(user.getAncestors())
-                .roles(null) // 角色列表将在后续加载
+                .roles(null)
                 .build();
     }
 
