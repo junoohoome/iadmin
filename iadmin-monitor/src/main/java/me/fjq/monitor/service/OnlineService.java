@@ -1,10 +1,10 @@
-package me.fjq.system.service;
+package me.fjq.monitor.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import me.fjq.constant.RedisConstants;
-import me.fjq.system.entity.OnlineUser;
+import me.fjq.monitor.entity.OnlineUser;
 import me.fjq.utils.RedisUtils;
 import org.springframework.stereotype.Service;
 
@@ -22,12 +22,12 @@ import java.util.concurrent.*;
  */
 @Slf4j
 @Service
-public class OnlineUserService {
+public class OnlineService {
 
     private final RedisUtils redisUtils;
     private final ObjectMapper objectMapper;
 
-    public OnlineUserService(RedisUtils redisUtils, ObjectMapper objectMapper) {
+    public OnlineService(RedisUtils redisUtils, ObjectMapper objectMapper) {
         this.redisUtils = redisUtils;
         this.objectMapper = objectMapper;
     }

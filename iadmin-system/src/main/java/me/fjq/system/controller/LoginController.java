@@ -10,7 +10,8 @@ import me.fjq.constant.Constants;
 import me.fjq.core.HttpResult;
 import me.fjq.properties.SecurityProperties;
 import me.fjq.security.JwtTokenService;
-import me.fjq.system.service.SysLogininforService;
+import me.fjq.monitor.service.OnlineService;
+import me.fjq.monitor.service.LogininforService;
 import me.fjq.system.vo.AuthUser;
 import me.fjq.utils.IpUtils;
 import me.fjq.utils.RedisUtils;
@@ -44,19 +45,19 @@ public class LoginController {
     private final JwtTokenService jwtTokenService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final String activeProfile;
-    private final me.fjq.system.service.OnlineUserService onlineUserService;
-    private final SysLogininforService logininforService;
+    private final OnlineService onlineService;
+    private final LogininforService logininforService;
 
     public LoginController(SecurityProperties properties, RedisUtils redisUtils,
                            JwtTokenService jwtTokenService, AuthenticationManagerBuilder authenticationManagerBuilder,
-                           me.fjq.system.service.OnlineUserService onlineUserService,
-                           SysLogininforService logininforService,
+                           OnlineService onlineService,
+                           LogininforService logininforService,
                            @org.springframework.beans.factory.annotation.Value("${spring.profiles.active:dev}") String activeProfile) {
         this.properties = properties;
         this.redisUtils = redisUtils;
         this.jwtTokenService = jwtTokenService;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
-        this.onlineUserService = onlineUserService;
+        this.onlineService = onlineService;
         this.logininforService = logininforService;
         this.activeProfile = activeProfile;
     }
@@ -137,7 +138,7 @@ public class LoginController {
             String token = jwtTokenService.getToken(ServletUtils.getRequest());
             if (token != null) {
                 // 将 token 加入黑名单，使其失效
-                onlineUserService.addToBlacklist(token);
+                onlineService.addToBlacklist(token);
                 log.info("用户登出成功");
             }
             return HttpResult.ok();

@@ -1,4 +1,4 @@
-package me.fjq.system.controller;
+package me.fjq.monitor.controller;
 
 import lombok.AllArgsConstructor;
 import me.fjq.core.HttpResult;
@@ -11,7 +11,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 缓存监控 Controller
@@ -20,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  * @since 2025-02-05
  */
 @RestController
-@RequestMapping("/system/cache")
+@RequestMapping("/monitor/cache")
 @AllArgsConstructor
 public class CacheController {
 
@@ -33,7 +32,7 @@ public class CacheController {
      * @return 缓存信息列表
      */
     @GetMapping("/list")
-    @PreAuthorize("@ss.hasPerms('system:cache:list')")
+    @PreAuthorize("@ss.hasPerms('monitor:cache:list')")
     public HttpResult<List<Map<String, Object>>> list() {
         List<Map<String, Object>> cacheInfos = new ArrayList<>();
 
@@ -61,7 +60,7 @@ public class CacheController {
      * @return 缓存详细信息
      */
     @GetMapping("/info/{key}")
-    @PreAuthorize("@ss.hasPerms('system:cache:query')")
+    @PreAuthorize("@ss.hasPerms('monitor:cache:query')")
     public HttpResult<Map<String, Object>> getCacheInfo(@PathVariable String key) {
         Map<String, Object> cacheInfo = new HashMap<>();
 
@@ -82,7 +81,7 @@ public class CacheController {
      * @return 匹配的键列表
      */
     @GetMapping("/keys")
-    @PreAuthorize("@ss.hasPerms('system:cache:query')")
+    @PreAuthorize("@ss.hasPerms('monitor:cache:query')")
     public HttpResult<Set<String>> getKeys(@RequestParam(defaultValue = "*") String pattern) {
         Set<String> keys = new HashSet<>();
         redisTemplate.execute((RedisCallback<Void>) connection -> {
@@ -103,7 +102,7 @@ public class CacheController {
      * @return 操作结果
      */
     @DeleteMapping("/{key}")
-    @PreAuthorize("@ss.hasPerms('system:cache:remove')")
+    @PreAuthorize("@ss.hasPerms('monitor:cache:remove')")
     public HttpResult<Boolean> deleteCache(@PathVariable String key) {
         redisUtils.del(key);
         return HttpResult.ok(true);
@@ -116,7 +115,7 @@ public class CacheController {
      * @return 删除的数量
      */
     @DeleteMapping("/batch")
-    @PreAuthorize("@ss.hasPerms('system:cache:remove')")
+    @PreAuthorize("@ss.hasPerms('monitor:cache:remove')")
     public HttpResult<Long> deleteBatch(@RequestBody List<String> keys) {
         redisUtils.del(keys.toArray(new String[0]));
         return HttpResult.ok((long) keys.size());
@@ -129,7 +128,7 @@ public class CacheController {
      * @return 删除的数量
      */
     @DeleteMapping("/pattern")
-    @PreAuthorize("@ss.hasPerms('system:cache:remove')")
+    @PreAuthorize("@ss.hasPerms('monitor:cache:remove')")
     public HttpResult<Integer> deleteByPattern(@RequestParam String pattern) {
         Set<String> keys = new HashSet<>();
         redisTemplate.execute((RedisCallback<Void>) connection -> {
@@ -154,7 +153,7 @@ public class CacheController {
      * @return 操作结果
      */
     @DeleteMapping("/clear")
-    @PreAuthorize("@ss.hasPerms('system:cache:remove')")
+    @PreAuthorize("@ss.hasPerms('monitor:cache:remove')")
     public HttpResult<Boolean> clearCache() {
         Set<String> keys = new HashSet<>();
         redisTemplate.execute((RedisCallback<Void>) connection -> {
@@ -178,7 +177,7 @@ public class CacheController {
      * @return 缓存统计信息
      */
     @GetMapping("/stats")
-    @PreAuthorize("@ss.hasPerms('system:cache:list')")
+    @PreAuthorize("@ss.hasPerms('monitor:cache:list')")
     public HttpResult<Map<String, Object>> getStats() {
         Map<String, Object> stats = new HashMap<>();
 

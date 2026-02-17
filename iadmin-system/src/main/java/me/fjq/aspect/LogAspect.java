@@ -7,8 +7,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import me.fjq.annotation.Log;
 import me.fjq.config.AsyncConfig;
-import me.fjq.system.entity.SysOperLog;
-import me.fjq.system.service.SysOperLogService;
+import me.fjq.monitor.entity.OperLog;
+import me.fjq.monitor.service.OperLogService;
 import me.fjq.utils.IpUtils;
 import me.fjq.utils.SystemSecurityUtils;
 import org.aspectj.lang.JoinPoint;
@@ -41,10 +41,10 @@ import java.util.concurrent.Executor;
 @Component
 public class LogAspect {
 
-    private final SysOperLogService operLogService;
+    private final OperLogService operLogService;
     private final Executor taskExecutor;
 
-    public LogAspect(SysOperLogService operLogService, @Qualifier(AsyncConfig.TASK_EXECUTOR) Executor taskExecutor) {
+    public LogAspect(OperLogService operLogService, @Qualifier(AsyncConfig.TASK_EXECUTOR) Executor taskExecutor) {
         this.operLogService = operLogService;
         this.taskExecutor = taskExecutor;
     }
@@ -98,7 +98,7 @@ public class LogAspect {
             HttpServletRequest request = attributes.getRequest();
 
             // 构建操作日志实体
-            SysOperLog operLog = new SysOperLog();
+            OperLog operLog = new OperLog();
 
             // 设置基础信息
             operLog.setStatus(0); // 默认成功
@@ -140,7 +140,7 @@ public class LogAspect {
             }
 
             // 异步保存日志
-            final SysOperLog finalOperLog = operLog;
+            final OperLog finalOperLog = operLog;
             taskExecutor.execute(() -> {
                 try {
                     operLogService.save(finalOperLog);
@@ -162,7 +162,7 @@ public class LogAspect {
      * @param operLog   操作日志
      * @param logAnnotation 日志注解
      */
-    private void setRequestValue(JoinPoint joinPoint, SysOperLog operLog, Log logAnnotation) {
+    private void setRequestValue(JoinPoint joinPoint, OperLog operLog, Log logAnnotation) {
         try {
             Object[] args = joinPoint.getArgs();
             if (args == null || args.length == 0) {

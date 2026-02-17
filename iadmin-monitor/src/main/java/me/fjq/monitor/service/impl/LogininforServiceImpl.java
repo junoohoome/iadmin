@@ -1,25 +1,25 @@
-package me.fjq.system.service.impl;
+package me.fjq.monitor.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import me.fjq.config.AsyncConfig;
-import me.fjq.system.entity.SysLogininfor;
-import me.fjq.system.mapper.SysLogininforMapper;
-import me.fjq.system.service.SysLogininforService;
+import me.fjq.monitor.entity.Logininfor;
+import me.fjq.monitor.mapper.LogininforMapper;
+import me.fjq.monitor.service.LogininforService;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
 /**
- * 系统访问记录(SysLogininfor)表服务实现类
+ * 系统访问记录(Logininfor)表服务实现类
  *
  * @author fjq
  * @since 2020-03-23 22:43:48
  */
 @Slf4j
-@Service("sysLogininforService")
-public class SysLogininforServiceImpl extends ServiceImpl<SysLogininforMapper, SysLogininfor> implements SysLogininforService {
+@Service("logininforService")
+public class LogininforServiceImpl extends ServiceImpl<LogininforMapper, Logininfor> implements LogininforService {
 
     /**
      * 异步记录登录日志
@@ -37,7 +37,7 @@ public class SysLogininforServiceImpl extends ServiceImpl<SysLogininforMapper, S
     public void recordLoginLog(String userName, String status, String ipaddr,
                                String loginLocation, String browser, String os, String msg) {
         try {
-            SysLogininfor logininfor = new SysLogininfor();
+            Logininfor logininfor = new Logininfor();
             logininfor.setUserName(userName);
             logininfor.setStatus(status);
             logininfor.setIpaddr(ipaddr);

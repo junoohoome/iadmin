@@ -18,7 +18,7 @@ import java.util.List;
  *
  * @author fjq
  */
-@MapperScan("me.fjq.system.mapper")
+@MapperScan({"me.fjq.system.mapper", "me.fjq.monitor.mapper"})
 @Configuration
 public class MybatisPlusConfig implements SmartInitializingSingleton {
 

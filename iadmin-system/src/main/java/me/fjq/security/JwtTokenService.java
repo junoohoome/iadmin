@@ -8,7 +8,7 @@ import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import me.fjq.exception.JwtTokenException;
 import me.fjq.properties.SecurityProperties;
-import me.fjq.system.service.OnlineUserService;
+import me.fjq.monitor.service.OnlineService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -48,11 +48,11 @@ public class JwtTokenService {
      */
     private static final String AUTHORITIES = "authorities";
     private final SecurityProperties properties;
-    private final OnlineUserService onlineUserService;
+    private final OnlineService onlineService;
 
-    public JwtTokenService(SecurityProperties properties, OnlineUserService onlineUserService) {
+    public JwtTokenService(SecurityProperties properties, OnlineService onlineService) {
         this.properties = properties;
-        this.onlineUserService = onlineUserService;
+        this.onlineService = onlineService;
     }
 
     /**
@@ -148,7 +148,7 @@ public class JwtTokenService {
     private Boolean validateToken(String token) {
         try {
             // 检查 token 是否在黑名单中
-            if (onlineUserService.isBlacklisted(token)) {
+            if (onlineService.isBlacklisted(token)) {
                 log.warn("Token is blacklisted: {}", token);
                 return false;
             }

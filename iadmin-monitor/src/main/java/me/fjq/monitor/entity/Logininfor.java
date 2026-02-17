@@ -1,8 +1,8 @@
-package me.fjq.system.entity;
+package me.fjq.monitor.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import lombok.Data;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,14 +10,15 @@ import java.util.Date;
 
 
 /**
- * 系统访问记录(SysLogininfor)表实体类
+ * 系统访问记录(Logininfor)表实体类
  *
  * @author fjq
  * @since 2020-03-23 22:43:48
  */
 @Getter
 @Setter
-public class SysLogininfor {
+@TableName("sys_logininfor")
+public class Logininfor {
 
     /**访问ID*/
     @TableId(value = "id", type = IdType.AUTO)

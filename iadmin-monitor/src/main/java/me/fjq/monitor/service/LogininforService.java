@@ -1,15 +1,15 @@
-package me.fjq.system.service;
+package me.fjq.monitor.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import me.fjq.system.entity.SysLogininfor;
+import me.fjq.monitor.entity.Logininfor;
 
 /**
- * 系统访问记录(SysLogininfor)表服务接口
+ * 系统访问记录(Logininfor)表服务接口
  *
  * @author fjq
  * @since 2020-03-23 22:43:48
  */
-public interface SysLogininforService extends IService<SysLogininfor> {
+public interface LogininforService extends IService<Logininfor> {
 
     /**
      * 记录登录日志

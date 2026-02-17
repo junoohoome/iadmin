@@ -1,9 +1,9 @@
-package me.fjq.system.controller;
+package me.fjq.monitor.controller;
 
 import lombok.AllArgsConstructor;
 import me.fjq.core.HttpResult;
-import me.fjq.system.entity.OnlineUser;
-import me.fjq.system.service.OnlineUserService;
+import me.fjq.monitor.entity.OnlineUser;
+import me.fjq.monitor.service.OnlineService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,11 +16,11 @@ import java.util.List;
  * @since 2025-02-05
  */
 @RestController
-@RequestMapping("/system/online")
+@RequestMapping("/monitor/online")
 @AllArgsConstructor
-public class SysOnlineUserController {
+public class OnlineController {
 
-    private final OnlineUserService onlineUserService;
+    private final OnlineService onlineService;
 
     /**
      * 获取在线用户列表
@@ -28,9 +28,9 @@ public class SysOnlineUserController {
      * @return 在线用户列表
      */
     @GetMapping("/list")
-    @PreAuthorize("@ss.hasPerms('system:online:list')")
+    @PreAuthorize("@ss.hasPerms('monitor:online:list')")
     public HttpResult<List<OnlineUser>> list() {
-        List<OnlineUser> onlineUsers = onlineUserService.getOnlineUsers();
+        List<OnlineUser> onlineUsers = onlineService.getOnlineUsers();
         return HttpResult.ok(onlineUsers);
     }
 
@@ -41,9 +41,9 @@ public class SysOnlineUserController {
      * @return 操作结果
      */
     @DeleteMapping("/{token}")
-    @PreAuthorize("@ss.hasPerms('system:online:forceLogout')")
+    @PreAuthorize("@ss.hasPerms('monitor:online:forceLogout')")
     public HttpResult<Boolean> forceLogout(@PathVariable String token) {
-        onlineUserService.addToBlacklist(token);
+        onlineService.addToBlacklist(token);
         return HttpResult.ok(true);
     }
 
@@ -54,9 +54,9 @@ public class SysOnlineUserController {
      * @return 强制下线的用户数量
      */
     @DeleteMapping("/username/{username}")
-    @PreAuthorize("@ss.hasPerms('system:online:forceLogout')")
+    @PreAuthorize("@ss.hasPerms('monitor:online:forceLogout')")
     public HttpResult<Integer> forceLogoutByUsername(@PathVariable String username) {
-        int count = onlineUserService.forceLogout(username);
+        int count = onlineService.forceLogout(username);
         return HttpResult.ok(count);
     }
 
@@ -68,7 +68,7 @@ public class SysOnlineUserController {
      */
     @GetMapping("/check/{token}")
     public HttpResult<Boolean> checkOnline(@PathVariable String token) {
-        return HttpResult.ok(onlineUserService.isOnline(token));
+        return HttpResult.ok(onlineService.isOnline(token));
     }
 
 }

@@ -1,22 +1,23 @@
-package me.fjq.system.entity;
+package me.fjq.monitor.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import lombok.Data;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
 
 /**
- * 操作日志记录(SysOperLog)表实体类
+ * 操作日志记录(OperLog)表实体类
  *
  * @author fjq
  * @since 2020-03-23 22:43:49
  */
 @Getter
 @Setter
-public class SysOperLog {
+@TableName("sys_oper_log")
+public class OperLog {
 
     /**日志主键*/
     @TableId(value = "id", type = IdType.AUTO)
