@@ -1,6 +1,18 @@
 server:
   name: iadmin
   port: 8090
+  tomcat:
+    threads:
+      # 最大工作线程数（压测优化：200→300）
+      max: ${TOMCAT_MAX_THREADS:300}
+      # 最小空闲线程数（压测优化：50→100）
+      min-spare: ${TOMCAT_MIN_SPARE:100}
+    # 最大连接数（保持5000）
+    max-connections: ${TOMCAT_MAX_CONNECTIONS:5000}
+    # 等待队列长度（压测优化：200→500，减少拒绝）
+    accept-count: 500
+    # 连接超时时间
+    connection-timeout: 20000
 
 spring:
   profiles:

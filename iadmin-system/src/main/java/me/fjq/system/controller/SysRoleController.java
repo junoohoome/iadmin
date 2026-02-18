@@ -8,7 +8,7 @@ import me.fjq.annotation.Log;
 import me.fjq.constant.Constants;
 import me.fjq.core.HttpResult;
 import me.fjq.system.entity.SysRole;
-import me.fjq.system.service.SysRoleService;
+import me.fjq.system.service.impl.SysRoleServiceImpl;
 import me.fjq.system.vo.SelectOptions;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -29,9 +29,9 @@ import java.util.stream.Collectors;
 @RequestMapping("sysRole")
 public class SysRoleController {
 
-    private final SysRoleService sysRoleService;
+    private final SysRoleServiceImpl sysRoleService;
 
-    public SysRoleController(SysRoleService sysRoleService) {
+    public SysRoleController(SysRoleServiceImpl sysRoleService) {
         this.sysRoleService = sysRoleService;
     }
 
@@ -45,24 +45,17 @@ public class SysRoleController {
     @PreAuthorize("@ss.hasPerms('system:role:list')")
     @GetMapping
     public HttpResult selectAll(Page<SysRole> page, SysRole sysRole) {
-        return HttpResult.ok(this.sysRoleService.page(page, new QueryWrapper<>(sysRole)));
+        return HttpResult.ok(sysRoleService.page(page, new QueryWrapper<>(sysRole)));
     }
 
     /**
-     * 查询下拉框所有数据
+     * 查询下拉框所有数据（带缓存）
      *
      * @return 所有数据
      */
     @GetMapping("selectOptions")
     public HttpResult selectOptions() {
-        List<SelectOptions> list = this.sysRoleService.list().stream().map(sysRole -> {
-            SelectOptions options = new SelectOptions();
-            options.setText(sysRole.getRoleName());
-            options.setValue(sysRole.getRoleId());
-            return options;
-        }).collect(Collectors.toList());
-
-        return HttpResult.ok(list);
+        return HttpResult.ok(sysRoleService.selectRoleOptions());
     }
 
     /**
@@ -74,7 +67,7 @@ public class SysRoleController {
     @PreAuthorize("@ss.hasPerms('system:role:list')")
     @GetMapping("{id}")
     public HttpResult selectOne(@PathVariable Serializable id) {
-        return HttpResult.ok(this.sysRoleService.getById(id));
+        return HttpResult.ok(sysRoleService.getById(id));
     }
 
     /**
@@ -87,7 +80,7 @@ public class SysRoleController {
     @Log(title = "角色管理", businessType = 1)
     @PostMapping
     public HttpResult insert(@RequestBody SysRole sysRole) {
-        return HttpResult.ok(this.sysRoleService.save(sysRole));
+        return HttpResult.ok(sysRoleService.save(sysRole));
     }
 
     /**
@@ -100,7 +93,7 @@ public class SysRoleController {
     @Log(title = "角色管理", businessType = 2)
     @PutMapping
     public HttpResult update(@RequestBody SysRole sysRole) {
-        return HttpResult.ok(this.sysRoleService.updateById(sysRole));
+        return HttpResult.ok(sysRoleService.updateById(sysRole));
     }
 
     /**
@@ -116,13 +109,13 @@ public class SysRoleController {
         List<Long> ids = Arrays.stream(idList.split(","))
             .map(Long::valueOf)
             .collect(Collectors.toList());
-        return HttpResult.ok(this.sysRoleService.removeByIds(ids));
+        return HttpResult.ok(sysRoleService.removeByIds(ids));
     }
 
     @PreAuthorize("@ss.hasPerms('system:role:list')")
     @GetMapping("selectMenuIds")
     public HttpResult<List<Long>> findRoleMenuListByRoleId(@RequestParam("roleId") String roleId) {
-        return HttpResult.ok(this.sysRoleService.selectRoleMenuListByRoleId(Long.valueOf(roleId)));
+        return HttpResult.ok(sysRoleService.selectRoleMenuListByRoleId(Long.valueOf(roleId)));
     }
 
     @PreAuthorize("@ss.hasPerms('system:role:edit')")
@@ -135,6 +128,4 @@ public class SysRoleController {
         sysRoleService.updatePermissions(Long.valueOf(roleId), menuIds);
         return HttpResult.ok();
     }
-
-
 }

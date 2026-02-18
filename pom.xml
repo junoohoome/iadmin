@@ -19,7 +19,6 @@
 	<modules>
 		<module>iadmin-common</module>
 		<module>iadmin-system</module>
-		<module>iadmin-tools</module>
 		<module>iadmin-monitor</module>
 		<module>iadmin-quartz</module>
 	</modules>

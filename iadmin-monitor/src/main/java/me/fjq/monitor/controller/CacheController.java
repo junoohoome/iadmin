@@ -36,19 +36,17 @@ public class CacheController {
     public HttpResult<List<Map<String, Object>>> list() {
         List<Map<String, Object>> cacheInfos = new ArrayList<>();
 
-        redisTemplate.execute((RedisCallback<Void>) connection -> {
-            ScanOptions options = ScanOptions.scanOptions().match("*").count(100).build();
-            Cursor<byte[]> cursor = connection.scan(options);
-            while (cursor.hasNext()) {
-                String key = new String(cursor.next());
-                Map<String, Object> cacheInfo = new HashMap<>();
-                cacheInfo.put("key", key);
-                cacheInfo.put("type", getType(key));
-                cacheInfo.put("ttl", redisUtils.getExpire(key));
-                cacheInfos.add(cacheInfo);
-            }
-            return null;
-        });
+        // 先获取所有 key
+        List<String> keys = redisUtils.scan("*");
+
+        // 然后在回调外获取每个 key 的类型和 TTL
+        for (String key : keys) {
+            Map<String, Object> cacheInfo = new HashMap<>();
+            cacheInfo.put("key", key);
+            cacheInfo.put("type", getType(key));
+            cacheInfo.put("ttl", redisUtils.getExpire(key));
+            cacheInfos.add(cacheInfo);
+        }
 
         return HttpResult.ok(cacheInfos);
     }
@@ -181,16 +179,8 @@ public class CacheController {
     public HttpResult<Map<String, Object>> getStats() {
         Map<String, Object> stats = new HashMap<>();
 
-        // 获取所有键的数量
-        final Set<String> keys = new HashSet<>();
-        redisTemplate.execute((RedisCallback<Void>) connection -> {
-            ScanOptions options = ScanOptions.scanOptions().match("*").count(1000).build();
-            Cursor<byte[]> cursor = connection.scan(options);
-            while (cursor.hasNext()) {
-                keys.add(new String(cursor.next()));
-            }
-            return null;
-        });
+        // 获取所有键
+        List<String> keys = redisUtils.scan("*");
         stats.put("totalKeys", keys.size());
 
         // 统计不同类型键的数量

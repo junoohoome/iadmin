@@ -1,12 +1,11 @@
 package me.fjq.system.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import me.fjq.annotation.Log;
 import me.fjq.core.HttpResult;
 import me.fjq.system.entity.SysDept;
-import me.fjq.system.service.SysDeptService;
+import me.fjq.system.service.impl.SysDeptServiceImpl;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,9 +24,9 @@ import java.util.stream.Collectors;
 @RequestMapping("sysDept")
 public class SysDeptController {
 
-    private final SysDeptService sysDeptService;
+    private final SysDeptServiceImpl sysDeptService;
 
-    public SysDeptController(SysDeptService sysDeptService) {
+    public SysDeptController(SysDeptServiceImpl sysDeptService) {
         this.sysDeptService = sysDeptService;
     }
 
@@ -41,7 +40,7 @@ public class SysDeptController {
     @PreAuthorize("@ss.hasPerms('system:dept:list')")
     @GetMapping
     public HttpResult selectAll(Page<SysDept> page, SysDept sysDept) {
-        return HttpResult.ok(this.sysDeptService.page(page,
+        return HttpResult.ok(sysDeptService.page(page,
                 Wrappers.<SysDept>lambdaQuery()
                         .eq(sysDept.getDeptId() != null, SysDept::getDeptId, sysDept.getDeptId())
                         .eq(sysDept.getParentId() != null, SysDept::getParentId, sysDept.getParentId())
@@ -50,18 +49,14 @@ public class SysDeptController {
     }
 
     /**
-     * 查询树形列表
+     * 查询树形列表（带缓存）
      *
      * @return 树形数据
      */
     @PreAuthorize("@ss.hasPerms('system:dept:list')")
     @GetMapping("list")
     public HttpResult list() {
-        List<SysDept> list = this.sysDeptService.list(
-                Wrappers.<SysDept>lambdaQuery()
-                        .orderByAsc(SysDept::getOrderNum)
-        );
-        return HttpResult.ok(list);
+        return HttpResult.ok(sysDeptService.selectDeptTree());
     }
 
     /**
@@ -73,7 +68,7 @@ public class SysDeptController {
     @PreAuthorize("@ss.hasPerms('system:dept:list')")
     @GetMapping("{id}")
     public HttpResult selectOne(@PathVariable Serializable id) {
-        return HttpResult.ok(this.sysDeptService.getById(id));
+        return HttpResult.ok(sysDeptService.getById(id));
     }
 
     /**
@@ -86,7 +81,7 @@ public class SysDeptController {
     @Log(title = "部门管理", businessType = 1)
     @PostMapping
     public HttpResult insert(@RequestBody SysDept sysDept) {
-        return HttpResult.ok(this.sysDeptService.save(sysDept));
+        return HttpResult.ok(sysDeptService.save(sysDept));
     }
 
     /**
@@ -99,7 +94,7 @@ public class SysDeptController {
     @Log(title = "部门管理", businessType = 2)
     @PutMapping
     public HttpResult update(@RequestBody SysDept sysDept) {
-        return HttpResult.ok(this.sysDeptService.updateById(sysDept));
+        return HttpResult.ok(sysDeptService.updateById(sysDept));
     }
 
     /**
@@ -115,6 +110,6 @@ public class SysDeptController {
         List<Long> ids = Arrays.stream(idList.split(","))
             .map(Long::valueOf)
             .collect(Collectors.toList());
-        return HttpResult.ok(this.sysDeptService.removeByIds(ids));
+        return HttpResult.ok(sysDeptService.removeByIds(ids));
     }
 }

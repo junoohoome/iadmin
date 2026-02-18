@@ -2,11 +2,11 @@ package me.fjq.system.controller;
 
 
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import me.fjq.annotation.Log;
 import me.fjq.core.HttpResult;
 import me.fjq.system.entity.SysDictData;
 import me.fjq.system.service.SysDictDataService;
+import me.fjq.system.service.impl.SysDictDataServiceImpl;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,14 +25,14 @@ import java.util.stream.Collectors;
 @RequestMapping("sysDictData")
 public class SysDictDataController {
 
-    private final SysDictDataService sysDictDataService;
+    private final SysDictDataServiceImpl sysDictDataService;
 
-    public SysDictDataController(SysDictDataService sysDictDataService) {
+    public SysDictDataController(SysDictDataServiceImpl sysDictDataService) {
         this.sysDictDataService = sysDictDataService;
     }
 
     /**
-     * 通过字典类型查询数据
+     * 通过字典类型查询数据（带缓存）
      *
      * @param dictType 字典类型
      * @return 查询字典类型数据
@@ -43,9 +43,7 @@ public class SysDictDataController {
             return HttpResult.ok();
         }
 
-        return HttpResult.ok(this.sysDictDataService.list(
-                Wrappers.<SysDictData>lambdaQuery().eq(SysDictData::getDictType, dictType)
-        ));
+        return HttpResult.ok(sysDictDataService.selectListByDictType(dictType));
     }
 
     /**
@@ -58,7 +56,7 @@ public class SysDictDataController {
     @Log(title = "字典数据", businessType = 1)
     @PostMapping
     public HttpResult insert(@RequestBody SysDictData sysDictData) {
-        return HttpResult.ok(this.sysDictDataService.save(sysDictData));
+        return HttpResult.ok(sysDictDataService.save(sysDictData));
     }
 
     /**
@@ -71,7 +69,7 @@ public class SysDictDataController {
     @Log(title = "字典数据", businessType = 2)
     @PutMapping
     public HttpResult update(@RequestBody SysDictData sysDictData) {
-        return HttpResult.ok(this.sysDictDataService.updateById(sysDictData));
+        return HttpResult.ok(sysDictDataService.updateById(sysDictData));
     }
 
     /**
@@ -87,19 +85,6 @@ public class SysDictDataController {
         List<Long> ids = Arrays.stream(idList.split(","))
             .map(Long::valueOf)
             .collect(Collectors.toList());
-        return HttpResult.ok(this.sysDictDataService.removeByIds(ids));
-    }
-
-    /**
-     * 刷新字典缓存
-     *
-     * @return 操作结果
-     */
-    @PreAuthorize("@ss.hasPerms('system:dict:edit')")
-    @DeleteMapping("refreshCache")
-    public HttpResult refreshCache() {
-        // 清空所有字典相关缓存
-        // 实际实现应根据业务需求调整
-        return HttpResult.ok("缓存刷新成功");
+        return HttpResult.ok(sysDictDataService.removeByIds(ids));
     }
 }

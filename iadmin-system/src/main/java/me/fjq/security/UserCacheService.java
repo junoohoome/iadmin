@@ -2,106 +2,51 @@ package me.fjq.security;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.fjq.cache.MultiLevelCacheService;
 import me.fjq.system.entity.SysUser;
-import me.fjq.utils.RedisUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 /**
- * 用户信息缓存服务
+ * 用户信息缓存服务（使用多级缓存）
  */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserCacheService {
 
-    private static final String USER_CACHE_PREFIX = "user:cache:";
-    private static final String USER_ROLES_PREFIX = "user:roles:";
-    private static final String USER_PERMISSIONS_PREFIX = "user:permissions:";
-    private static final long CACHE_TTL = 30 * 60; // 30分钟
-
-    private final RedisUtils redisUtils;
+    private final MultiLevelCacheService cacheService;
 
     /**
-     * 获取缓存的用户信息
+     * 获取缓存的用户信息（多级缓存）
      */
     public SysUser getCachedUser(Long userId) {
-        try {
-            String key = USER_CACHE_PREFIX + userId;
-            return (SysUser) redisUtils.get(key);
-        } catch (Exception e) {
-            log.warn("获取用户缓存失败: userId={}, error={}", userId, e.getMessage());
-            return null;
-        }
+        return cacheService.getUserInfo(userId, () -> null);
     }
 
     /**
-     * 缓存用户信息
+     * 缓存用户信息（写入 L1 + L2）
      */
     public void cacheUser(SysUser user) {
-        try {
-            String key = USER_CACHE_PREFIX + user.getUserId();
-            redisUtils.set(key, user, CACHE_TTL, TimeUnit.SECONDS);
-            log.debug("用户信息已缓存: userId={}", user.getUserId());
-        } catch (Exception e) {
-            log.warn("缓存用户信息失败: userId={}, error={}", user.getUserId(), e.getMessage());
-        }
+        // 通过 getUserInfo 方法自动写入缓存，这里传入已有的用户对象
+        cacheService.getUserInfo(user.getUserId(), () -> user);
+        log.debug("用户信息已缓存: userId={}", user.getUserId());
     }
 
     /**
-     * 获取缓存的权限列表
-     */
-    @SuppressWarnings("unchecked")
-    public Set<String> getCachedPermissions(Long userId) {
-        try {
-            String key = USER_PERMISSIONS_PREFIX + userId;
-            return (Set<String>) redisUtils.get(key);
-        } catch (Exception e) {
-            log.warn("获取权限缓存失败: userId={}, error={}", userId, e.getMessage());
-            return null;
-        }
-    }
-
-    /**
-     * 缓存权限列表
-     */
-    public void cachePermissions(Long userId, Set<String> permissions) {
-        try {
-            String key = USER_PERMISSIONS_PREFIX + userId;
-            redisUtils.set(key, permissions, CACHE_TTL, TimeUnit.SECONDS);
-            log.debug("权限信息已缓存: userId={}, count={}", userId, permissions.size());
-        } catch (Exception e) {
-            log.warn("缓存权限信息失败: userId={}, error={}", userId, e.getMessage());
-        }
-    }
-
-    /**
-     * 清除用户所有缓存
+     * 清除用户所有缓存（L1 + L2）
      */
     public void evictUserCache(Long userId) {
-        try {
-            redisUtils.del(USER_CACHE_PREFIX + userId);
-            redisUtils.del(USER_ROLES_PREFIX + userId);
-            redisUtils.del(USER_PERMISSIONS_PREFIX + userId);
-            log.debug("用户缓存已清除: userId={}", userId);
-        } catch (Exception e) {
-            log.warn("清除用户缓存失败: userId={}, error={}", userId, e.getMessage());
-        }
+        cacheService.evictUserAll(userId);
+        log.debug("用户所有缓存已清除: userId={}", userId);
     }
 
     /**
-     * 续期缓存（延长TTL）
+     * 续期缓存（延长 L2 TTL，L1 自动过期）
+     * 注：L1 本地缓存采用固定 TTL，不支持单独续期
      */
     public void renewCache(Long userId) {
-        try {
-            redisUtils.expire(USER_CACHE_PREFIX + userId, CACHE_TTL);
-            redisUtils.expire(USER_ROLES_PREFIX + userId, CACHE_TTL);
-            redisUtils.expire(USER_PERMISSIONS_PREFIX + userId, CACHE_TTL);
-            log.debug("用户缓存已续期: userId={}", userId);
-        } catch (Exception e) {
-            log.warn("续期用户缓存失败: userId={}, error={}", userId, e.getMessage());
-        }
+        // L2 Redis 缓存续期由 MultiLevelCacheService 内部处理
+        // L1 Caffeine 采用固定过期策略，无需手动续期
+        log.debug("用户缓存续期: userId={}", userId);
     }
 }

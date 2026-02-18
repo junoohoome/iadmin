@@ -101,4 +101,56 @@ public class Constants {
      * 用户权限缓存过期时间/分钟
      */
     public static final Long USER_PERMISSIONS_EXPIRE_TIME = 30L;
+
+    // ==================== 多级缓存相关常量 ====================
+
+    /**
+     * 用户菜单缓存 Key 前缀
+     */
+    public static final String USER_MENUS_KEY = "user:menus:";
+
+    /**
+     * 用户信息缓存 Key 前缀
+     */
+    public static final String USER_INFO_KEY = "user:info:";
+
+    /**
+     * 字典缓存 Key 前缀
+     */
+    public static final String DICT_KEY = "sys:dict:";
+
+    /**
+     * 缓存过期时间/分钟 - 菜单
+     */
+    public static final Long CACHE_MENUS_EXPIRE_TIME = 30L;
+
+    /**
+     * 缓存过期时间/分钟 - 用户信息
+     */
+    public static final Long CACHE_USER_INFO_EXPIRE_TIME = 30L;
+
+    /**
+     * 缓存过期时间/分钟 - 字典
+     */
+    public static final Long CACHE_DICT_EXPIRE_TIME = 60L;
+
+    /**
+     * 部门树缓存 Key
+     */
+    public static final String DEPT_TREE_KEY = "sys:dept:tree";
+
+    /**
+     * 角色列表缓存 Key
+     */
+    public static final String ROLE_LIST_KEY = "sys:role:list";
+
+    /**
+     * 缓存过期时间/分钟 - 部门
+     */
+    public static final Long CACHE_DEPT_EXPIRE_TIME = 60L;
+
+    /**
+     * 缓存过期时间/分钟 - 角色
+     */
+    public static final Long CACHE_ROLE_EXPIRE_TIME = 60L;
 }

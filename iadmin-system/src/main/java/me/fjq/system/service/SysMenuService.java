@@ -72,4 +72,16 @@ public interface SysMenuService extends IService<SysMenu> {
      * @param userIds 用户ID列表
      */
     void clearUserPermissionCacheBatch(List<Long> userIds);
+
+    /**
+     * 清除用户菜单缓存
+     *
+     * @param userId 用户ID
+     */
+    void clearUserMenuCache(Long userId);
+
+    /**
+     * 清除所有菜单缓存（菜单配置变更时调用）
+     */
+    void clearAllMenuCache();
 }

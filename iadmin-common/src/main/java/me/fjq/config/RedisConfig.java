@@ -11,6 +11,7 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
@@ -56,15 +57,16 @@ public class RedisConfig extends CachingConfigurerSupport {
         template.setConnectionFactory(connectionFactory);
 
         StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
+        GenericJackson2JsonRedisSerializer jsonRedisSerializer = new GenericJackson2JsonRedisSerializer();
 
         // key采用String的序列化方式
         template.setKeySerializer(stringRedisSerializer);
         // hash的key也采用String的序列化方式
         template.setHashKeySerializer(stringRedisSerializer);
-        // value序列化方式也采用String（简单字符串类型）
-        template.setValueSerializer(stringRedisSerializer);
-        // hash的value序列化方式也采用String
-        template.setHashValueSerializer(stringRedisSerializer);
+        // value序列化方式采用JSON（支持对象序列化）
+        template.setValueSerializer(jsonRedisSerializer);
+        // hash的value序列化方式也采用JSON
+        template.setHashValueSerializer(jsonRedisSerializer);
 
         template.afterPropertiesSet();
 

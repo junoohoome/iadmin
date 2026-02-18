@@ -4,8 +4,9 @@ import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.fjq.cache.MultiLevelCacheService;
 import me.fjq.system.entity.SysRole;
 import me.fjq.system.entity.SysRoleMenu;
 import me.fjq.system.entity.SysUserRole;
@@ -14,6 +15,7 @@ import me.fjq.system.mapper.SysRoleMenuMapper;
 import me.fjq.system.mapper.SysUserRoleMapper;
 import me.fjq.system.service.SysMenuService;
 import me.fjq.system.service.SysRoleService;
+import me.fjq.system.vo.SelectOptions;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +30,7 @@ import java.util.stream.Collectors;
  * @since 2020-03-23 22:43:49
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service("sysRoleService")
 public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> implements SysRoleService {
 
@@ -36,6 +38,23 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     private final SysRoleMenuMapper roleMenuMapper;
     private final SysUserRoleMapper userRoleMapper;
     private final SysMenuService menuService;
+    private final MultiLevelCacheService cacheService;
+
+    /**
+     * 查询角色下拉选项（带缓存）
+     *
+     * @return 角色下拉选项列表
+     */
+    public List<SelectOptions> selectRoleOptions() {
+        return cacheService.getRoleList(() ->
+                list().stream().map(sysRole -> {
+                    SelectOptions options = new SelectOptions();
+                    options.setText(sysRole.getRoleName());
+                    options.setValue(sysRole.getRoleId());
+                    return options;
+                }).collect(Collectors.toList())
+        );
+    }
 
     @Override
     public Set<String> selectRolePermsByUserId(Long userId) {
@@ -53,6 +72,42 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     public List<Long> selectRoleMenuListByRoleId(Long roleId) {
         return roleMenuMapper.selectList(new QueryWrapper<SysRoleMenu>().lambda().eq(SysRoleMenu::getRoleId, roleId))
                 .stream().map(SysRoleMenu::getMenuId).collect(Collectors.toList());
+    }
+
+    /**
+     * 保存角色并清除缓存
+     */
+    @Override
+    public boolean save(SysRole entity) {
+        boolean result = super.save(entity);
+        if (result) {
+            cacheService.evictRoleList();
+        }
+        return result;
+    }
+
+    /**
+     * 更新角色并清除缓存
+     */
+    @Override
+    public boolean updateById(SysRole entity) {
+        boolean result = super.updateById(entity);
+        if (result) {
+            cacheService.evictRoleList();
+        }
+        return result;
+    }
+
+    /**
+     * 删除角色并清除缓存
+     */
+    @Override
+    public boolean removeById(SysRole entity) {
+        boolean result = super.removeById(entity);
+        if (result) {
+            cacheService.evictRoleList();
+        }
+        return result;
     }
 
     /**
