@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import me.fjq.security.JwtAuthenticationTokenFilter;
 import me.fjq.security.handle.JwtAccessDeniedHandler;
 import me.fjq.security.handle.JwtAuthenticationEntryPoint;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -28,7 +29,6 @@ import java.util.Set;
  *
  * @author fjq
  */
-@AllArgsConstructor
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
@@ -38,6 +38,19 @@ public class WebSecurityConfig {
     private final CorsFilter corsFilter;
     private final JwtAuthenticationEntryPoint authenticationErrorHandler;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+
+    @Value("${spring.profiles.active:dev}")
+    private String activeProfile;
+
+    public WebSecurityConfig(JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter,
+                              CorsFilter corsFilter,
+                              JwtAuthenticationEntryPoint authenticationErrorHandler,
+                              JwtAccessDeniedHandler jwtAccessDeniedHandler) {
+        this.jwtAuthenticationTokenFilter = jwtAuthenticationTokenFilter;
+        this.corsFilter = corsFilter;
+        this.authenticationErrorHandler = authenticationErrorHandler;
+        this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -74,22 +87,33 @@ public class WebSecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 // 授权配置
-                .authorizeHttpRequests(auth -> auth
-                        // 静态资源 - Spring Boot 默认已处理，这里只放行特定目录
-                        .requestMatchers("/webSocket/**").permitAll()
-                        // SpringDoc 文档
-                        .requestMatchers("/swagger-ui.html", "/swagger-ui/**",
+                .authorizeHttpRequests(auth -> {
+                    // 静态资源 - Spring Boot 默认已处理，这里只放行特定目录
+                    auth.requestMatchers("/webSocket/**").permitAll();
+                    // 文件（头像、上传文件）
+                    auth.requestMatchers("/avatar/**", "/file/**").permitAll();
+                    // 自定义匿名访问所有url放行
+                    auth.requestMatchers(anonymousUrls.toArray(new String[0])).permitAll();
+
+                    // 安全配置：Swagger 和 Druid 仅在开发环境可访问
+                    if ("dev".equals(activeProfile) || "local".equals(activeProfile)) {
+                        // SpringDoc 文档 - 仅开发环境
+                        auth.requestMatchers("/swagger-ui.html", "/swagger-ui/**",
                                 "/v3/api-docs/**", "/swagger-resources/**",
-                                "/webjars/**", "/api-docs/**").permitAll()
-                        // 文件
-                        .requestMatchers("/avatar/**", "/file/**").permitAll()
-                        // 阿里巴巴 druid
-                        .requestMatchers("/druid/**").permitAll()
-                        // 自定义匿名访问所有url放行 ： 允许匿名和带权限以及登录用户访问
-                        .requestMatchers(anonymousUrls.toArray(new String[0])).permitAll()
-                        // 所有请求都需要认证
-                        .anyRequest().authenticated()
-                );
+                                "/webjars/**", "/api-docs/**").permitAll();
+                        // Druid 监控 - 仅开发环境
+                        auth.requestMatchers("/druid/**").permitAll();
+                    } else {
+                        // 生产环境：Swagger 和 Druid 需要管理员权限
+                        auth.requestMatchers("/swagger-ui.html", "/swagger-ui/**",
+                                "/v3/api-docs/**", "/swagger-resources/**",
+                                "/webjars/**", "/api-docs/**").hasRole("ADMIN");
+                        auth.requestMatchers("/druid/**").hasRole("ADMIN");
+                    }
+
+                    // 所有请求都需要认证
+                    auth.anyRequest().authenticated();
+                });
 
         // 添加JWT filter
         httpSecurity.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);

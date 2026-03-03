@@ -48,6 +48,25 @@ public class RedisUtils {
     }
 
     /**
+     * 指定缓存失效时间（带时间单位）
+     *
+     * @param key  键
+     * @param time 时间
+     * @param timeUnit 时间单位
+     */
+    public boolean expire(String key, long time, TimeUnit timeUnit) {
+        try {
+            if (time > 0) {
+                redisTemplate.expire(key, time, timeUnit);
+            }
+        } catch (Exception e) {
+            log.error("操作失败", e);
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * 根据 key 获取过期时间
      *
      * @param key 键 不能为null
@@ -373,6 +392,37 @@ public class RedisUtils {
         return redisTemplate.opsForHash().hasKey(key, item);
     }
 
+    // ============================incr=============================
+
+    /**
+     * 递增操作
+     * 如果 key 不存在，则初始化为 0 后再执行 INCR 操作
+     *
+     * @param key 键
+     * @param delta 要增加几(大于0)
+     * @return 递增后的值
+     */
+    public Long incr(String key, long delta) {
+        if (delta < 0) {
+            throw new RuntimeException("递增因子必须大于0");
+        }
+        return redisTemplate.opsForValue().increment(key, delta);
+    }
+
+    /**
+     * 递减操作
+     *
+     * @param key 键
+     * @param delta 要减少几(大于0)
+     * @return 递减后的值
+     */
+    public Long decr(String key, long delta) {
+        if (delta < 0) {
+            throw new RuntimeException("递减因子必须大于0");
+        }
+        return redisTemplate.opsForValue().increment(key, -delta);
+    }
+
     /**
      * hash递增 如果不存在,就会创建一个 并把新增后的值返回
      *
@@ -654,6 +704,59 @@ public class RedisUtils {
     public long lRemove(String key, long count, Object value) {
         try {
             return redisTemplate.opsForList().remove(key, count, value);
+        } catch (Exception e) {
+            log.error("操作失败", e);
+            return 0;
+        }
+    }
+
+    // ============================ZSet=============================
+
+    /**
+     * 添加元素到有序集合
+     *
+     * @param key   键
+     * @param value 值
+     * @param score 分数
+     * @return true 成功 false 失败
+     */
+    public boolean zAdd(String key, String value, double score) {
+        try {
+            return redisTemplate.opsForZSet().add(key, value, score);
+        } catch (Exception e) {
+            log.error("操作失败", e);
+            return false;
+        }
+    }
+
+    /**
+     * 获取有序集合的元素数量
+     *
+     * @param key 键
+     * @return 元素数量
+     */
+    public long zCard(String key) {
+        try {
+            Long size = redisTemplate.opsForZSet().size(key);
+            return size != null ? size : 0;
+        } catch (Exception e) {
+            log.error("操作失败", e);
+            return 0;
+        }
+    }
+
+    /**
+     * 移除有序集合中指定分数范围的元素
+     *
+     * @param key 键
+     * @param min 最小分数
+     * @param max 最大分数
+     * @return 移除的元素数量
+     */
+    public long zRemoveRangeByScore(String key, double min, double max) {
+        try {
+            Long count = redisTemplate.opsForZSet().removeRangeByScore(key, min, max);
+            return count != null ? count : 0;
         } catch (Exception e) {
             log.error("操作失败", e);
             return 0;

@@ -153,6 +153,13 @@
 			<version>${hutool.version}</version>
 		</dependency>
 
+		<!-- dotenv-java: 从 .env 文件加载环境变量 -->
+		<dependency>
+			<groupId>io.github.cdimascio</groupId>
+			<artifactId>dotenv-java</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+
 		<!--常用工具类 -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>

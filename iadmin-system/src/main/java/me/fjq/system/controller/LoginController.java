@@ -6,10 +6,12 @@ import cn.hutool.crypto.asymmetric.RSA;
 import com.wf.captcha.SpecCaptcha;
 import com.wf.captcha.base.Captcha;
 import lombok.extern.slf4j.Slf4j;
+import me.fjq.annotation.Limiter;
 import me.fjq.constant.Constants;
 import me.fjq.core.HttpResult;
 import me.fjq.properties.SecurityProperties;
 import me.fjq.security.JwtTokenService;
+import me.fjq.security.LoginAttemptService;
 import me.fjq.monitor.service.OnlineService;
 import me.fjq.event.LoginRecordEvent;
 import org.springframework.context.ApplicationEventPublisher;
@@ -44,31 +46,47 @@ public class LoginController {
     private final SecurityProperties properties;
     private final RedisUtils redisUtils;
     private final JwtTokenService jwtTokenService;
+    private final LoginAttemptService loginAttemptService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final String activeProfile;
     private final OnlineService onlineService;
     private final ApplicationEventPublisher eventPublisher;
 
     public LoginController(SecurityProperties properties, RedisUtils redisUtils,
-                           JwtTokenService jwtTokenService, AuthenticationManagerBuilder authenticationManagerBuilder,
+                           JwtTokenService jwtTokenService, LoginAttemptService loginAttemptService,
+                           AuthenticationManagerBuilder authenticationManagerBuilder,
                            OnlineService onlineService,
                            ApplicationEventPublisher eventPublisher,
                            @org.springframework.beans.factory.annotation.Value("${spring.profiles.active:dev}") String activeProfile) {
         this.properties = properties;
         this.redisUtils = redisUtils;
         this.jwtTokenService = jwtTokenService;
+        this.loginAttemptService = loginAttemptService;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.onlineService = onlineService;
         this.eventPublisher = eventPublisher;
         this.activeProfile = activeProfile;
     }
 
+    /**
+     * 登录接口
+     * <p>限流：每分钟最多 10 次请求</p>
+     */
+    @Limiter(limit = 10, timeout = 60, timeUnit = TimeUnit.SECONDS)
     @PostMapping(value = "login")
     public HttpResult login(@Validated @RequestBody AuthUser authUser) {
         String username = authUser.getUsername();
         String ipaddr = IpUtils.getIp(ServletUtils.getRequest());
         String browser = IpUtils.getBrowser(ServletUtils.getRequest());
         String os = IpUtils.getOs(ServletUtils.getRequest());
+
+        // 检查账户是否被锁定
+        if (loginAttemptService.isLocked(username, ipaddr)) {
+            long remainingTime = loginAttemptService.getLockRemainingTime(username, ipaddr);
+            String message = String.format("账户已锁定，请 %d 分钟后重试", (remainingTime / 60) + 1);
+            eventPublisher.publishEvent(LoginRecordEvent.fail(username, ipaddr, browser, os, message));
+            return HttpResult.error(message);
+        }
 
         // 密码解密
         RSA rsa = new RSA(privateKey, null);
@@ -93,16 +111,34 @@ public class LoginController {
         // 系统登录认证并返回令牌
         try {
             String token = jwtTokenService.login(username, password, authenticationManagerBuilder);
+            // 登录成功，清除失败记录
+            loginAttemptService.loginSucceeded(username, ipaddr);
             // 记录登录成功日志
             eventPublisher.publishEvent(LoginRecordEvent.success(username, ipaddr, browser, os));
             return HttpResult.ok(properties.getTokenStartWith().concat(token));
         } catch (AuthenticationException e) {
+            // 记录登录失败
+            loginAttemptService.loginFailed(username, ipaddr);
+            int remaining = loginAttemptService.getRemainingAttempts(username, ipaddr);
+
+            String message = e.getMessage();
+            if (remaining > 0) {
+                message += "，剩余尝试次数：" + remaining;
+            } else {
+                message = "登录失败次数过多，账户已锁定30分钟";
+            }
+
             // 记录登录失败日志
-            eventPublisher.publishEvent(LoginRecordEvent.fail(username, ipaddr, browser, os, e.getMessage()));
+            eventPublisher.publishEvent(LoginRecordEvent.fail(username, ipaddr, browser, os, message));
             throw e;
         }
     }
 
+    /**
+     * 获取验证码
+     * <p>限流：每分钟最多 20 次请求</p>
+     */
+    @Limiter(limit = 20, timeout = 60, timeUnit = TimeUnit.SECONDS)
     @GetMapping(value = "code")
     public HttpResult getCode() {
         // 字符类型验证码
@@ -167,12 +203,31 @@ public class LoginController {
             return HttpResult.error("用户名和密码不能为空");
         }
 
+        // 检查账户是否被锁定（测试接口也需要锁定保护）
+        if (loginAttemptService.isLocked(username, ipaddr)) {
+            long remainingTime = loginAttemptService.getLockRemainingTime(username, ipaddr);
+            String message = String.format("账户已锁定，请 %d 分钟后重试", (remainingTime / 60) + 1);
+            eventPublisher.publishEvent(LoginRecordEvent.fail(username, ipaddr, browser, os, message));
+            return HttpResult.error(message);
+        }
+
         try {
             String token = jwtTokenService.login(username, password, authenticationManagerBuilder);
+            loginAttemptService.loginSucceeded(username, ipaddr);
             eventPublisher.publishEvent(LoginRecordEvent.success(username, ipaddr, browser, os));
             return HttpResult.ok(properties.getTokenStartWith().concat(token));
         } catch (AuthenticationException e) {
-            eventPublisher.publishEvent(LoginRecordEvent.fail(username, ipaddr, browser, os, e.getMessage()));
+            loginAttemptService.loginFailed(username, ipaddr);
+            int remaining = loginAttemptService.getRemainingAttempts(username, ipaddr);
+
+            String message = e.getMessage();
+            if (remaining > 0) {
+                message += "，剩余尝试次数：" + remaining;
+            } else {
+                message = "登录失败次数过多，账户已锁定30分钟";
+            }
+
+            eventPublisher.publishEvent(LoginRecordEvent.fail(username, ipaddr, browser, os, message));
             throw e;
         }
     }

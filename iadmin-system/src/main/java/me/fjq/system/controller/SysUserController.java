@@ -12,7 +12,9 @@ import me.fjq.system.entity.SysUser;
 import me.fjq.system.query.SysUserQuery;
 import me.fjq.system.service.SysRoleService;
 import me.fjq.system.service.SysUserService;
+import me.fjq.utils.FileUploadUtils;
 import me.fjq.utils.ServletUtils;
+import me.fjq.validation.PasswordValidator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,6 +34,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import me.fjq.system.vo.system.SysUserVo;
@@ -54,6 +57,7 @@ public class SysUserController {
     private final SysRoleService sysRoleService;
     private final JwtTokenService jwtTokenService;
     private final PasswordEncoder passwordEncoder;
+    private final PasswordValidator passwordValidator;
 
     @Value("${file.avatar:./avatar/}")
     private String avatarPath;
@@ -62,11 +66,13 @@ public class SysUserController {
     private int avatarMaxSize;
 
     public SysUserController(SysUserService sysUserService, SysRoleService sysRoleService,
-                            JwtTokenService jwtTokenService, PasswordEncoder passwordEncoder) {
+                            JwtTokenService jwtTokenService, PasswordEncoder passwordEncoder,
+                            PasswordValidator passwordValidator) {
         this.sysUserService = sysUserService;
         this.sysRoleService = sysRoleService;
         this.jwtTokenService = jwtTokenService;
         this.passwordEncoder = passwordEncoder;
+        this.passwordValidator = passwordValidator;
     }
 
     /**
@@ -97,6 +103,9 @@ public class SysUserController {
 
     /**
      * 新增数据
+     * <p>
+     * 包含密码复杂度校验
+     * </p>
      *
      * @param sysUser 实体对象
      * @return 新增结果
@@ -105,6 +114,13 @@ public class SysUserController {
     @PreAuthorize("@ss.hasPerms('admin,system:user:add')")
     @PostMapping
     public HttpResult insert(@RequestBody SysUser sysUser) {
+        // 密码复杂度校验
+        PasswordValidator.PasswordValidationResult validation =
+                passwordValidator.validate(sysUser.getPassword(), sysUser.getUserName());
+        if (!validation.isValid()) {
+            return HttpResult.error(validation.getMessage());
+        }
+
         sysUser.setPassword(passwordEncoder.encode(sysUser.getPassword()));
         return HttpResult.ok(this.sysUserService.save(sysUser));
     }
@@ -168,38 +184,96 @@ public class SysUserController {
         return HttpResult.ok(sysUserService.updateById(sysUser));
     }
 
+    /**
+     * 修改当前用户密码
+     * <p>
+     * 包含密码复杂度校验
+     * </p>
+     *
+     * @param oldPassword 旧密码
+     * @param newPassword 新密码
+     * @return 操作结果
+     */
     @PutMapping("profile/updatePwd")
-    public HttpResult<Boolean> updateUserPwd(@RequestParam("oldPassword") String oldPassword, @RequestParam("newPassword") String newPassword) {
+    public HttpResult<Boolean> updateUserPwd(@RequestParam("oldPassword") String oldPassword,
+                                              @RequestParam("newPassword") String newPassword) {
         JwtUserDetails jwtUserDetails = jwtTokenService.getJwtUserDetails(ServletUtils.getRequest());
         SysUser user = sysUserService.getById(jwtUserDetails.getId());
-        if (passwordEncoder.matches(oldPassword, user.getPassword())) {
-            SysUser sysUser = new SysUser();
-            sysUser.setPassword(passwordEncoder.encode(newPassword));
-            sysUser.setUserId(jwtUserDetails.getId());
-            sysUserService.updateById(sysUser);
-            return HttpResult.ok();
+
+        // 验证旧密码
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            return HttpResult.error("旧密码错误");
         }
-        return HttpResult.error("修改密码错误");
+
+        // 新密码不能与旧密码相同
+        if (oldPassword.equals(newPassword)) {
+            return HttpResult.error("新密码不能与旧密码相同");
+        }
+
+        // 密码复杂度校验
+        PasswordValidator.PasswordValidationResult validation =
+                passwordValidator.validate(newPassword, user.getUserName());
+        if (!validation.isValid()) {
+            return HttpResult.error(validation.getMessage());
+        }
+
+        // 更新密码
+        SysUser sysUser = new SysUser();
+        sysUser.setPassword(passwordEncoder.encode(newPassword));
+        sysUser.setUserId(jwtUserDetails.getId());
+        sysUserService.updateById(sysUser);
+
+        log.info("用户修改密码成功: userId={}", jwtUserDetails.getId());
+        return HttpResult.ok();
     }
 
     /**
      * 重置用户密码（管理员功能）
+     * <p>
+     * 包含密码复杂度校验
+     * </p>
      *
-     * @param userId 用户ID
+     * @param userId   用户ID
      * @param password 新密码
      * @return 操作结果
      */
     @PreAuthorize("@ss.hasPerms('admin,system:user:resetPwd')")
     @PostMapping("resetPwd")
-    public HttpResult<Boolean> resetPassword(@RequestParam("userId") Long userId, @RequestParam("password") String password) {
+    public HttpResult<Boolean> resetPassword(@RequestParam("userId") Long userId,
+                                              @RequestParam("password") String password) {
+        // 获取用户信息
+        SysUser user = sysUserService.getById(userId);
+        if (user == null) {
+            return HttpResult.error("用户不存在");
+        }
+
+        // 密码复杂度校验
+        PasswordValidator.PasswordValidationResult validation =
+                passwordValidator.validate(password, user.getUserName());
+        if (!validation.isValid()) {
+            return HttpResult.error(validation.getMessage());
+        }
+
+        // 更新密码
         SysUser sysUser = new SysUser();
         sysUser.setUserId(userId);
         sysUser.setPassword(passwordEncoder.encode(password));
-        return HttpResult.ok(sysUserService.updateById(sysUser));
+        sysUserService.updateById(sysUser);
+
+        log.info("管理员重置用户密码: userId={}, operator={}", userId,
+                jwtTokenService.getJwtUserDetails(ServletUtils.getRequest()).getUsername());
+        return HttpResult.ok();
     }
 
     /**
      * 上传用户头像
+     * <p>
+     * 安全检查：
+     * 1. 文件扩展名白名单
+     * 2. 文件 MIME 类型白名单
+     * 3. 文件头（Magic Number）验证
+     * 4. 文件大小限制
+     * </p>
      *
      * @param avatarFile 头像文件
      * @return 上传结果（头像访问URL）
@@ -214,42 +288,45 @@ public class SysUserController {
             return HttpResult.error("用户不存在");
         }
 
-        // 1. 文件校验
+        // 1. 基础文件校验
         if (avatarFile == null || avatarFile.isEmpty()) {
             return HttpResult.error("请选择要上传的文件");
         }
 
-        // 2. 文件类型校验
-        String contentType = avatarFile.getContentType();
-        if (contentType == null || !contentType.startsWith("image/")) {
-            return HttpResult.error("只能上传图片文件");
-        }
-
-        // 3. 文件大小校验（MB）
+        // 2. 文件大小校验（MB）
         long fileSizeMB = avatarFile.getSize() / (1024 * 1024);
         if (fileSizeMB > avatarMaxSize) {
             return HttpResult.error("文件大小不能超过" + avatarMaxSize + "MB");
         }
 
-        try {
-            // 4. 生成唯一文件名
-            String originalFilename = avatarFile.getOriginalFilename();
-            String extension = originalFilename != null && originalFilename.contains(".")
-                    ? originalFilename.substring(originalFilename.lastIndexOf("."))
-                    : ".jpg";
-            String fileName = UUID.randomUUID().toString().replace("-", "") + extension;
+        // 3. 使用 FileUploadUtils 进行安全校验
+        FileUploadUtils.FileValidationResult validation = FileUploadUtils.validate(avatarFile);
+        if (!validation.isValid()) {
+            log.warn("头像上传被拒绝: userId={}, reason={}", user.getUserId(), validation.getMessage());
+            return HttpResult.error(validation.getMessage());
+        }
 
-            // 5. 确保目录存在
+        // 4. 额外检查：头像必须是图片类型
+        String extension = FileUploadUtils.getExtension(avatarFile.getOriginalFilename());
+        if (!Set.of("jpg", "jpeg", "png", "gif", "bmp", "webp").contains(extension.toLowerCase())) {
+            return HttpResult.error("头像只能上传图片文件（jpg/png/gif/bmp/webp）");
+        }
+
+        try {
+            // 5. 生成安全文件名
+            String fileName = FileUploadUtils.generateSafeFileName(avatarFile.getOriginalFilename());
+
+            // 6. 确保目录存在
             File dir = new File(avatarPath);
             if (!dir.exists()) {
                 dir.mkdirs();
             }
 
-            // 6. 保存文件
+            // 7. 保存文件
             File destFile = new File(avatarPath + fileName);
             avatarFile.transferTo(destFile);
 
-            // 7. 更新用户头像字段
+            // 8. 更新用户头像字段
             String avatarUrl = "/avatar/" + fileName;
             SysUser updateUser = new SysUser();
             updateUser.setUserId(user.getUserId());

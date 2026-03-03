@@ -1,5 +1,6 @@
 package me.fjq.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,11 +11,14 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.Arrays;
+
 /**
  * WebMvcConfigurer
  *
  * @author fjq
  */
+@Slf4j
 @Configuration
 @EnableWebMvc
 public class WebMvcConfig implements WebMvcConfigurer {
@@ -25,7 +29,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Value("${file.avatar}")
     private String avatar;
 
-    @Value("${cors.allowed-origins:http://localhost:3000}")
+    /**
+     * 允许的 CORS 来源域名
+     * 生产环境必须配置具体的域名
+     */
+    @Value("${cors.allowed-origins:http://localhost:3000,http://127.0.0.1:3000}")
     private String[] allowedOrigins;
 
     @Value("${spring.profiles.active:dev}")
@@ -35,20 +43,55 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
+
+        // 允许携带凭证（Cookies）
         config.setAllowCredentials(true);
 
-        // 生产环境使用配置的域名，开发环境允许所有来源
+        // 配置允许的来源
         if ("prod".equals(activeProfile)) {
-            for (String origin : allowedOrigins) {
-                config.addAllowedOrigin(origin);
+            // 生产环境：仅允许配置的域名
+            if (allowedOrigins.length == 0 ||
+                (allowedOrigins.length == 1 && allowedOrigins[0].contains("localhost"))) {
+                log.warn("生产环境未配置 CORS 允许的域名，请检查 cors.allowed-origins 配置！");
             }
+            config.setAllowedOrigins(Arrays.asList(allowedOrigins));
+            log.info("CORS 配置 - 生产模式，允许的域名: {}", Arrays.toString(allowedOrigins));
         } else {
-            config.addAllowedOriginPattern("*");
+            // 开发环境：仅允许本地开发域名
+            config.setAllowedOrigins(Arrays.asList(
+                    "http://localhost:3000",
+                    "http://127.0.0.1:3000",
+                    "http://localhost:8080",
+                    "http://127.0.0.1:8080"
+            ));
+            log.info("CORS 配置 - 开发模式，允许的域名: localhost:3000, localhost:8080");
         }
 
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
+        // 允许的请求头（明确指定，不使用 *）
+        config.setAllowedHeaders(Arrays.asList(
+                "Authorization",
+                "Content-Type",
+                "X-Requested-With",
+                "Accept",
+                "Origin",
+                "X-New-Token",
+                "Cache-Control"
+        ));
+
+        // 允许的 HTTP 方法
+        config.setAllowedMethods(Arrays.asList(
+                "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"
+        ));
+
+        // 暴露的响应头（前端可以读取）
+        config.setExposedHeaders(Arrays.asList(
+                "X-New-Token",
+                "Content-Disposition"
+        ));
+
+        // 预检请求缓存时间（秒）
         config.setMaxAge(3600L);
+
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
