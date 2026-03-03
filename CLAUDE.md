@@ -189,6 +189,119 @@ HttpResult {
 3. **系统监控** - 基于 OSHI 的 CPU、内存、JVM、磁盘监控
 4. **代码生成器** - 数据库表内省，生成 Entity/Mapper/Service/Controller
 
+## 安全特性
+
+### 环境变量配置
+
+敏感配置通过环境变量管理，不硬编码在配置文件中：
+
+```bash
+# 复制示例文件并配置
+cp iadmin-system/src/main/resources/.env.example .env.dev
+```
+
+**必需的环境变量：**
+- `DB_PASSWORD` - 数据库密码
+- `REDIS_PASSWORD` - Redis 密码
+- `JWT_SECRET` - JWT 签名密钥（至少 88 位 Base64）
+- `RSA_PRIVATE_KEY` / `RSA_PUBLIC_KEY` - RSA 密钥对
+- `DRUID_PASSWORD` - Druid 监控密码
+
+### 登录安全
+
+**登录失败锁定：**
+- 连续 5 次失败后锁定账户 30 分钟
+- 基于 IP + 用户名组合限制
+- 实现：`LoginAttemptService.java`
+
+**接口限流：**
+- 使用 `@Limiter` 注解限制请求频率
+- 滑动窗口算法实现
+- 实现：`LimiterAspect.java`
+
+```java
+@Limiter(limit = 10, timeout = 60, timeUnit = TimeUnit.SECONDS)
+@PostMapping(value = "login")
+public HttpResult login(...) { }
+```
+
+### XSS 防护
+
+- `XssFilter.java` - 全局 XSS 过滤器
+- `XssHttpServletRequestWrapper.java` - HTML 转义处理
+- 自动排除文件上传等特殊请求
+
+### 文件上传安全
+
+**Magic Number 验证：**
+- 通过文件头验证真实文件类型
+- 防止伪造扩展名攻击
+
+```java
+FileUploadUtils.FileValidationResult result = FileUploadUtils.validate(file);
+if (!result.isValid()) {
+    return HttpResult.error(result.getMessage());
+}
+```
+
+### 密码复杂度
+
+**密码要求：**
+- 最少 8 位，最多 32 位
+- 必须包含大写字母
+- 必须包含小写字母
+- 必须包含数字
+- 必须包含特殊字符 (!@#$%^&* 等)
+- 不能包含用户名
+- 不能是常见弱密码
+
+实现：`PasswordValidator.java`
+
+### 会话超时
+
+- 30 分钟无活动自动登出
+- 实现：`SessionActivityService.java`
+- 集成在 `JwtAuthenticationTokenFilter` 中
+
+### 安全响应头
+
+自动添加以下安全响应头（`SecurityHeadersConfig.java`）：
+
+| 响应头 | 值 | 作用 |
+|--------|-----|------|
+| `Content-Security-Policy` | 限制资源加载来源 | 防止 XSS |
+| `X-Frame-Options` | `SAMEORIGIN` | 防止点击劫持 |
+| `X-Content-Type-Options` | `nosniff` | 防止 MIME 嗅探 |
+| `X-XSS-Protection` | `1; mode=block` | XSS 过滤器 |
+| `Referrer-Policy` | `strict-origin-when-cross-origin` | 控制 Referrer |
+| `Permissions-Policy` | 禁用敏感功能 | 限制浏览器权限 |
+
+### CORS 配置
+
+**开发环境：** 仅允许 `localhost:3000` 和 `localhost:8080`
+
+**生产环境：** 必须配置 `cors.allowed-origins`
+
+### Swagger/Druid 保护
+
+| 环境 | Swagger | Druid |
+|------|---------|-------|
+| dev/local | 公开访问 | 公开访问 |
+| prod | 需要 ADMIN 角色 | 需要 ADMIN 角色 |
+
+### 安全最佳实践
+
+1. **生产环境部署前：**
+   - 确保 `.env` 文件不提交到 Git
+   - 使用强密码（至少 16 位随机字符）
+   - 定期更换 JWT 密钥和 RSA 密钥
+
+2. **HTTPS：** 生产环境必须启用 HTTPS
+
+3. **Redis：** 启用密码认证，限制访问 IP
+
+4. **数据库：** 使用专用账户，限制权限
+
 ## 数据库表
 
 核心表：`sys_user`、`sys_role`（含 `data_scope` 字段）、`sys_role_dept`、`sys_dept`、`sys_menu`、`sys_dict_data`、`sys_dict_type`、`sys_oper_log`、`sys_logininfor`
