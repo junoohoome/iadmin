@@ -1,7 +1,6 @@
 package me.fjq.config;
 
 
-import lombok.AllArgsConstructor;
 import me.fjq.security.JwtAuthenticationTokenFilter;
 import me.fjq.security.handle.JwtAccessDeniedHandler;
 import me.fjq.security.handle.JwtAuthenticationEntryPoint;

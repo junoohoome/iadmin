@@ -1,11 +1,8 @@
 package me.fjq.filter;
 
 import jakarta.servlet.*;
-import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -21,9 +18,6 @@ import java.util.List;
  * @author fjq
  */
 @Slf4j
-@Component
-@WebFilter(filterName = "xssFilter", urlPatterns = "/*")
-@Order(1)
 public class XssFilter implements Filter {
 
     /**

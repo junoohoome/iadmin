@@ -1,5 +1,6 @@
 package me.fjq.config;
 
+import me.fjq.filter.XssFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +26,19 @@ import java.io.IOException;
  */
 @Configuration
 public class SecurityHeadersConfig {
+
+    /**
+     * XSS 过滤器
+     */
+    @Bean
+    public FilterRegistrationBean<XssFilter> xssFilter() {
+        FilterRegistrationBean<XssFilter> registration = new FilterRegistrationBean<>();
+        registration.setFilter(new XssFilter());
+        registration.addUrlPatterns("/*");
+        registration.setName("xssFilter");
+        registration.setOrder(1);  // XSS 过滤器优先级最高
+        return registration;
+    }
 
     /**
      * 安全响应头过滤器
